@@ -45,10 +45,10 @@ node {
       defraUtils.lintHelm(imageName)
     }
     stage('Build test image') {
-      defraUtils.buildTestImage(imageName, BUILD_NUMBER, containerTag)
+      buildTestImage(imageName, BUILD_NUMBER, containerTag)
     }
     stage('Run tests') {
-      defraUtils.runTests(imageName, BUILD_NUMBER, containerTag)
+      runTests(imageName, BUILD_NUMBER, containerTag)
     }
     stage('Fix absolute paths in lcov file') {
       defraUtils.replaceInFile(containerSrcFolder, localSrcFolder, lcovFile)
