@@ -17,6 +17,8 @@ def localSrcFolder = '.'
 def lcovFile = './test-output/lcov.info'
 def timeoutInMinutes = 5
 
+def extraCommands = ""
+
 def buildTestImage(name, suffix, containerTag) {
   sh 'docker image prune -f || echo could not prune images'
   sh "docker-compose -p $name-$suffix-$containerTag -f docker-compose.yaml -f docker-compose.test.yaml build --no-cache $name"
@@ -64,7 +66,6 @@ node {
     }
     // if (pr != '') {
       stage('Helm install') {
-        def extraCommands = ""
         defraUtils.deployChart(kubeCredsId, registry, imageName, containerTag, extraCommands)
       }
     // }
