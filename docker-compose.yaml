@@ -5,8 +5,8 @@ services:
     image: ffc-ce-payment-orchestrator
     command: npm run start:watch
     volumes:
-      - node_modules:/app/node_modules
-      - .:/app
+      - node_modules:/usr/src/app/node_modules
+      - .:/usr/src/app
 
 volumes:
   node_modules: {}

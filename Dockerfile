@@ -1,7 +1,7 @@
 FROM node:10.15.3-alpine
 
-WORKDIR /app
-RUN chown node:node /app
+WORKDIR /usr/src/app
+RUN chown node:node /usr/src/app
 
 USER node
 
