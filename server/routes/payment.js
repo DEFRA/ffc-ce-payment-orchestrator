@@ -1,5 +1,5 @@
-const schema = require('../schema/user')
-const userService = require('../services/paymentService')
+const schema = require('../schema/payment')
+const paymentService = require('../services/paymentService')
 
 module.exports = {
   method: 'POST',
@@ -13,9 +13,9 @@ module.exports = {
       }
     },
     handler: async (request, h) => {
-      console.log('new payment received')
-      const user = await userService.create(request.payload)
-      return h.response({ user, date: new Date() }).code(200)
+      console.log('new payment received', request.payload)
+      const payment = await paymentService.create(request.payload)
+      return h.response({ user: payment, date: new Date() }).code(200)
     }
   }
 }
