@@ -3,7 +3,7 @@ describe('Web test', () => {
   let server
 
   beforeAll(async () => {
-    jest.mock('../server/services/user-service')
+    jest.mock('../server/services/paymentService')
     createServer = require('../server/createServer')
   })
 
@@ -51,6 +51,6 @@ describe('Web test', () => {
   })
 
   afterAll(async () => {
-    jest.unmock('../server/services/user-service')
+    jest.unmock('../server/services/paymentService')
   })
 })

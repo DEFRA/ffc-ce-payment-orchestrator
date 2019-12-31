@@ -4,9 +4,9 @@
   "version": "0.0.1",
   "repository": {
     "type": "git",
-    "url": "https://github.com/DEFRA/mine-support-user-service.git"
+    "url": "CHANGEME"
   },
-  "homepage": "https://github.com/DEFRA/mine-support-user-service",
+  "homepage": "CHANGEME",
   "main": "index.js",
   "scripts": {
     "pretest": "npm run lint",

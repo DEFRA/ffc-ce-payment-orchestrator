@@ -1,4 +1,4 @@
-# FFC Demo Payment Orchestrator
+# FFC Calculation Engine Payment Orchestrator
 Digital service mock for calculation engine
 
 ## Prerequisites
@@ -149,31 +149,6 @@ scripts/start --clean
 ## Build pipeline
 
 A detailed description on the build pipeline and PR work flow is available in the [Defra Confluence page](https://eaflood.atlassian.net/wiki/spaces/FFCPD/pages/1281359920/Build+Pipeline+and+PR+Workflow)
-
-### Testing a pull request
-
-A PR can be tested by reconfiguring the user service to use the URL of the PR rather than the current release in the development cluster. Create a `patch.yaml` file containing the desired URL:
-
-```
-apiVersion: extensions/v1beta1
-kind: Deployment
-spec:
-  template:
-    spec:
-      containers:
-      - env:
-        - name: FFC_DEMO_USER_SERVICE
-          value: http://ffc-ce-payment-orchestrator.ffc-ce-payment-orchestrator-pr2
-        name: ffc-ce-payment-orchestrator
-```
-
-then apply the patch:
-
-`kubectl patch deployment --namespace default ffc-ce-payment-orchestrator --patch "$(cat patch.yaml)"`
-
-Once tested the patch can be rolled back, i.e.
-
-`kubectl rollout undo --namespace default deployment/ffc-ce-payment-orchestrator`
 
 ## License
 
