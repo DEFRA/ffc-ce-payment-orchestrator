@@ -4,6 +4,7 @@ module.exports = {
   options: {
     handler: (request, h) => {
       return h.response('ok').code(200)
-    }
+    },
+    log: false
   }
 }

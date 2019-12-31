@@ -17,7 +17,7 @@ def localSrcFolder = '.'
 def lcovFile = './test-output/lcov.info'
 def timeoutInMinutes = 5
 
-def extraCommands = "container.redeployOnChange=$pr-$BUILD_NUMBER"
+def extraCommands = " --set container.redeployOnChange=$pr-$BUILD_NUMBER"
 
 def buildTestImage(name, suffix, containerTag) {
   sh 'docker image prune -f || echo could not prune images'
