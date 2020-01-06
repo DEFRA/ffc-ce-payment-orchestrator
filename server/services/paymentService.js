@@ -1,6 +1,6 @@
 module.exports = {
-  create: async function (payment) {
-    console.log('creating new payment')
+  create: function (payment) {
+    console.log('creating new payment', payment)
     return payment.email
   }
 }
