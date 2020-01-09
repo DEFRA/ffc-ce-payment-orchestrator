@@ -33,12 +33,12 @@ describe('GET /parcels', () => {
     jest.unmock('../../server/services/parcelService')
   })
 
-  test('returns 200', async () => {
+  test('responds with status code 200', async () => {
     const response = await server.inject(request)
     expect(response.statusCode).toBe(200)
   })
 
-  test('calls parcelService', async () => {
+  test('fetches data from parcelService', async () => {
     await server.inject(request)
     expect(mockParcelService.get).toHaveBeenCalled()
   })
