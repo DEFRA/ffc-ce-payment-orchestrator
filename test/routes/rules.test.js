@@ -3,7 +3,7 @@ describe('Web test', () => {
   let server
 
   beforeAll(async () => {
-    createServer = require('../server/createServer')
+    createServer = require('../../server/createServer')
   })
 
   beforeEach(async () => {
@@ -11,15 +11,14 @@ describe('Web test', () => {
     await server.initialize()
   })
 
-  test('GET / route returns 404', async () => {
+  test('GET /rules route works', async () => {
     const options = {
       method: 'GET',
-      url: '/'
+      url: '/rules'
     }
 
     const response = await server.inject(options)
-    expect(response.statusCode).toBe(404)
-    expect((response.headers['content-type'])).toEqual(expect.stringContaining('application/json'))
+    expect(response.statusCode).toBe(200)
   })
 
   afterEach(async () => {
