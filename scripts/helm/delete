@@ -1,0 +1,17 @@
+#!/bin/sh
+
+set -e
+projectRoot="$(a="/$0"; a=${a%/*}; a=${a:-.}; a=${a#/}/; cd "$a/../.." || return; pwd)"
+
+# Set Docker/Kubernetes resource names managed by this script
+containerName="ffc-ce-payment-orchestrator"
+dockerPrefix="ffc-ce"
+kubernetesNamespace="ffc-ce"
+
+(
+  cd "${projectRoot}"
+
+  kubectl delete \
+    --namespace ${kubernetesNamespace} \
+    job/ffc-ce-payment-orchestrator-migration
+)

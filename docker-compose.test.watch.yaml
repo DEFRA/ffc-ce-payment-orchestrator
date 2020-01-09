@@ -1,0 +1,8 @@
+version: '3.7'
+
+# This override file should be used to run automated tests in an
+# isolated container stack
+
+services:
+  ffc-ce-payment-orchestrator:
+    command: npm run test:watch

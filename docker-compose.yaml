@@ -1,0 +1,13 @@
+version: '3.7'
+services:
+  ffc-ce-payment-orchestrator:
+    build: .
+    image: ffc-ce-payment-orchestrator
+    command: npm run start:watch
+    volumes:
+      - node_modules:/usr/src/app/node_modules
+      - .:/usr/src/app
+
+volumes:
+  node_modules: {}
+

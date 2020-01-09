@@ -1,0 +1,10 @@
+version: '3.7'
+
+# This file should be used when running automated tests so
+# that test output is saved to the host
+
+services:
+  ffc-ce-payment-orchestrator:
+    command: npm run test
+    environment:
+      NODE_ENV: test

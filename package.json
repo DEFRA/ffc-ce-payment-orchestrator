@@ -1,0 +1,57 @@
+{
+  "name": "ffc-ce-payment-orchestrator",
+  "description": "Digital service mock to claim public money in the event property subsides into mine shaft.",
+  "version": "0.0.1",
+  "repository": {
+    "type": "git",
+    "url": "CHANGEME"
+  },
+  "homepage": "CHANGEME",
+  "main": "index.js",
+  "scripts": {
+    "pretest": "npm run lint",
+    "test": "jest",
+    "lint": "standard",
+    "test:watch": "nodemon --inspect=0.0.0.0 --ext js --legacy-watch --exec npm test",
+    "start:watch": "nodemon --inspect=0.0.0.0 --ext js --legacy-watch index.js"
+  },
+  "author": "Defra DDTS",
+  "contributors": [
+    "John Watson <john.watson2@rpa.gov.uk>",
+    "Mark Harrop <mark.harrop@defra.gov.uk>",
+    "Matthew Collins <matthew.collins@defra.gov.uk>",
+    "David Bingham <david.bingham@defra.gov.uk>"
+  ],
+  "license": "OGL-UK-3.0",
+  "dependencies": {
+    "@hapi/hapi": "^18.4.0",
+    "@hapi/joi": "^16.1.4"
+  },
+  "devDependencies": {
+    "@hapi/good": "^8.2.3",
+    "@hapi/good-console": "^8.1.2",
+    "@hapi/good-squeeze": "^5.2.1",
+    "blipp": "^4.0.1",
+    "jest": "^24.9.0",
+    "jest-junit": "^8.0.0",
+    "nodemon": "^1.19.2",
+    "standard": "14.3.1"
+  },
+  "standard": {
+    "globals": [
+      "describe",
+      "beforeEach",
+      "expect",
+      "test",
+      "afterEach",
+      "jest",
+      "beforeAll",
+      "afterAll"
+    ]
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "**/test-output/**"
+    ]
+  }
+}

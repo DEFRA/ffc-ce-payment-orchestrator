@@ -1,0 +1,22 @@
+#!/bin/sh
+
+set -e
+projectRoot="$(a="/$0"; a=${a%/*}; a=${a:-.}; a=${a#/}/; cd "$a/../.." || return; pwd)"
+
+# Set Docker/Kubernetes resource names managed by this script
+kubernetesNamespace="ffc-ce"
+serviceName="ffc-ce-payment-orchestrator"
+
+(
+  cd "${projectRoot}"
+
+  echo "Deploying service."
+  helm upgrade \
+    --atomic \
+    --install \
+    --namespace ${kubernetesNamespace} \
+    --values helm/${serviceName}/development-values.yaml \
+    --wait \
+    ${serviceName} \
+    ./helm/${serviceName}
+)
