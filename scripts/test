@@ -8,5 +8,5 @@ projectRoot="$(a="/$0"; a=${a%/*}; a=${a:-.}; a=${a#/}/; cd "$a/.." || return; p
 
   docker-compose -f docker-compose.yaml -f docker-compose.test.yaml down -v
   docker-compose -f docker-compose.yaml -f docker-compose.test.yaml build --no-cache
-  docker-compose -f docker-compose.yaml -f docker-compose.test.yaml up --force-recreate --exit-code-from ffc-ce-payment-orchestrator
+  docker-compose -f docker-compose.yaml -f docker-compose.test.yaml run ffc-ce-payment-orchestrator $@
 )
