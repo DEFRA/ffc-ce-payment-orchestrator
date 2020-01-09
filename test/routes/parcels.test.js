@@ -38,7 +38,12 @@ describe('GET /parcels', () => {
     expect(response.statusCode).toBe(200)
   })
 
-  test('returns a JSON collection of parcel data', async () => {
+  test('calls parcelService', async () => {
+    await server.inject(request)
+    expect(mockParcelService.get).toHaveBeenCalled()
+  })
+
+  test('returns the data provided by parcelService', async () => {
     const response = await server.inject(request)
     const payload = JSON.parse(response.payload)
     expect(payload).toEqual(mockParcelList)
