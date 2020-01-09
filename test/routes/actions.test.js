@@ -1,4 +1,4 @@
-describe('Healthz test', () => {
+describe('Actions route test', () => {
   let createServer
   let server
 
@@ -25,3 +25,4 @@ describe('Healthz test', () => {
     await server.stop()
   })
 })
+
