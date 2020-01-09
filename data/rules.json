@@ -1,0 +1,9 @@
+{
+  "rules": [
+    {
+      "id": 1,
+      "description": "rule one",
+      "enabled": true
+    }
+  ]
+}
