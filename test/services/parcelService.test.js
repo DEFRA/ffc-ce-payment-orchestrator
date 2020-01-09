@@ -13,7 +13,7 @@ describe('parcelService', () => {
     ]))
   })
 
-  test('response does not contain invalid items', () => {
+  test('response contains only parcel objects', () => {
     const result = parcelService.get()
 
     expect(result).not.toEqual(expect.arrayContaining([
