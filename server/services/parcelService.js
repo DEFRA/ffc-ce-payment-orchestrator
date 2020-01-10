@@ -1,7 +1,7 @@
-const parcels = require('../../data/parcels.json')
+const parcels = require('../../data/mock-parcel-data.json')
 
 module.exports = {
   get: function () {
-    return parcels
+    return parcels.map(parcel => ({ ref: parcel.parcelRef }))
   }
 }
