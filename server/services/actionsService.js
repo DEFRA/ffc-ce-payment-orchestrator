@@ -1,10 +1,9 @@
+const actionsList = require('../../data/actions.json')
+
 module.exports = {
-  get: async function (parcelId) {
+  get: async function (parcelRef) {
     return {
-      actions: [{
-        id: 'FG1',
-        description: 'Fencing'
-      }]
+      actions: actionsList
     }
   }
 }
