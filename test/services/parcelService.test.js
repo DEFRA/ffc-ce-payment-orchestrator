@@ -5,7 +5,7 @@ describe('parcelService', () => {
     ref: expect.stringMatching(new RegExp('.+'))
   }
 
-  test('returns a JSON collection of parcel objects', () => {
+  test('returns a collection of parcel objects', () => {
     const result = parcelService.get()
 
     expect(result).toEqual(expect.arrayContaining([

@@ -7,7 +7,7 @@ module.exports = {
     handler: (request, h) => {
       const parcels = parcelService.get()
 
-      return h.response(JSON.stringify(parcels)).code(200)
+      return h.response({ parcels }).code(200)
     }
   }
 }

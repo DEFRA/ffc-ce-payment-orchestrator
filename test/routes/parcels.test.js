@@ -46,6 +46,6 @@ describe('GET /parcels', () => {
   test('returns the data provided by parcelService', async () => {
     const response = await server.inject(request)
     const payload = JSON.parse(response.payload)
-    expect(payload).toEqual(mockParcelList)
+    expect(payload.parcels).toEqual(mockParcelList)
   })
 })

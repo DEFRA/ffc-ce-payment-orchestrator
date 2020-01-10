@@ -1,9 +1,7 @@
-{
-  "rules": [
-    {
-      "id": 1,
-      "description": "rule one",
-      "enabled": true
-    }
-  ]
-}
+[
+  {
+    "id": 1,
+    "description": "rule one",
+    "enabled": true
+  }
+]

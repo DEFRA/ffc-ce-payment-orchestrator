@@ -1,26 +1,25 @@
-describe('Web test', () => {
+describe('Actions route test', () => {
   let createServer
   let server
 
   const request = {
     method: 'GET',
-    url: '/rules'
+    url: '/actions'
   }
 
-  const mockRulesList = [
+  const mockActionList = [
     {
-      id: 9999,
-      description: 'test rule one',
-      enabled: true
+      id: 'ID1',
+      description: 'Test Action'
     }
   ]
 
-  const mockRulesService = {
-    get: jest.fn().mockResolvedValue(mockRulesList)
+  const mockActionsService = {
+    get: jest.fn().mockResolvedValue(mockActionList)
   }
 
   beforeAll(async () => {
-    jest.mock('../../server/services/rulesService', () => mockRulesService)
+    jest.mock('../../server/services/actionsService', () => mockActionsService)
     createServer = require('../../server/createServer')
   })
 
@@ -34,19 +33,19 @@ describe('Web test', () => {
     expect(response.statusCode).toBe(200)
   })
 
-  test('fetches data from rulesService', async () => {
+  test('fetches data from actionsService', async () => {
     await server.inject(request)
-    expect(mockRulesService.get).toHaveBeenCalled()
+    expect(mockActionsService.get).toHaveBeenCalled()
   })
 
-  test('returns the data provided by rulesService', async () => {
+  test('returns the data provided by actionsService', async () => {
     const response = await server.inject(request)
     const payload = JSON.parse(response.payload)
-    expect(payload.rules).toEqual(mockRulesList)
+    expect(payload.actions).toEqual(mockActionList)
   })
 
   afterAll(() => {
-    jest.unmock('../../server/services/rulesService')
+    jest.unmock('../../server/services/actionsService')
   })
 
   afterEach(async () => {
