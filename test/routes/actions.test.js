@@ -15,7 +15,7 @@ describe('Actions route test', () => {
   ]
 
   const mockActionsService = {
-    get: jest.fn().mockReturnValue(mockActionList)
+    get: jest.fn().mockResolvedValue(mockActionList)
   }
 
   beforeAll(async () => {
