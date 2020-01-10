@@ -6,7 +6,7 @@ module.exports = {
   options: {
     handler: async (request, h) => {
       const rules = await rulesService.get()
-      return h.response(rules).code(200)
+      return h.response({ rules }).code(200)
     }
   }
 }

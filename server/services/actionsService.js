@@ -1,9 +1,7 @@
-const actionsList = require('../../data/actions.json')
+const actions = require('../../data/actions.json')
 
 module.exports = {
   get: async function (parcelRef) {
-    return {
-      actions: actionsList
-    }
+    return actions
   }
 }

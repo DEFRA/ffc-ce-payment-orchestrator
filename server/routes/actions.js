@@ -8,7 +8,7 @@ module.exports = {
       const parcelRef = request.query.parcelref
       console.log('Actions request. Parcel Ref is ', parcelRef)
       const actions = await actionsService.get(parcelRef)
-      return h.response(actions).code(200)
+      return h.response({ actions }).code(200)
     }
   }
 }
