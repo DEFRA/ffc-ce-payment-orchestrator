@@ -31,9 +31,15 @@ A convenience script is provided to run automated tests in a containerised envir
 ./scripts/test
 ```
 
-It should be straight forward for the end user to inspect the test scripts so they can call commands individually to avoid a build or cleanup.
+The test script passes all arguments through to the `docker-compose run` command. For example, to run the test watcher:
 
-A "test watch" compose file is also available, that will rerun the tests in the container when files are edited locally. This may be run via 
+```
+./scripts/test npm run test:watch
+```
+
+It should be straight forward for the end user to inspect the test scripts so they can call commands individually to avoid a build or to cleanup test containers and volumes.
+
+A "test watch" compose file is also available, that will rerun the tests in the container when files are edited locally. This may be run via
 ```
 docker-compose -f docker-compose.yaml -f docker-compose.test.watch.yaml up --force-recreate ffc-ce-web
 ```
