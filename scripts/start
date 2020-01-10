@@ -1,4 +1,12 @@
 #!/bin/bash
-docker-compose down -v
-docker-compose build --no-cache
-docker-compose up --force-recreate
+
+set -e
+projectRoot="$(a="/$0"; a=${a%/*}; a=${a:-.}; a=${a#/}/; cd "$a/.." || return; pwd)"
+
+(
+  cd "${projectRoot}"
+
+  docker-compose down -v
+  docker-compose build --no-cache
+  docker-compose up --force-recreate
+)
