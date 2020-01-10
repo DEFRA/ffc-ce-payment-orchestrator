@@ -2,7 +2,24 @@ describe('Web test', () => {
   let createServer
   let server
 
+  const request = {
+    method: 'GET',
+    url: '/rules'
+  }
+
+  const mockRulesList = [
+    {
+      id: 'ID1',
+      description: 'Test Action'
+    }
+  ]
+
+  const mockRulesService = {
+    get: jest.fn().mockResolvedValue(mockRulesList)
+  }
+
   beforeAll(async () => {
+    jest.mock('../../server/services/rulesService', () => mockRulesService)
     createServer = require('../../server/createServer')
   })
 
@@ -11,14 +28,18 @@ describe('Web test', () => {
     await server.initialize()
   })
 
-  test('GET /rules route works', async () => {
-    const options = {
-      method: 'GET',
-      url: '/rules'
-    }
-
-    const response = await server.inject(options)
+  test('responds with status code 200', async () => {
+    const response = await server.inject(request)
     expect(response.statusCode).toBe(200)
+  })
+
+  test('fetches data from rulesService', async () => {
+    await server.inject(request)
+    expect(mockRulesService.get).toHaveBeenCalled()
+  })
+
+  afterAll(() => {
+    jest.unmock('../../server/services/rulesService')
   })
 
   afterEach(async () => {
