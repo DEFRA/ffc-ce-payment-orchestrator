@@ -39,6 +39,12 @@ describe('Web test', () => {
     expect(mockRulesService.get).toHaveBeenCalled()
   })
 
+  test('returns the data provided by rulesService', async () => {
+    const response = await server.inject(request)
+    const payload = JSON.parse(response.payload)
+    expect(payload.rules).toEqual(mockRulesList)
+  })
+
   afterAll(() => {
     jest.unmock('../../server/services/rulesService')
   })

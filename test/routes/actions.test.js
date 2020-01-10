@@ -38,6 +38,12 @@ describe('Actions route test', () => {
     expect(mockActionsService.get).toHaveBeenCalled()
   })
 
+  test('returns the data provided by actionsService', async () => {
+    const response = await server.inject(request)
+    const payload = JSON.parse(response.payload)
+    expect(payload.actions).toEqual(mockActionList)
+  })
+
   afterAll(() => {
     jest.unmock('../../server/services/actionsService')
   })
