@@ -2,7 +2,7 @@ const parcelService = require('../../server/services/parcelService')
 
 describe('parcelService', () => {
   const parcelShape = {
-    id: expect.stringMatching(new RegExp('.+'))
+    ref: expect.stringMatching(new RegExp('.+'))
   }
 
   test('returns a JSON collection of parcel objects', () => {

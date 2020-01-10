@@ -3,7 +3,7 @@ describe('GET /parcels', () => {
   let server
 
   const mockParcelList = [
-    { id: 'BsJ48Jdayiy6TTPT1F99yEtkjqw0UVT8MI3dmw2PB6Id' }
+    { ref: 'BsJ48Jdayiy6TTPT1F99yEtkjqw0UVT8MI3dmw2PB6Id' }
   ]
 
   const mockParcelService = {
