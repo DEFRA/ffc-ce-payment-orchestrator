@@ -1,4 +1,4 @@
-const parcels = require('../../data/mock-parcel-data.json')
+const parcels = require('../../data/parcels.json')
 
 module.exports = {
   get: function () {
