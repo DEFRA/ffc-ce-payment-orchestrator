@@ -9,8 +9,9 @@ describe('Web test', () => {
 
   const mockRulesList = [
     {
-      id: 'ID1',
-      description: 'Test Action'
+      'id': 9999,
+      'description': 'test rule one',
+      'enabled': true
     }
   ]
 
