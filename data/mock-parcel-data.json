@@ -1,0 +1,64 @@
+{
+    "parcels": [
+        {
+            "parcelRef": "SD74445738",
+            "totalPerimeter": 325.2,
+            "spanningFeatures": [
+                {
+                    "type": "barn",
+                    "length": 23.3
+                },
+                {
+                    "type": "hedgerow",
+                    "length": 162.6
+                }
+            ],
+            "previousActions": []
+        },
+        {
+            "parcelRef": "SD75492628",
+            "totalPerimeter": 104.9,
+            "spanningFeatures": [],
+            "previousActions": [
+                {
+                    "date": "2017-04-28",
+                    "identifier": "ABC action"
+                }
+            ]
+
+        },
+        {
+            "parcelRef": "SD78379604",
+            "totalPerimeter": 45.3,
+            "spanningFeatures": [],
+            "previousActions": []
+        },
+        {
+            "parcelRef": "SD81437506",
+            "totalPerimeter": 363.7,
+            "spanningFeatures": [
+                {
+                    "type": "lake",
+                    "length": 32.1
+                }
+            ],
+            "previousActions": [
+                {
+                    "date": "2013-07-03",
+                    "identifier": "XYZ action"
+                }
+            ]
+        },
+        {
+            "parcelRef": "SD81525709",
+            "totalPerimeter": 281.0,
+            "spanningFeatures": [
+                {
+                    "type": "hedgerow",
+                    "length": 140.6
+                }
+            ],
+            "previousActions": []
+        }
+    ]
+}
