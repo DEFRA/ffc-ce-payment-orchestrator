@@ -2,7 +2,9 @@ const parcelService = require('../../server/services/parcelService')
 
 describe('parcelService', () => {
   const parcelShape = {
-    ref: expect.stringMatching(new RegExp('.+'))
+    // Match known Parcel Ref format: start with two alphabetical characters
+    // followed by eight numeric characters
+    ref: expect.stringMatching(new RegExp('^[A-Za-z]{2}[0-9]{8}$'))
   }
 
   test('returns a collection of parcel objects', () => {

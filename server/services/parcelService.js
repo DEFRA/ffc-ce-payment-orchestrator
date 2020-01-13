@@ -2,6 +2,6 @@ const parcels = require('../../data/parcels.json')
 
 module.exports = {
   get: function () {
-    return parcels
+    return parcels.map(parcel => ({ ref: parcel.parcelRef }))
   }
 }
