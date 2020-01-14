@@ -1,7 +1,61 @@
 [
   {
     "id": 1,
-    "description": "rule one",
-    "enabled": true
+    "description": "Proposed fence length is longer than Total Parcel Perimeter",
+    "enabled": true,
+    "facts": [
+      {
+        "description": "Total Parcel Perimeter"
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "description": "Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features",
+    "enabled": true,
+    "facts": [
+      {
+        "description": "Total Parcel Perimeter"
+      },
+      {
+        "description": "Total Feature Length"
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "description": "Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features including the Tolerance",
+    "enabled": true,
+    "facts": [
+      {
+        "description": "Total Parcel Perimeter"
+      },
+      {
+        "description": "Total Feature Length"
+      },
+      {
+        "description": "Tolerance"
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "description": "Previous Action date is within the last 5 years",
+    "enabled": true,
+    "facts": [
+      {
+        "description": "Previous Action Dates"
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "description": "Parcel within SSSI",
+    "enabled": true,
+    "facts": [
+      {
+        "description": "SSSI"
+      }
+    ]
   }
 ]

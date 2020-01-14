@@ -13,4 +13,9 @@ describe('actionsService', () => {
       description: 'Fencing'
     })
   })
+
+  test('actions service returns an object with a rules object embedded', async () => {
+    const actions = await actionsService.get()
+    expect(actions[0]).toHaveProperty('rules')
+  })
 })
