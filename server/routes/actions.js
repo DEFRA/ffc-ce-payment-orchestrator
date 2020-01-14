@@ -5,9 +5,7 @@ module.exports = {
   path: '/actions',
   options: {
     handler: async (request, h) => {
-      const parcelRef = request.query.parcelref
-      console.log('Actions request. Parcel Ref is ', parcelRef)
-      const actions = await actionsService.get(parcelRef)
+      const actions = await actionsService.get()
       return h.response({ actions }).code(200)
     }
   }
