@@ -8,5 +8,8 @@ module.exports = {
       action.rules = rules
       return action
     })
+  },
+  getById: function (id) {
+
   }
 }
