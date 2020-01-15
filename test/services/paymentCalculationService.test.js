@@ -9,7 +9,7 @@ const sampleLandParcel = {
 }
 
 describe('paymentCalculationService', () => {
-  describe ('getValue', () => {
+  describe('getValue', () => {
     beforeAll(() => {
       fencingAction.calculateValue.mockReturnValue(mockFencingActionValue)
     })

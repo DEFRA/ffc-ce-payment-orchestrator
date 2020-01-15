@@ -2,7 +2,7 @@ const parcelService = require('../../server/services/parcelService')
 
 jest.mock(
   '../../data/parcels.json',
-  () => ([ { parcelRef: 'AB74445736' } ])
+  () => ([{ parcelRef: 'AB74445736' }])
 )
 
 describe('parcelService', () => {
