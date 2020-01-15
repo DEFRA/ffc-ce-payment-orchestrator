@@ -15,8 +15,7 @@ module.exports = {
       }
     },
     handler: async (request, h) => {
-      const requestedActions = request.payload.actions
-      const { parcelRef } = request.payload
+      const { actions: requestedActions, parcelRef } = request.payload
 
       const landParcel = await parcelService.getByRef(parcelRef)
 
