@@ -26,7 +26,7 @@ describe('POST /payment-calculation', () => {
       actions
     }
   }
-  const mockEligibleResult = { amount: '80', eligible: true }
+  const mockEligibleResult = { value: '80', eligible: true }
   const mockIneligibleResult = { eligible: false }
 
   beforeAll(async () => {
@@ -58,7 +58,7 @@ describe('POST /payment-calculation', () => {
       actionService.getById.mockReturnValue(actions[0].action)
       parcelService.getByRef.mockReturnValue(landParcel)
       paymentCalculationService.isEligible.mockReturnValue(true)
-      paymentCalculationService.getValue.mockReturnValue(mockEligibleResult.amount)
+      paymentCalculationService.getValue.mockReturnValue(mockEligibleResult.value)
     })
 
     test('responds with status code 200', async () => {

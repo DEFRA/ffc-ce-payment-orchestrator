@@ -30,12 +30,12 @@ module.exports = {
 
       const eligible = await paymentCalculationService.isEligible(landParcel, actions)
 
-      let amount
+      let value
       if (eligible) {
-        amount = await paymentCalculationService.getValue(landParcel, actions)
+        value = await paymentCalculationService.getValue(landParcel, actions)
       }
 
-      return h.response({ amount, eligible }).code(200)
+      return h.response({ value, eligible }).code(200)
     }
   }
 }
