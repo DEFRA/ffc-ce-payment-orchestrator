@@ -1,6 +1,6 @@
 [
     {
-        "parcelRef": "SD74445738",
+        "ref": "SD74445738",
         "totalPerimeter": 325.2,
         "perimeterFeatures": [
             {
@@ -15,7 +15,7 @@
         "previousActions": []
     },
     {
-        "parcelRef": "SD75492628",
+        "ref": "SD75492628",
         "totalPerimeter": 104.9,
         "perimeterFeatures": [],
         "previousActions": [
@@ -27,13 +27,13 @@
 
     },
     {
-        "parcelRef": "SD78379604",
+        "ref": "SD78379604",
         "totalPerimeter": 45.3,
         "perimeterFeatures": [],
         "previousActions": []
     },
     {
-        "parcelRef": "SD81437506",
+        "ref": "SD81437506",
         "totalPerimeter": 363.7,
         "perimeterFeatures": [
             {
@@ -49,7 +49,7 @@
         ]
     },
     {
-        "parcelRef": "SD81525709",
+        "ref": "SD81525709",
         "totalPerimeter": 281.0,
         "perimeterFeatures": [
             {
