@@ -4,7 +4,7 @@ const actionRulesService = require('../services/actionRulesService')
 
 module.exports = {
   method: 'PUT',
-  path: '/actions/{actionID}/{ruleID}',
+  path: '/actions/{actionID}/rules/{ruleID}',
   options: {
     validate: {
       params: paramsSchema,
