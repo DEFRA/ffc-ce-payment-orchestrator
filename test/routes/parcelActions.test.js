@@ -55,7 +55,7 @@ describe('Parcel Actions route test', () => {
   })
 
   afterAll(() => {
-    jest.unmock('../../server/services/actionsService')
+    jest.unmock('../../server/services/parcelActionsService')
   })
 
   afterEach(async () => {
