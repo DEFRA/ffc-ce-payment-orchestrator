@@ -4,19 +4,19 @@ describe('Action rules route test', () => {
 
   const goodRequest = {
     method: 'PUT',
-    url: '/actions/FG1/3',
+    url: '/actions/FG1/rules/3',
     payload: { enabled: true }
   }
 
   const badRequestParams = {
     method: 'PUT',
-    url: '/actions/FG1/ABC',
+    url: '/actions/FG1/rules/ABC',
     payload: { enabled: true }
   }
 
   const badRequestPayload = {
     method: 'PUT',
-    url: '/actions/FG1/3',
+    url: '/actions/FG1/rules/3',
     payload: { enabled: '123' }
   }
 
