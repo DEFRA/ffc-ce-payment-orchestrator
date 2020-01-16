@@ -2,14 +2,14 @@ const parcelService = require('../../server/services/parcelService')
 
 jest.mock(
   '../../data/parcels.json',
-  () => ([{ parcelRef: 'AB74445736' }])
+  () => ([{ ref: 'AB74445736' }])
 )
 
 describe('parcelService', () => {
   const parcelShape = {
     // Match known Parcel Ref format: start with two alphabetical characters
     // followed by eight numeric characters
-    parcelRef: expect.stringMatching(new RegExp('^[A-Za-z]{2}[0-9]{8}$'))
+    ref: expect.stringMatching(new RegExp('^[A-Za-z]{2}[0-9]{8}$'))
   }
 
   afterAll(() => {
@@ -38,7 +38,7 @@ describe('parcelService', () => {
     test('returns a single matching parcel object', () => {
       const result = parcelService.getByRef('AB74445736')
 
-      expect(result).toEqual({ parcelRef: 'AB74445736' })
+      expect(result).toEqual({ ref: 'AB74445736' })
     })
 
     test('returns null if the requested parcel is not found', () => {
