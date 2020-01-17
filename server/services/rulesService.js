@@ -6,7 +6,12 @@ module.exports = {
   },
   updateRuleEnabled: async function (ruleID, enabled) {
     const ruleIndex = rules.findIndex(rule => rule.id === ruleID)
-    rules[ruleIndex].enabled = enabled
-    return rules[ruleIndex]
+
+    if (ruleIndex > -1) {
+      rules[ruleIndex].enabled = enabled
+      return rules[ruleIndex]
+    }
+
+    return {}
   }
 }

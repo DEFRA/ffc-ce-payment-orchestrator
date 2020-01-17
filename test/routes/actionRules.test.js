@@ -2,9 +2,12 @@ describe('Action rules route test', () => {
   let createServer
   let server
 
+  const actionID = 'FG1'
+  const ruleID = 3
+
   const goodRequest = {
     method: 'PUT',
-    url: '/actions/FG1/rules/3',
+    url: `/actions/${actionID}/rules/${ruleID}`,
     payload: { enabled: true }
   }
 
@@ -43,7 +46,7 @@ describe('Action rules route test', () => {
 
   test('calls the actionRulesService', async () => {
     await server.inject(goodRequest)
-    expect(mockActionRulesService.update).toHaveBeenCalled()
+    expect(mockActionRulesService.update).toHaveBeenCalledWith(actionID, ruleID, goodRequest.payload.enabled)
   })
 
   test('returns the updated data from actionRulesService', async () => {
