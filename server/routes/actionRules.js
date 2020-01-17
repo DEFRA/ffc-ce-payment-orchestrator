@@ -22,7 +22,7 @@ module.exports = {
       const enabled = request.payload.enabled
       console.log(`actionRules: set rule ${ruleID} on action ${actionID} to ${enabled}`)
       const updatedRule = await actionRulesService.update(actionID, ruleID, enabled)
-      return h.response(updatedRule).code(200)
+      return updatedRule ? h.response(updatedRule).code(200) : h.response().code(400)
     }
   }
 }

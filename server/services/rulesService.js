@@ -12,6 +12,6 @@ module.exports = {
       return rules[ruleIndex]
     }
 
-    return {}
+    return null
   }
 }
