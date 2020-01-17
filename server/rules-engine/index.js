@@ -7,6 +7,56 @@ const _resetEngine = function () {
   _engine = new Engine([], { allowUndefinedFacts: true })
 }
 
+const _buildStandardRule = function (conditions, ruleName, eventType) {
+  return new Rule({
+    conditions: {
+      all: conditions
+    },
+    event: {
+      type: eventType
+    },
+    name: ruleName,
+    priority: 5
+  })
+}
+
+const _setupStandardRule = function (conditions, ruleName, eventType) {
+  const rule = _buildStandardRule(conditions, ruleName, eventType)
+  _engine.addRule(rule)
+  _engine.on('success', async (event, almanac, ruleResult) => {
+    if (event.type === eventType) {
+      almanac.addRuntimeFact(enums.ruleRejected, true)
+    }
+  })
+}
+
+function _buildAcceptedItemsRule () {
+  return new Rule({
+    conditions: {
+      all: [{
+        fact: enums.ruleRejected,
+        operator: 'notEqual',
+        value: true
+      }]
+    },
+    event: {
+      type: enums.acceptedEventName
+    },
+    priority: 1,
+    name: 'matchAcceptedItems'
+  })
+}
+
+const _setupAcceptedItemsRule = function (funcToCall) {
+  const rule = _buildAcceptedItemsRule()
+  _engine.addRule(rule)
+  _engine.on('success', async (event, almanac, ruleResult) => {
+    if (event.type === enums.acceptedEventName) {
+      funcToCall(event, almanac, ruleResult)
+    }
+  })
+}
+
 _resetEngine()
 
 const rulesEngine = {
@@ -30,34 +80,11 @@ const rulesEngine = {
     }, [])
     return allRules
   },
-  buildStandardRule: function (conditions, ruleName, eventType) {
-    return new Rule({
-      conditions: {
-        all: conditions
-      },
-      event: {
-        type: eventType
-      },
-      name: ruleName,
-      priority: 5
-    })
-  },
-  buildAcceptedItemsRule: function () {
-    return new Rule({
-      conditions: {
-        all: [{
-          fact: enums.ruleRejected,
-          operator: 'notEqual',
-          value: true
-        }]
-      },
-      event: {
-        type: enums.acceptedEventName
-      },
-      priority: 1,
-      name: 'matchAcceptedItems'
-    })
-  }
+  setupStandardRule: _setupStandardRule,
+  buildStandardRule: _buildStandardRule,
+  setupAcceptedItemsRule: _setupAcceptedItemsRule,
+  buildAcceptedItemsRule: _buildAcceptedItemsRule
 }
+
 
 module.exports = rulesEngine

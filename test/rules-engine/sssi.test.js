@@ -1,6 +1,5 @@
 describe('Rules engine rule test', () => {
   let rulesEngine
-  let SSSIrule
   const parcelsTestData = require('./test-data/parcels-sssi.json')
   const testRules = require('./test-data/rules-sssi.json')
   const successEvent = jest.fn()
@@ -22,7 +21,7 @@ describe('Rules engine rule test', () => {
     })
     const enabledRules = rulesEngine.enabledEligibilityRules(testRules)
     const conditions = rulesEngine.conditionsFromRules(enabledRules)
-    SSSIrule = rulesEngine.buildStandardRule(conditions, 'SSSI', eventType)
+    const SSSIrule = rulesEngine.buildStandardRule(conditions, 'SSSI', eventType)
     rulesEngine.engine.addRule(SSSIrule)
     var actions = parcelsTestData.map(parcel => {
       return rulesEngine.engine.run(parcel)
@@ -33,20 +32,13 @@ describe('Rules engine rule test', () => {
 
   test('eligibility rules run gets parcels without sssi', async () => {
     const acceptedParcels = []
-    rulesEngine.engine.on('success', async (event, almanac, ruleResult) => {
-      if (event.type === eventType) {
-        almanac.addRuntimeFact(rulesEngine.enums.ruleRejected, true)
-      } else if (event.type === rulesEngine.enums.acceptedEventName) {
-        acceptedParcels.push(await almanac.factValue('ref'))
-        successEvent()
-      }
-    })
     const enabledRules = rulesEngine.enabledEligibilityRules(testRules)
     const conditions = rulesEngine.conditionsFromRules(enabledRules)
-    SSSIrule = rulesEngine.buildStandardRule(conditions, 'SSSI', eventType)
-    rulesEngine.engine.addRule(SSSIrule)
-    const acceptedRule = rulesEngine.buildAcceptedItemsRule()
-    rulesEngine.engine.addRule(acceptedRule)
+    rulesEngine.setupStandardRule(conditions, 'SSSI', eventType)
+    rulesEngine.setupAcceptedItemsRule(async function (event, almanac, ruleResult) {
+      acceptedParcels.push(await almanac.factValue('ref'))
+      successEvent()
+    })
     var actions = parcelsTestData.map(parcel => {
       return rulesEngine.engine.run(parcel)
     })
