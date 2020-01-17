@@ -1,11 +1,6 @@
 const Engine = require('json-rules-engine').Engine
 const enums = require('./enums')
 const Rule = require('json-rules-engine').Rule
-let _engine
-
-const _resetEngine = function () {
-  _engine = new Engine([], { allowUndefinedFacts: true })
-}
 
 const _buildStandardRule = function (conditions, ruleName, eventType) {
   return new Rule({
@@ -22,8 +17,8 @@ const _buildStandardRule = function (conditions, ruleName, eventType) {
 
 const _setupStandardRule = function (conditions, ruleName, eventType) {
   const rule = _buildStandardRule(conditions, ruleName, eventType)
-  _engine.addRule(rule)
-  _engine.on('success', async (event, almanac, ruleResult) => {
+  this.engine.addRule(rule)
+  this.engine.on('success', function (event, almanac, ruleResult) {
     if (event.type === eventType) {
       almanac.addRuntimeFact(enums.ruleRejected, true)
     }
@@ -49,25 +44,30 @@ function _buildAcceptedItemsRule () {
 
 const _setupAcceptedItemsRule = function (funcToCall) {
   const rule = _buildAcceptedItemsRule()
-  _engine.addRule(rule)
-  _engine.on('success', async (event, almanac, ruleResult) => {
+  this.engine.addRule(rule)
+  this.engine.on('success', function (event, almanac, ruleResult) {
     if (event.type === enums.acceptedEventName) {
       funcToCall(event, almanac, ruleResult)
     }
   })
 }
 
-_resetEngine()
+function RulesEngine () {
+  this.engine = {}
 
-const rulesEngine = {
-  engine: _engine,
-  resetEngine: _resetEngine,
-  enums,
-  Rule,
-  enabledEligibilityRules: function (rules) {
+  this.resetEngine = function () {
+    this.engine = new Engine([], { allowUndefinedFacts: true })
+  }
+
+  this.enums = enums
+
+  this.Rule = Rule
+
+  this.enabledEligibilityRules = function (rules) {
     return rules.filter(rule => (('types' in rule) && rule.types.includes(enums.rulesTypes.eligibility) && rule.enabled))
-  },
-  conditionsFromRules: function (rules) {
+  }
+
+  this.conditionsFromRules = function (rules) {
     const allRules = rules.reduce((acc, rule) => {
       if (Object.prototype.hasOwnProperty.call(rule, 'conditions')) {
         if (Array.isArray(rule.conditions)) {
@@ -79,12 +79,17 @@ const rulesEngine = {
       return acc
     }, [])
     return allRules
-  },
-  setupStandardRule: _setupStandardRule,
-  buildStandardRule: _buildStandardRule,
-  setupAcceptedItemsRule: _setupAcceptedItemsRule,
-  buildAcceptedItemsRule: _buildAcceptedItemsRule
+  }
+
+  this.setupStandardRule = _setupStandardRule
+
+  this.buildStandardRule = _buildStandardRule
+
+  this.setupAcceptedItemsRule = _setupAcceptedItemsRule
+
+  this.buildAcceptedItemsRule = _buildAcceptedItemsRule
+
+  this.resetEngine()
 }
 
-
-module.exports = rulesEngine
+module.exports = new RulesEngine()
