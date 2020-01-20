@@ -1,6 +1,7 @@
 const Engine = require('json-rules-engine').Engine
 const enums = require('./enums')
 const Rule = require('json-rules-engine').Rule
+const operators = require('./operators')
 
 const _buildStandardRule = function (conditions, ruleName, eventType) {
   return new Rule({
@@ -57,6 +58,7 @@ function RulesEngine () {
 
   this.resetEngine = function () {
     this.engine = new Engine([], { allowUndefinedFacts: true })
+    operators.addAdditionalOperators(this.engine)
   }
 
   this.enums = enums

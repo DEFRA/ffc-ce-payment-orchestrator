@@ -22,7 +22,7 @@ describe('Rules engine rule test', () => {
     expect(Object.keys(mockRulesEngine.operators).length).toBe(1)
   })
 
-  test('lessThan5Years operator', async () => {
+  test('lessThan5Years operator', () => {
     registerCustomOps()
     expect(mockRulesEngine.callOperator('lessThan5Years', '2013-07-03T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(false)
     expect(mockRulesEngine.callOperator('lessThan5Years', '2015-01-19T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(false)
@@ -30,6 +30,14 @@ describe('Rules engine rule test', () => {
     expect(mockRulesEngine.callOperator('lessThan5Years', '2015-01-21T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(true)
     expect(mockRulesEngine.callOperator('lessThan5Years', '2020-01-20T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(true)
     expect(mockRulesEngine.callOperator('lessThan5Years', '2020-01-21T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(true)
+  })
+
+  test('lessThan5Years operator with array', () => {
+    registerCustomOps()
+    expect(mockRulesEngine.callOperator('lessThan5Years', ['2013-01-19T00:00:01.000Z', '2014-01-19T00:00:01.000Z'], '2020-01-20T00:00:01.000Z')).toBe(false)
+    expect(mockRulesEngine.callOperator('lessThan5Years', ['2014-01-19T00:00:01.000Z', '2015-01-19T00:00:01.000Z'], '2020-01-20T00:00:01.000Z')).toBe(false)
+    expect(mockRulesEngine.callOperator('lessThan5Years', ['2015-01-19T00:00:01.000Z', '2016-01-19T00:00:01.000Z'], '2020-01-20T00:00:01.000Z')).toBe(true)
+    expect(mockRulesEngine.callOperator('lessThan5Years', ['2016-01-19T00:00:01.000Z', '2017-01-19T00:00:01.000Z'], '2020-01-20T00:00:01.000Z')).toBe(true)
   })
 
   afterEach(() => {

@@ -1,0 +1,66 @@
+[
+    {
+        "ref": "SD74445738",
+        "totalPerimeter": 325.2,
+        "perimeterFeatures": [
+            {
+                "type": "barn",
+                "length": 23.3
+            },
+            {
+                "type": "hedgerow",
+                "length": 162.6
+            }
+        ],
+        "previousActions": []
+    },
+    {
+        "ref": "SD75492628",
+        "totalPerimeter": 104.9,
+        "perimeterFeatures": [],
+        "previousActions": [
+            {
+                "date": "2017-04-28T00:00:01.000Z",
+                "identifier": "ABC action"
+            }
+        ]
+    },
+    {
+        "ref": "SD78379604",
+        "totalPerimeter": 45.3,
+        "perimeterFeatures": [],
+        "previousActions": [],
+        "SSSI": true
+    },
+    {
+        "ref": "SD81437506",
+        "totalPerimeter": 363.7,
+        "perimeterFeatures": [
+            {
+                "type": "lake",
+                "length": 32.1
+            }
+        ],
+        "previousActions": [
+            {
+                "date": "2013-07-03T00:00:01.000Z",
+                "identifier": "XYZ action"
+            },
+            {
+                "date": "2016-07-04T00:00:01.000Z",
+                "identifier": "XYZ action 2"
+            }
+        ]
+    },
+    {
+        "ref": "SD81525709",
+        "totalPerimeter": 281.0,
+        "perimeterFeatures": [
+            {
+                "type": "hedgerow",
+                "length": 140.6
+            }
+        ],
+        "previousActions": []
+    }
+]
