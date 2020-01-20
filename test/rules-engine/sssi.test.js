@@ -4,12 +4,13 @@ describe('Rules engine rule test', () => {
   const testRules = require('./test-data/rules-sssi.json')
   const successEvent = jest.fn()
   const eventType = 'sssi'
+  const sssiParcelRef = 'SD78379604'
 
-  beforeAll(async () => {
+  beforeAll(() => {
     rulesEngine = require('../../server/rules-engine')
   })
 
-  beforeEach(async () => {
+  beforeEach(() => {
     rulesEngine.resetEngine()
   })
 
@@ -17,9 +18,7 @@ describe('Rules engine rule test', () => {
     const enabledRules = rulesEngine.enabledEligibilityRules(testRules)
     const conditions = rulesEngine.conditionsFromRules(enabledRules)
     rulesEngine.setupStandardRule(conditions, 'SSSI', eventType)
-    console.log(rulesEngine.engine)
     rulesEngine.engine.on('success', async (event, almanac, ruleResult) => {
-      console.log(ruleResult)
       if (event.type === eventType) {
         successEvent()
       }
@@ -38,7 +37,6 @@ describe('Rules engine rule test', () => {
     rulesEngine.setupStandardRule(conditions, 'SSSI', eventType)
     rulesEngine.setupAcceptedItemsRule(async function (event, almanac, ruleResult) {
       acceptedParcels.push(await almanac.factValue('ref'))
-      console.log(acceptedParcels)
       successEvent()
     })
     var actions = parcelsTestData.map(parcel => {
@@ -46,18 +44,12 @@ describe('Rules engine rule test', () => {
     })
     await Promise.all(actions)
 
-    expect(acceptedParcels.includes('SD74445738')).toBe(true)
-    expect(acceptedParcels.includes('SD75492628')).toBe(true)
-    expect(acceptedParcels.includes('SD81437506')).toBe(true)
-    expect(acceptedParcels.includes('SD81525709')).toBe(true)
+    expect(acceptedParcels.includes(sssiParcelRef)).toBe(false)
     expect(acceptedParcels.length).toBe(4)
     expect(successEvent).toHaveBeenCalledTimes(4)
   })
 
-  afterAll(() => {
-  })
-
-  afterEach(async () => {
+  afterEach(() => {
     jest.clearAllMocks()
   })
 })

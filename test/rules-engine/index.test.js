@@ -2,11 +2,11 @@ describe('Rules engine help methods test', () => {
   let rulesEngine
   const rulesTestData = require('./test-data/rules-index.json')
 
-  beforeAll(async () => {
+  beforeAll(() => {
     rulesEngine = require('../../server/rules-engine')
   })
 
-  beforeEach(async () => {
+  beforeEach(() => {
     rulesEngine.resetEngine()
   })
 
@@ -20,11 +20,5 @@ describe('Rules engine help methods test', () => {
     const eligibilityRules = rulesEngine.enabledEligibilityRules(rulesTestData)
     const conditions = rulesEngine.conditionsFromRules(eligibilityRules)
     expect(conditions).toMatchObject([{ fact: 'SSSI', operator: 'equal', value: true }])
-  })
-
-  afterAll(() => {
-  })
-
-  afterEach(async () => {
   })
 })
