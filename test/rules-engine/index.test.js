@@ -24,7 +24,7 @@ describe('Rules engine help methods test', () => {
 
   test('enabledRules excludes just the disabled rule', () => {
     const enabledRules = rulesEngine.enabledEligibilityRules(rulesTestData)
-    expect(enabledRules.filter(rule => rule.id === 1).length).toEqual(0)
+    expect(enabledRules.filter(rule => rule.id !== 1).length).toEqual(enabledRules.length)
   })
 
   test('factsHandler.getCalculatedFacts returns a sorted list of facts to calculate', () => {
