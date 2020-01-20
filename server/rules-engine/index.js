@@ -2,6 +2,7 @@ const Engine = require('json-rules-engine').Engine
 const enums = require('./enums')
 const Rule = require('json-rules-engine').Rule
 const operators = require('./operators')
+const factHandler = require('./factHandler')
 
 const _buildStandardRule = function (conditions, ruleName, eventType) {
   return new Rule({
@@ -69,6 +70,10 @@ function RulesEngine () {
     return rules.filter(rule => (('types' in rule) && rule.types.includes(enums.rulesTypes.eligibility) && rule.enabled))
   }
 
+  this.enabledRules = function (rules) {
+    return rules.filter(rule => (rule.enabled))
+  }
+
   this.conditionsFromRules = function (rules) {
     const allRules = rules.reduce((acc, rule) => {
       if (Object.prototype.hasOwnProperty.call(rule, 'conditions')) {
@@ -83,6 +88,11 @@ function RulesEngine () {
     return allRules
   }
 
+  this.runEngine = function (facts, passedFacts) {
+    const factsToRun = Object.assign({}, facts, passedFacts)
+    return this.engine.run(factsToRun)
+  }
+
   this.setupStandardRule = _setupStandardRule
 
   this.buildStandardRule = _buildStandardRule
@@ -90,6 +100,8 @@ function RulesEngine () {
   this.setupAcceptedItemsRule = _setupAcceptedItemsRule
 
   this.buildAcceptedItemsRule = _buildAcceptedItemsRule
+
+  this.factHandler = factHandler
 
   this.resetEngine()
 }

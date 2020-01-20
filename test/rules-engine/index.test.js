@@ -21,4 +21,16 @@ describe('Rules engine help methods test', () => {
     const conditions = rulesEngine.conditionsFromRules(eligibilityRules)
     expect(conditions).toMatchObject([{ fact: 'SSSI', operator: 'equal', value: true }])
   })
+
+  test('enabledRules excludes just the disabled rule', () => {
+    const enabledRules = rulesEngine.enabledEligibilityRules(rulesTestData)
+    expect(enabledRules.filter(rule => rule.id === 1).length).toEqual(0)
+  })
+
+  test('factsHandler.getCalculatedFacts returns a sorted list of facts to calculate', () => {
+    const prevalidateRules = require('./test-data/rules-prevalidation.json')
+    const enabledRules = rulesEngine.enabledRules(prevalidateRules)
+    const calculatedFacts = rulesEngine.factHandler.getCalculatedFacts(enabledRules)
+    expect(calculatedFacts).toHaveLength(2)
+  })
 })

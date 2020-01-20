@@ -1,4 +1,4 @@
-describe('Rules engine rule test', () => {
+describe('Rules engine Actiondate rule test', () => {
   let rulesEngine
   const parcelsTestData = require('./test-data/parcels-actiondate.json')
   const testRules = require('./test-data/rules-actiondate.json')
@@ -24,7 +24,7 @@ describe('Rules engine rule test', () => {
       }
     })
     var actions = parcelsTestData.map(parcel => {
-      return rulesEngine.engine.run(parcel)
+      return rulesEngine.runEngine(parcel)
     })
     await Promise.all(actions)
     // There are two invalid parcels in the data
@@ -41,7 +41,7 @@ describe('Rules engine rule test', () => {
       successEvent()
     })
     var actions = parcelsTestData.map(parcel => {
-      return rulesEngine.engine.run(parcel)
+      return rulesEngine.runEngine(parcel)
     })
     await Promise.all(actions)
 

@@ -1,6 +1,6 @@
 const customOperators = require('../../server/rules-engine/operators')
 
-describe('Rules engine rule test', () => {
+describe('Rules engine customer operators', () => {
   const mockRulesEngine = {
     operators: {},
     addOperator: jest.fn(function (opName, opFunc) {

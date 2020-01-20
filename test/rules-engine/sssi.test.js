@@ -1,4 +1,4 @@
-describe('Rules engine rule test', () => {
+describe('Rules engine SSSI rule test', () => {
   let rulesEngine
   const parcelsTestData = require('./test-data/parcels-sssi.json')
   const testRules = require('./test-data/rules-sssi.json')
@@ -24,7 +24,7 @@ describe('Rules engine rule test', () => {
       }
     })
     var actions = parcelsTestData.map(parcel => {
-      return rulesEngine.engine.run(parcel)
+      return rulesEngine.runEngine(parcel)
     })
     await Promise.all(actions)
     expect(successEvent).toHaveBeenCalledTimes(1)
@@ -40,7 +40,7 @@ describe('Rules engine rule test', () => {
       successEvent()
     })
     var actions = parcelsTestData.map(parcel => {
-      return rulesEngine.engine.run(parcel)
+      return rulesEngine.runEngine(parcel)
     })
     await Promise.all(actions)
 
