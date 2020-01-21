@@ -1,34 +1,45 @@
+const DEBUG = false
 const Engine = require('json-rules-engine').Engine
 const enums = require('./enums')
 const Rule = require('json-rules-engine').Rule
 const operators = require('./operators')
 const factHandler = require('./factHandler')
 
-const _buildStandardRule = function (conditions, ruleName, eventType) {
-  return new Rule({
-    conditions: {
-      all: conditions
-    },
-    event: {
-      type: eventType
-    },
-    name: ruleName,
-    priority: 5
+const _buildStandardRules = function (conditions, ruleName, eventType) {
+  const retRules = []
+  if (DEBUG) console.log('Setting up standard rules with conditions ', conditions)
+  conditions.map(condition => {
+    retRules.push(new Rule({
+      conditions: {
+        all: [condition]
+      },
+      event: {
+        type: eventType
+      },
+      name: ruleName,
+      priority: 5
+    }))
   })
+  return retRules
 }
 
 const _setupStandardRule = function (conditions, ruleName, eventType) {
-  const rule = _buildStandardRule(conditions, ruleName, eventType)
-  this.engine.addRule(rule)
+  const rules = _buildStandardRules(conditions, ruleName, eventType)
+  rules.map(rule => {
+    this.engine.addRule(rule)
+  })
   this.engine.on('success', function (event, almanac, ruleResult) {
     if (event.type === eventType) {
       almanac.addRuntimeFact(enums.ruleRejected, true)
+      almanac.factValue('ref').then(ref => {
+        if (DEBUG) console.log('Rule passed, rejecting parcel:', ref)
+      })
     }
   })
 }
 
-const _buildAcceptedItemsRule = function () {
-  return new Rule({
+const _buildAcceptedItemsRules = function () {
+  return [new Rule({
     conditions: {
       all: [{
         fact: enums.ruleRejected,
@@ -41,15 +52,21 @@ const _buildAcceptedItemsRule = function () {
     },
     priority: 1,
     name: 'matchAcceptedItems'
-  })
+  })]
 }
 
 const _setupAcceptedItemsRule = function (funcToCall) {
-  const rule = _buildAcceptedItemsRule()
-  this.engine.addRule(rule)
+  const rules = _buildAcceptedItemsRules()
+  rules.map(rule => {
+    this.engine.addRule(rule)
+  })
   this.engine.on('success', function (event, almanac, ruleResult) {
     if (event.type === enums.acceptedEventName) {
-      funcToCall(event, almanac, ruleResult)
+      if (typeof funcToCall !== 'undefined') {
+        funcToCall(event, almanac, ruleResult)
+      }
+    } else if (event.type === enums.rejectedFactAdder) {
+      // almanac.addRuntimeFact(enums.ruleRejected, false)
     }
   })
 }
@@ -65,12 +82,54 @@ const _setupCalculationRules = function (ruleDefs) {
   })
 }
 
+const _setupFullRun = function (rulesJson, dataJson, successFunc) {
+  const enabledRules = this.enabledRules(rulesJson)
+  if (DEBUG) console.log('enabledRules', enabledRules)
+  const conditions = this.conditionsFromRules(enabledRules)
+  if (DEBUG) console.log(conditions)
+  this.setupStandardRule(conditions, 'Standard', 'standard')
+  this.setupAcceptedItemsRule(successFunc)
+  const calculatedFacts = this.factHandler.getCalculatedFacts(enabledRules)
+  const calcRules = this.factHandler.buildCalculationRules(calculatedFacts)
+  this.loadCalculationRules(calcRules)
+}
+
+const _doFullRun = async function (rulesJson, dataJson, passedFacts, successFunc) {
+  const retVal = []
+  this.setupFullRun(rulesJson, dataJson, successFunc)
+  if (DEBUG) {
+    this.engine.rules.map(rule => {
+      console.log(rule.toJSON())
+    })
+  }
+  dataJson.map(data => {
+    retVal.push(this.runEngine(data, passedFacts))
+  })
+  const resolvedRetVal = await Promise.all(retVal)
+  resolvedRetVal.map(retVal => {
+    if (DEBUG) {
+      console.log(retVal)
+      retVal.almanac.factValue(enums.ruleRejected).then(ruleRejected => {
+        retVal.almanac.factValue('ref').then(ref => {
+          console.log(ref, ' has rejected value of ', ruleRejected)
+        })
+      })
+    }
+  })
+  return resolvedRetVal
+}
+
 function RulesEngine () {
   this.engine = {}
 
   this.resetEngine = function () {
     this.engine = new Engine([], { allowUndefinedFacts: true })
     operators.addAdditionalOperators(this.engine)
+    if (DEBUG) {
+      this.engine.on('failure', (event, almanac, ruleResult) => {
+        console.log('failure', JSON.stringify(event), JSON.stringify(ruleResult))
+      })
+    }
   }
 
   this.enums = enums
@@ -106,15 +165,19 @@ function RulesEngine () {
 
   this.setupStandardRule = _setupStandardRule
 
-  this.buildStandardRule = _buildStandardRule
+  this.buildStandardRules = _buildStandardRules
 
   this.setupAcceptedItemsRule = _setupAcceptedItemsRule
 
-  this.buildAcceptedItemsRule = _buildAcceptedItemsRule
+  this.buildAcceptedItemsRules = _buildAcceptedItemsRules
 
   this.factHandler = factHandler
 
   this.loadCalculationRules = _setupCalculationRules
+
+  this.setupFullRun = _setupFullRun
+
+  this.doFullRun = _doFullRun
 
   this.resetEngine()
 }

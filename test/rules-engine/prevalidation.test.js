@@ -1,10 +1,6 @@
 describe('Rules engine prevalidation rules test', () => {
   let rulesEngine
   const parcelsTestData = require('./test-data/parcels-prevalidation.json')
-  // const testRules = require('./test-data/rules-prevalidation.json')
-  // const successEvent = jest.fn()
-  // const eventType = 'prevalidation'
-  // const actiondateParcelRefs = ['SD75492628', 'SD81437506']
 
   beforeAll(() => {
     rulesEngine = require('../../server/rules-engine')
@@ -15,10 +11,6 @@ describe('Rules engine prevalidation rules test', () => {
   })
 
   test('prevalidation rules calculate usable perimeter', async () => {
-    const prevalidateRules = require('./test-data/rules-prevalidation.json')
-    const enabledRules = rulesEngine.enabledRules(prevalidateRules)
-    const calculatedFacts = rulesEngine.factHandler.getCalculatedFacts(enabledRules)
-    const calcRules = rulesEngine.factHandler.buildCalculationRules(calculatedFacts)
     const expectedResults = [
       {
         ref: 'SD74445738',
@@ -40,6 +32,10 @@ describe('Rules engine prevalidation rules test', () => {
         ref: 'SD81525709',
         value: 140.4
       }]
+    const prevalidateRules = require('./test-data/rules-prevalidation.json')
+    const enabledRules = rulesEngine.enabledRules(prevalidateRules)
+    const calculatedFacts = rulesEngine.factHandler.getCalculatedFacts(enabledRules)
+    const calcRules = rulesEngine.factHandler.buildCalculationRules(calculatedFacts)
     rulesEngine.loadCalculationRules(calcRules)
     const actionsPromises = parcelsTestData.map(parcel => {
       return rulesEngine.runEngine(parcel)
