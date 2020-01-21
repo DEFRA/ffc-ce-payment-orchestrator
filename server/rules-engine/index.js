@@ -27,7 +27,7 @@ const _setupStandardRule = function (conditions, ruleName, eventType) {
   })
 }
 
-function _buildAcceptedItemsRule () {
+const _buildAcceptedItemsRule = function () {
   return new Rule({
     conditions: {
       all: [{
@@ -51,6 +51,17 @@ const _setupAcceptedItemsRule = function (funcToCall) {
     if (event.type === enums.acceptedEventName) {
       funcToCall(event, almanac, ruleResult)
     }
+  })
+}
+
+const _buildCalculationRule = function (ruleDef) {
+  return new Rule(ruleDef)
+}
+
+const _setupCalculationRules = function (ruleDefs) {
+  ruleDefs.forEach(ruleDef => {
+    const rule = _buildCalculationRule(ruleDef)
+    this.engine.addRule(rule)
   })
 }
 
@@ -102,6 +113,8 @@ function RulesEngine () {
   this.buildAcceptedItemsRule = _buildAcceptedItemsRule
 
   this.factHandler = factHandler
+
+  this.loadCalculationRules = _setupCalculationRules
 
   this.resetEngine()
 }

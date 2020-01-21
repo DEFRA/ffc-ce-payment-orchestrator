@@ -1,3 +1,55 @@
+const jp = require('jsonpath')
+
+const sumallRuleHandler = function (event, almanac) {
+  almanac.factValue(event.params.calculation.sourcefact).then(source => {
+    let totalSum = 0
+    const values = jp.query(source, event.params.calculation.path)
+    totalSum = values.reduce((acc, value) => {
+      acc += value
+      return acc
+    }, totalSum)
+    almanac.addRuntimeFact(event.params.id, totalSum)
+  })
+}
+
+const sumallRule = function (fact, priority) {
+  const retVal = {}
+  retVal.conditions = {
+    all: [{
+      fact: fact.id,
+      operator: 'notEqual',
+      value: 0
+    }]
+  }
+  retVal.event = { type: 'sumall', params: fact }
+  retVal.onSuccess = sumallRuleHandler
+  retVal.priority = priority
+  return retVal
+}
+
+const subtractRuleHandler = function (event, almanac) {
+  almanac.factValue(event.params.calculation.value1).then(value1 => {
+    almanac.factValue(event.params.calculation.value2).then(value2 => {
+      almanac.addRuntimeFact(event.params.id, value1 - value2)
+    })
+  })
+}
+
+const subtractRule = function (fact, priority) {
+  const retVal = {}
+  retVal.conditions = {
+    all: [{
+      fact: fact.id,
+      operator: 'notEqual',
+      value: 0
+    }]
+  }
+  retVal.event = { type: 'subtract', params: fact }
+  retVal.onSuccess = subtractRuleHandler
+  retVal.priority = priority
+  return retVal
+}
+
 const factHandler = {
   factsFromRules: function (rules) {
     const allFacts = rules.reduce((acc, rule) => {
@@ -73,8 +125,28 @@ const factHandler = {
         }
       }
     })
-    console.log(orderedFactList)
     return orderedFactList
+  },
+  buildCalculationRules: function (factList) {
+    let priority = 20 + factList.length
+    const returnRules = []
+    // Array is in priority order, so process it in that order
+    for (let i = 0; i < factList.length; ++i) {
+      const fact = factList[i]
+      if (fact.calculated) {
+        switch (fact.calculation.operator) {
+          case 'sumall':
+            returnRules.push(sumallRule(fact, priority--))
+            break
+          case 'subtract':
+            returnRules.push(subtractRule(fact, priority--))
+            break
+          default:
+            console.log('Unknown operator: ', fact.calculation.operator)
+        }
+      }
+    }
+    return returnRules
   }
 }
 

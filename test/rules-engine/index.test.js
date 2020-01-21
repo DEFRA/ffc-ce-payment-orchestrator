@@ -33,4 +33,13 @@ describe('Rules engine help methods test', () => {
     const calculatedFacts = rulesEngine.factHandler.getCalculatedFacts(enabledRules)
     expect(calculatedFacts).toHaveLength(2)
   })
+
+  test('factHandler.buildCalculationRules returns a list of rules', () => {
+    const prevalidateRules = require('./test-data/rules-prevalidation.json')
+    const enabledRules = rulesEngine.enabledRules(prevalidateRules)
+    const calculatedFacts = rulesEngine.factHandler.getCalculatedFacts(enabledRules)
+    const calcRules = rulesEngine.factHandler.buildCalculationRules(calculatedFacts)
+    rulesEngine.loadCalculationRules(calcRules)
+    expect(calcRules).toHaveLength(2)
+  })
 })
