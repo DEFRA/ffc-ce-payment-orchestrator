@@ -111,3 +111,104 @@ describe('POST /payment-calculation', () => {
     })
   })
 })
+
+describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () => {
+  const createServer = require('../../server/createServer')
+  let server
+
+  const generateRequestOptions = (
+    parcelRef = 'AA1111',
+    actionId = 'aaa111',
+    actions = [{ action: { id: 'FG1' }, options: { quantity: 50 } }]
+  ) => ({
+    method: 'POST',
+    url: `/parcels/${parcelRef}/actions/${actionId}/payment-calculation`,
+    payload: {
+      actions
+    }
+  })
+
+  beforeEach(async () => {
+    jest.clearAllMocks()
+
+    actionService.getById.mockReturnValue({ action: { id: 'FG1' } })
+    parcelService.getByRef.mockReturnValue({ ref: 'AA1111' })
+    paymentCalculationService.isEligible.mockReturnValue(true)
+    paymentCalculationService.getValue.mockReturnValue(80)
+
+    server = await createServer()
+    await server.initialize()
+  })
+
+  afterEach(async () => {
+    await server.stop()
+  })
+
+  afterAll(() => {
+    jest.unmock('../../server/services/actionService')
+    jest.unmock('../../server/services/parcelService')
+    jest.unmock('../../server/services/paymentCalculationService')
+  })
+
+  test('responds with status code 200', async () => {
+    const response = await server.inject(generateRequestOptions())
+    expect(response.statusCode).toBe(200)
+  })
+
+  test('provides parcel ref when calling getByRef on parcel service', async () => {
+    const parcelRef = 'HK12345'
+    await server.inject(generateRequestOptions(parcelRef))
+    expect(parcelService.getByRef).toHaveBeenCalledWith(parcelRef)
+  })
+
+  test('provides action when retrieving action id from action service', async () => {
+    const actions = [{ action: { id: 'action1' }, options: { quantity: 22 } }]
+    const options = generateRequestOptions(undefined, undefined, actions)
+    await server.inject(options)
+    expect(actionService.getById).toHaveBeenCalledWith(
+      expect.objectContaining(actions[0].action)
+    )
+  })
+
+  test('provides land parcel and actions to payment calculation service when determining eligibility', async () => {
+    const sampleAction = { id: 'sample action' }
+    const sampleParcel = { id: 'sample parcel' }
+    const actions = [{ action: sampleAction, options: { quantity: 111 } }]
+    actionService.getById.mockReturnValue(sampleAction)
+    parcelService.getByRef.mockReturnValue(sampleParcel)
+    await server.inject(generateRequestOptions(undefined, undefined, actions))
+    expect(paymentCalculationService.isEligible).toHaveBeenCalledWith(
+      expect.objectContaining(sampleParcel),
+      expect.arrayContaining([
+        { action: sampleAction, options: expect.objectContaining(actions[0].options) }
+      ])
+    )
+  })
+
+  test('provides eligible flag matching flag from paymentCalculationService.isEligible', async () => {
+    const testCases = [true, false]
+    for (const testCase of testCases) {
+      paymentCalculationService.isEligible.mockReturnValue(testCase)
+      const response = await server.inject(generateRequestOptions())
+      const responseData = JSON.parse(response.payload)
+      expect(responseData).toEqual(expect.objectContaining({ eligible: testCase }))
+    }
+  })
+
+  test('provides value matching calculated payment from paymentCalculationService.getValue', async () => {
+    const testCases = [12, 38, 872]
+    for (const testCase of testCases) {
+      paymentCalculationService.getValue.mockReturnValue(testCase)
+      const response = await server.inject(generateRequestOptions())
+      const responseData = JSON.parse(response.payload)
+      expect(responseData).toEqual(expect.objectContaining({ value: testCase }))
+    }
+  })
+
+  test('omits value from payload when parcel and action are ineligible for a payment', async () => {
+    paymentCalculationService.isEligible.mockReturnValue(false)
+    const response = await server.inject(generateRequestOptions())
+    const responseData = JSON.parse(response.payload)
+    expect(Object.keys(responseData).includes('value')).toBeFalsy()
+  })
+})
