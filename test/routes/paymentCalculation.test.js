@@ -5,7 +5,6 @@ const paymentCalculationService = require('../../server/services/paymentCalculat
 jest.mock('../../server/services/actionsService')
 jest.mock('../../server/services/parcelService')
 jest.mock('../../server/services/paymentCalculationService')
-
 describe('POST /payment-calculation', () => {
   let createServer
   let server
@@ -40,12 +39,6 @@ describe('POST /payment-calculation', () => {
 
   afterEach(async () => {
     await server.stop()
-  })
-
-  afterAll(() => {
-    jest.unmock('../../server/services/actionService')
-    jest.unmock('../../server/services/parcelService')
-    jest.unmock('../../server/services/paymentCalculationService')
   })
 
   describe('with eligible request', () => {
@@ -142,12 +135,6 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
 
   afterEach(async () => {
     await server.stop()
-  })
-
-  afterAll(() => {
-    jest.unmock('../../server/services/actionService')
-    jest.unmock('../../server/services/parcelService')
-    jest.unmock('../../server/services/paymentCalculationService')
   })
 
   test('responds with status code 200', async () => {

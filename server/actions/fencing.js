@@ -1,6 +1,8 @@
+const config = require('../config')
+
 module.exports = {
   calculateValue: function (landParcel, options) {
-    return 99 // For initial prototype, fixed value as per https://eaflood.atlassian.net/browse/FCEP-48
+    return options.quantity * config.actions.fencingPricePerMetre
   },
 
   isEligible: function (landParcel, options) {
