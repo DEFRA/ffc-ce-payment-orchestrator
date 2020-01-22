@@ -21,7 +21,7 @@ const _buildStandardRules = function (conditions, ruleName, eventType) {
 
 const _setupStandardRule = function (conditions, ruleName, eventType) {
   const rules = _buildStandardRules(conditions, ruleName, eventType)
-  rules.map(rule => {
+  rules.forEach(rule => {
     this.engine.addRule(rule)
   })
   this.engine.on('success', function (event, almanac, ruleResult) {
@@ -55,7 +55,7 @@ const _buildAcceptedItemsRules = function () {
 
 const _setupAcceptedItemsRule = function (funcToCall) {
   const rules = _buildAcceptedItemsRules()
-  rules.map(rule => {
+  rules.forEach(rule => {
     this.engine.addRule(rule)
   })
   this.engine.on('success', function (event, almanac, ruleResult) {

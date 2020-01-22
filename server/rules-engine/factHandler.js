@@ -49,16 +49,7 @@ const subtractRule = function (fact, priority) {
 
 const factHandler = {
   factsFromRules: function (rules) {
-    const allFacts = rules.reduce((acc, rule) => {
-      if (Object.prototype.hasOwnProperty.call(rule, 'facts')) {
-        if (Array.isArray(rule.facts)) {
-          rule.facts.reduce((notused, fact) => {
-            return acc.push(fact)
-          }, [])
-        }
-      }
-      return acc
-    }, [])
+    const allFacts = rules.filter(rule => Array.isArray(rule.facts)).reduce((acc, rule) => acc.concat(rule.facts), [])
     return allFacts
   },
   getCalculatedFacts: function (rules) {
