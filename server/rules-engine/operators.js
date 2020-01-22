@@ -13,11 +13,11 @@ const additionalOperators = {
         }
         if (Array.isArray(factValue)) {
           let retResult = false
-          factValue.reduce((reduceResult, current) => {
+          for (const current of factValue) {
             if (compareDate(current)) {
               retResult = true
             }
-          }, false)
+          }
           return retResult
         } else {
           return compareDate(factValue)
