@@ -5,6 +5,7 @@ const paymentCalculationService = require('../../server/services/paymentCalculat
 jest.mock('../../server/services/actionsService')
 jest.mock('../../server/services/parcelService')
 jest.mock('../../server/services/paymentCalculationService')
+
 describe('POST /payment-calculation', () => {
   let createServer
   let server
