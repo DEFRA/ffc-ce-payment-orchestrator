@@ -65,6 +65,11 @@
         "id": "SSSI",
         "description": "Parcel in SSSI area"
       }
-    ]
+    ],
+    "conditions": [{
+      "fact": "SSSI",
+      "operator": "equal",
+      "value": true
+    }]
   }
 ]

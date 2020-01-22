@@ -2,7 +2,7 @@
   {
     "id": 1,
     "description": "Proposed fence length is longer than Total Parcel Perimeter",
-    "enabled": true,
+    "enabled": false,
     "facts": [
       {
         "id": "totalPerimeter",
@@ -65,6 +65,11 @@
         "id": "SSSI",
         "description": "Parcel in SSSI area"
       }
-    ]
+    ],
+    "conditions": [{
+      "fact": "SSSI",
+      "operator": "equal",
+      "value": true
+    }]
   }
 ]

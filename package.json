@@ -26,7 +26,10 @@
   "license": "OGL-UK-3.0",
   "dependencies": {
     "@hapi/hapi": "^18.4.0",
-    "@hapi/joi": "^16.1.4"
+    "@hapi/joi": "^16.1.4",
+    "json-rules-engine": "^5.0.0",
+    "jsonpath": "^1.0.2",
+    "moment": "^2.24.0"
   },
   "devDependencies": {
     "@hapi/good": "^8.2.3",

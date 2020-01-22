@@ -1,0 +1,47 @@
+const customOperators = require('../../server/rules-engine/operators')
+
+describe('Rules engine customer operators', () => {
+  const mockRulesEngine = {
+    operators: {},
+    // See https://github.com/CacheControl/json-rules-engine/blob/master/docs/engine.md
+    addOperator: jest.fn(function (opName, opFunc) {
+      this.operators[opName] = opFunc
+    }),
+    callOperator: function (opName, factValue, jsonValue) {
+      const func = this.operators[opName]
+      return func(factValue, jsonValue)
+    }
+  }
+
+  const registerCustomOps = function () {
+    customOperators.addAdditionalOperators(mockRulesEngine)
+  }
+
+  test('All custom operators are registered', () => {
+    registerCustomOps()
+    expect(mockRulesEngine.addOperator).toHaveBeenCalled()
+    expect(Object.keys(mockRulesEngine.operators).length).toBe(1)
+  })
+
+  test('lessThan5Years operator', () => {
+    registerCustomOps()
+    expect(mockRulesEngine.callOperator('lessThan5Years', '2013-07-03T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(false)
+    expect(mockRulesEngine.callOperator('lessThan5Years', '2015-01-19T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(false)
+    expect(mockRulesEngine.callOperator('lessThan5Years', '2015-01-20T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(false)
+    expect(mockRulesEngine.callOperator('lessThan5Years', '2015-01-21T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(true)
+    expect(mockRulesEngine.callOperator('lessThan5Years', '2020-01-20T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(true)
+    expect(mockRulesEngine.callOperator('lessThan5Years', '2020-01-21T00:00:01.000Z', '2020-01-20T00:00:01.000Z')).toBe(true)
+  })
+
+  test('lessThan5Years operator with array', () => {
+    registerCustomOps()
+    expect(mockRulesEngine.callOperator('lessThan5Years', ['2013-01-19T00:00:01.000Z', '2014-01-19T00:00:01.000Z'], '2020-01-20T00:00:01.000Z')).toBe(false)
+    expect(mockRulesEngine.callOperator('lessThan5Years', ['2014-01-19T00:00:01.000Z', '2015-01-19T00:00:01.000Z'], '2020-01-20T00:00:01.000Z')).toBe(false)
+    expect(mockRulesEngine.callOperator('lessThan5Years', ['2015-01-19T00:00:01.000Z', '2016-01-19T00:00:01.000Z'], '2020-01-20T00:00:01.000Z')).toBe(true)
+    expect(mockRulesEngine.callOperator('lessThan5Years', ['2016-01-19T00:00:01.000Z', '2017-01-19T00:00:01.000Z'], '2020-01-20T00:00:01.000Z')).toBe(true)
+  })
+
+  afterEach(() => {
+    jest.clearAllMocks()
+  })
+})
