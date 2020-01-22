@@ -14,9 +14,8 @@ describe('Rules engine prevalidation rules test', () => {
   test('Full run of data and rules works', async () => {
     const acceptedParcels = []
     const successFunc = async function (event, almanac, ruleResult) {
-      almanac.factValue('ref').then(ref => {
-        acceptedParcels.push(ref)
-      })
+      const ref = await almanac.factValue('ref')
+      acceptedParcels.push(ref)
     }
     await rulesEngine.doFullRun(testRules, parcelsTestData, { requestedLength: 100 }, successFunc)
     expect(acceptedParcels).toHaveLength(2)

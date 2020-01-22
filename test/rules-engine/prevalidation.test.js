@@ -43,13 +43,11 @@ describe('Rules engine prevalidation rules test', () => {
     const actions = await Promise.all(actionsPromises)
     expect.assertions(6)
     expect(actions.length).toBe(5)
-    await Promise.all(actions.map(action => {
-      return action.almanac.factValue('ref').then(ref => {
-        return action.almanac.factValue('usablePerimeter').then(usablePerimeter => {
-          const expected = expectedResults.find(result => result.ref === ref)
-          expect(expected.value).toBeCloseTo(usablePerimeter, 1)
-        })
-      })
+    await Promise.all(actions.map(async action => {
+      const ref = await action.almanac.factValue('ref')
+      const usablePerimeter = await action.almanac.factValue('usablePerimeter')
+      const expected = expectedResults.find(result => result.ref === ref)
+      expect(expected.value).toBeCloseTo(usablePerimeter, 1)
     }))
   })
 

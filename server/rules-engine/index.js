@@ -27,9 +27,11 @@ const _setupStandardRule = function (conditions, ruleName, eventType) {
   this.engine.on('success', function (event, almanac, ruleResult) {
     if (event.type === eventType) {
       almanac.addRuntimeFact(enums.ruleRejected, true)
-      almanac.factValue('ref').then(ref => {
-        if (DEBUG) console.log('Rule passed, rejecting parcel:', ref)
-      })
+      if (DEBUG) {
+        almanac.factValue('ref').then(ref => {
+          console.log('Rule passed, rejecting parcel:', ref)
+        })
+      }
     }
   })
 }

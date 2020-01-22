@@ -1,15 +1,14 @@
 const jp = require('jsonpath')
 
-const sumallRuleHandler = function (event, almanac) {
-  almanac.factValue(event.params.calculation.sourcefact).then(source => {
-    let totalSum = 0
-    const values = jp.query(source, event.params.calculation.path)
-    totalSum = values.reduce((acc, value) => {
-      acc += value
-      return acc
-    }, totalSum)
-    almanac.addRuntimeFact(event.params.id, totalSum)
-  })
+const sumallRuleHandler = async function (event, almanac) {
+  const source = await almanac.factValue(event.params.calculation.sourcefact)
+  let totalSum = 0
+  const values = jp.query(source, event.params.calculation.path)
+  totalSum = values.reduce((acc, value) => {
+    acc += value
+    return acc
+  }, totalSum)
+  almanac.addRuntimeFact(event.params.id, totalSum)
 }
 
 const sumallRule = function (fact, priority) {
@@ -27,12 +26,10 @@ const sumallRule = function (fact, priority) {
   }
 }
 
-const subtractRuleHandler = function (event, almanac) {
-  almanac.factValue(event.params.calculation.value1).then(value1 => {
-    almanac.factValue(event.params.calculation.value2).then(value2 => {
-      almanac.addRuntimeFact(event.params.id, value1 - value2)
-    })
-  })
+const subtractRuleHandler = async function (event, almanac) {
+  const value1 = await almanac.factValue(event.params.calculation.value1)
+  const value2 = await almanac.factValue(event.params.calculation.value2)
+  almanac.addRuntimeFact(event.params.id, value1 - value2)
 }
 
 const subtractRule = function (fact, priority) {
