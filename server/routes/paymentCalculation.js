@@ -44,21 +44,11 @@ module.exports = [
     method: 'POST',
     path: '/parcels/{parcelRef}/actions/{actionId}/payment-calculation',
     handler: async (request, h) => {
-      console.log('parcelRef', request.params.parcelRef, 'actionId', request.params.actionId)
-      const { params: { parcelRef }, payload: { actions: requestedActions } } = request
+      const { params: { parcelRef, actionId }, payload: { actionData } } = request
+      console.log(`request for payment calculation. parcelRef: ${parcelRef}, actionId: ${actionId}, actionData:`, actionData)
+
       const landParcel = await parcelService.getByRef(parcelRef)
-
-      console.log('requestedActions', requestedActions)
-
-      const actions = await Promise.all(
-        requestedActions.map(
-          async ({ action, options }) => ({
-            action: await actionService.getById(action),
-            options
-          })
-        )
-      )
-
+      const actions = [{ action: await actionService.getById({ id: actionId }), options: actionData }]
       const response = {
         eligible: await paymentCalculationService.isEligible(landParcel, actions)
       }

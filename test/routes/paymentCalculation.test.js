@@ -119,12 +119,12 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
   const generateRequestOptions = (
     parcelRef = 'AA1111',
     actionId = 'aaa111',
-    actions = [{ action: { id: 'FG1' }, options: { quantity: 50 } }]
+    actionData = { quantity: 50 }
   ) => ({
     method: 'POST',
     url: `/parcels/${parcelRef}/actions/${actionId}/payment-calculation`,
     payload: {
-      actions
+      actionData
     }
   })
 
@@ -162,25 +162,25 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
   })
 
   test('provides action when retrieving action id from action service', async () => {
-    const actions = [{ action: { id: 'action1' }, options: { quantity: 22 } }]
-    const options = generateRequestOptions(undefined, undefined, actions)
+    const actionId = 'action1'
+    const options = generateRequestOptions(undefined, actionId)
     await server.inject(options)
     expect(actionService.getById).toHaveBeenCalledWith(
-      expect.objectContaining(actions[0].action)
+      expect.objectContaining({ id: actionId })
     )
   })
 
   test('provides land parcel and actions to payment calculation service when determining eligibility', async () => {
     const sampleAction = { id: 'sample action' }
     const sampleParcel = { id: 'sample parcel' }
-    const actions = [{ action: sampleAction, options: { quantity: 111 } }]
+    const actionData = { quantity: 111 }
     actionService.getById.mockReturnValue(sampleAction)
     parcelService.getByRef.mockReturnValue(sampleParcel)
-    await server.inject(generateRequestOptions(undefined, undefined, actions))
+    await server.inject(generateRequestOptions(undefined, undefined, actionData))
     expect(paymentCalculationService.isEligible).toHaveBeenCalledWith(
       expect.objectContaining(sampleParcel),
       expect.arrayContaining([
-        { action: sampleAction, options: expect.objectContaining(actions[0].options) }
+        { action: sampleAction, options: expect.objectContaining(actionData) }
       ])
     )
   })
