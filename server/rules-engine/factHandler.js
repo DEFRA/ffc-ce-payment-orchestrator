@@ -13,18 +13,18 @@ const sumallRuleHandler = function (event, almanac) {
 }
 
 const sumallRule = function (fact, priority) {
-  const retVal = {}
-  retVal.conditions = {
-    all: [{
-      fact: fact.id,
-      operator: 'notEqual',
-      value: 0
-    }]
+  return {
+    conditions: {
+      all: [{
+        fact: fact.id,
+        operator: 'notEqual',
+        value: 0
+      }]
+    },
+    event: { type: 'sumall', params: fact },
+    onSuccess: sumallRuleHandler,
+    priority
   }
-  retVal.event = { type: 'sumall', params: fact }
-  retVal.onSuccess = sumallRuleHandler
-  retVal.priority = priority
-  return retVal
 }
 
 const subtractRuleHandler = function (event, almanac) {
@@ -36,18 +36,18 @@ const subtractRuleHandler = function (event, almanac) {
 }
 
 const subtractRule = function (fact, priority) {
-  const retVal = {}
-  retVal.conditions = {
-    all: [{
-      fact: fact.id,
-      operator: 'notEqual',
-      value: 0
-    }]
+  return {
+    conditions: {
+      all: [{
+        fact: fact.id,
+        operator: 'notEqual',
+        value: 0
+      }]
+    },
+    event: { type: 'subtract', params: fact },
+    onSuccess: subtractRuleHandler,
+    priority
   }
-  retVal.event = { type: 'subtract', params: fact }
-  retVal.onSuccess = subtractRuleHandler
-  retVal.priority = priority
-  return retVal
 }
 
 const factHandler = {

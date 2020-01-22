@@ -6,21 +6,17 @@ const operators = require('./operators')
 const factHandler = require('./factHandler')
 
 const _buildStandardRules = function (conditions, ruleName, eventType) {
-  const retRules = []
   if (DEBUG) console.log('Setting up standard rules with conditions ', conditions)
-  conditions.map(condition => {
-    retRules.push(new Rule({
-      conditions: {
-        all: [condition]
-      },
-      event: {
-        type: eventType
-      },
-      name: ruleName,
-      priority: 5
-    }))
-  })
-  return retRules
+  return conditions.map(condition => new Rule({
+    conditions: {
+      all: [condition]
+    },
+    event: {
+      type: eventType
+    },
+    name: ruleName,
+    priority: 5
+  }))
 }
 
 const _setupStandardRule = function (conditions, ruleName, eventType) {
@@ -65,8 +61,6 @@ const _setupAcceptedItemsRule = function (funcToCall) {
       if (typeof funcToCall !== 'undefined') {
         funcToCall(event, almanac, ruleResult)
       }
-    } else if (event.type === enums.rejectedFactAdder) {
-      // almanac.addRuntimeFact(enums.ruleRejected, false)
     }
   })
 }

@@ -1,10 +1,6 @@
 describe('Rules engine help methods test', () => {
-  let rulesEngine
+  const rulesEngine = require('../../server/rules-engine')
   const rulesTestData = require('./test-data/rules-index.json')
-
-  beforeAll(() => {
-    rulesEngine = require('../../server/rules-engine')
-  })
 
   beforeEach(() => {
     rulesEngine.resetEngine()

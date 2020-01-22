@@ -15,12 +15,10 @@ describe('Rules engine prevalidation rules test', () => {
     const acceptedParcels = []
     const successFunc = async function (event, almanac, ruleResult) {
       almanac.factValue('ref').then(ref => {
-        // console.log('Adding parcel to accepted parcels list: ', ref)
         acceptedParcels.push(ref)
       })
     }
     await rulesEngine.doFullRun(testRules, parcelsTestData, { requestedLength: 100 }, successFunc)
-    // console.log(acceptedParcels)
     expect(acceptedParcels).toHaveLength(2)
     expect(acceptedParcels).toContain('SD81525709')
     expect(acceptedParcels).toContain('SD74445738')

@@ -1,14 +1,10 @@
 describe('Rules engine SSSI rule test', () => {
-  let rulesEngine
+  const rulesEngine = require('../../server/rules-engine')
   const parcelsTestData = require('./test-data/parcels-sssi.json')
   const testRules = require('./test-data/rules-sssi.json')
   const successEvent = jest.fn()
   const eventType = 'sssi'
   const sssiParcelRef = 'SD78379604'
-
-  beforeAll(() => {
-    rulesEngine = require('../../server/rules-engine')
-  })
 
   beforeEach(() => {
     rulesEngine.resetEngine()
