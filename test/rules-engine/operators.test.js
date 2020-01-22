@@ -3,6 +3,7 @@ const customOperators = require('../../server/rules-engine/operators')
 describe('Rules engine customer operators', () => {
   const mockRulesEngine = {
     operators: {},
+    // See https://github.com/CacheControl/json-rules-engine/blob/master/docs/engine.md
     addOperator: jest.fn(function (opName, opFunc) {
       this.operators[opName] = opFunc
     }),

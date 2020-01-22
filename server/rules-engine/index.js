@@ -21,9 +21,7 @@ const _buildStandardRules = function (conditions, ruleName, eventType) {
 
 const _setupStandardRule = function (conditions, ruleName, eventType) {
   const rules = _buildStandardRules(conditions, ruleName, eventType)
-  for (const rule of rules) {
-    this.engine.addRule(rule)
-  }
+  this.addRule(rules)
   this.engine.on('success', function (event, almanac, ruleResult) {
     if (event.type === eventType) {
       almanac.addRuntimeFact(enums.ruleRejected, true)
@@ -55,9 +53,7 @@ const _buildAcceptedItemsRules = function () {
 
 const _setupAcceptedItemsRule = function (funcToCall) {
   const rules = _buildAcceptedItemsRules()
-  for (const rule of rules) {
-    this.engine.addRule(rule)
-  }
+  this.addRule(rules)
   this.engine.on('success', function (event, almanac, ruleResult) {
     if (event.type === enums.acceptedEventName) {
       if (typeof funcToCall !== 'undefined') {
@@ -72,10 +68,7 @@ const _buildCalculationRule = function (ruleDef) {
 }
 
 const _setupCalculationRules = function (ruleDefs) {
-  for (const ruleDef of ruleDefs) {
-    const rule = _buildCalculationRule(ruleDef)
-    this.engine.addRule(rule)
-  }
+  this.addRule(ruleDefs.map(ruleDef => _buildCalculationRule(ruleDef)))
 }
 
 const _setupFullRun = function (rulesJson, dataJson, successFunc) {
@@ -165,6 +158,16 @@ function RulesEngine () {
   this.setupFullRun = _setupFullRun
 
   this.doFullRun = _doFullRun
+
+  this.addRule = function (rules) {
+    if (Array.isArray(rules)) {
+      for (const rule of rules) {
+        this.engine.addRule(rule)
+      }
+    } else {
+      this.engine.addRule(rules)
+    }
+  }
 
   this.resetEngine()
 }

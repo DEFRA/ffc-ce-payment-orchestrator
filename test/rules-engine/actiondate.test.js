@@ -14,7 +14,7 @@ describe('Rules engine Actiondate rule test', () => {
     rulesEngine.resetEngine()
   })
 
-  test('actiondate rule discards parcel with invalid actiondate', async () => {
+  test('actiondate rule discards parcels with an action date in the last 5 years', async () => {
     const enabledRules = rulesEngine.enabledEligibilityRules(testRules)
     const conditions = rulesEngine.conditionsFromRules(enabledRules)
     rulesEngine.setupStandardRule(conditions, 'ActionDate', eventType)
