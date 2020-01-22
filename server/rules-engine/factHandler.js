@@ -65,7 +65,7 @@ const factHandler = {
       }
       return false
     }
-    rules.forEach(rule => {
+    for (const rule of rules) {
       rule.facts.map(x => {
         if (x.calculated) {
           x.dependantFacts = []
@@ -81,7 +81,7 @@ const factHandler = {
           factsToCalculate.push(x)
         }
       })
-    })
+    }
     // Now sort factsToCalculate into the order the facts need to be calculated
     const orderedFactList = factsToCalculate.sort((x, y) => {
       if (x.dependantFacts.length === 0) {

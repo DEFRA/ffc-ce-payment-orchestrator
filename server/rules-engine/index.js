@@ -21,9 +21,9 @@ const _buildStandardRules = function (conditions, ruleName, eventType) {
 
 const _setupStandardRule = function (conditions, ruleName, eventType) {
   const rules = _buildStandardRules(conditions, ruleName, eventType)
-  rules.forEach(rule => {
+  for (const rule of rules) {
     this.engine.addRule(rule)
-  })
+  }
   this.engine.on('success', function (event, almanac, ruleResult) {
     if (event.type === eventType) {
       almanac.addRuntimeFact(enums.ruleRejected, true)
@@ -55,9 +55,9 @@ const _buildAcceptedItemsRules = function () {
 
 const _setupAcceptedItemsRule = function (funcToCall) {
   const rules = _buildAcceptedItemsRules()
-  rules.forEach(rule => {
+  for (const rule of rules) {
     this.engine.addRule(rule)
-  })
+  }
   this.engine.on('success', function (event, almanac, ruleResult) {
     if (event.type === enums.acceptedEventName) {
       if (typeof funcToCall !== 'undefined') {
@@ -72,10 +72,10 @@ const _buildCalculationRule = function (ruleDef) {
 }
 
 const _setupCalculationRules = function (ruleDefs) {
-  ruleDefs.forEach(ruleDef => {
+  for (const ruleDef of ruleDefs) {
     const rule = _buildCalculationRule(ruleDef)
     this.engine.addRule(rule)
-  })
+  }
 }
 
 const _setupFullRun = function (rulesJson, dataJson, successFunc) {
@@ -94,9 +94,9 @@ const _doFullRun = async function (rulesJson, dataJson, passedFacts, successFunc
   const retVal = []
   this.setupFullRun(rulesJson, dataJson, successFunc)
   if (DEBUG) {
-    this.engine.rules.map(rule => {
+    for (const rule of this.engine.rules) {
       console.log(rule.toJSON())
-    })
+    }
   }
   dataJson.map(data => {
     retVal.push(this.runEngine(data, passedFacts))
@@ -141,16 +141,7 @@ function RulesEngine () {
   }
 
   this.conditionsFromRules = function (rules) {
-    const allRules = rules.reduce((acc, rule) => {
-      if (Object.prototype.hasOwnProperty.call(rule, 'conditions')) {
-        if (Array.isArray(rule.conditions)) {
-          rule.conditions.reduce((notused, condition) => {
-            return acc.push(condition)
-          }, [])
-        }
-      }
-      return acc
-    }, [])
+    const allRules = rules.filter(rule => Array.isArray(rule.conditions)).reduce((acc, rule) => acc.concat(rule.conditions), [])
     return allRules
   }
 
