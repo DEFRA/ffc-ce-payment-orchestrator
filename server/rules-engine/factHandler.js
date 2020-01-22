@@ -83,7 +83,7 @@ const factHandler = {
       })
     }
     // Now sort factsToCalculate into the order the facts need to be calculated
-    const orderedFactList = factsToCalculate.sort((x, y) => {
+    factsToCalculate.sort((x, y) => {
       if (x.dependantFacts.length === 0) {
         if (y.dependantFacts.length === 0) {
           // If they both have no dependant facts, then they're equal.
@@ -113,7 +113,7 @@ const factHandler = {
         }
       }
     })
-    return orderedFactList
+    return factsToCalculate
   },
   buildCalculationRules: function (factList) {
     let priority = 20 + factList.length
