@@ -1,6 +1,8 @@
 [
   {
     "id": 1,
+    "types": ["prevalidation"],
+    "groupname": "Perimeter",
     "description": "Proposed fence length is longer than Total Parcel Perimeter",
     "enabled": true,
     "facts": [
@@ -8,10 +10,19 @@
         "id": "totalPerimeter",
         "description": "Total Parcel Perimeter"
       }
-    ]
+    ],
+    "conditions": [{
+      "fact": "requestedLength",
+      "operator": "greaterThan",
+      "value": {
+        "fact": "totalPerimeter"
+      }
+    }]
   },
   {
     "id": 2,
+    "types": ["prevalidation"],
+    "groupname": "Perimeter",
     "description": "Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features",
     "enabled": true,
     "facts": [
@@ -21,12 +32,41 @@
       },
       {
         "id": "perimeterRemoved",
-        "description": "Total Feature Length"
+        "description": "Total Feature Length",
+        "calculated": true,
+        "calculation": {
+          "operator": "sumall",
+          "sourcefact": "perimeterFeatures",
+          "path": "$..length"
+        }
+      },
+      {
+        "id": "usablePerimeter",
+        "description": "Total usable perimeter length",
+        "calculated": true,
+        "calculation": {
+          "operator": "subtract",
+          "value1": "totalPerimeter",
+          "value2": "perimeterRemoved"
+        }
+      },
+      {
+        "id": "requestedLength",
+        "description": "Metres of fencing requested"
       }
-    ]
+    ],
+    "conditions": [{
+      "fact": "usablePerimeter",
+      "operator": "lessThanInclusive",
+      "value": {
+        "fact": "requestedLength"
+      }
+    }]
   },
   {
     "id": 3,
+    "types": ["prevalidation"],
+    "groupname": "Perimeter",
     "description": "Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features including the Tolerance",
     "enabled": true,
     "facts": [
@@ -53,7 +93,13 @@
         "id": "previousActions",
         "description": "Previous Action Dates"
       }
-    ]
+    ],
+    "conditions": [{
+      "fact": "previousActions",
+      "path": "$..date",
+      "operator": "lessThan5Years",
+      "value": "2020-01-20T00:00:01.000Z"
+    }]
   },
   {
     "id": 5,
@@ -65,6 +111,11 @@
         "id": "SSSI",
         "description": "Parcel in SSSI area"
       }
-    ]
+    ],
+    "conditions": [{
+      "fact": "SSSI",
+      "operator": "equal",
+      "value": true
+    }]
   }
 ]

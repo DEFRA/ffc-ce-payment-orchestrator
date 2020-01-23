@@ -1,9 +1,21 @@
+const config = require('../config')
+const rulesEngine = require('../rules-engine')
+const actionsService = require('../services/actionsService')
+
+const id = 'FG1'
+
 module.exports = {
   calculateValue: function (landParcel, options) {
-    return 99 // For initial prototype, fixed value as per https://eaflood.atlassian.net/browse/FCEP-48
+    return options.quantity * config.actions.fencingPricePerMetre
   },
 
-  isEligible: function (landParcel, options) {
-    return options.quantity > 0 // For initial prototype, eligibility criteria as per https://eaflood.atlassian.net/browse/FCEP-48
+  isEligible: async function (landParcel, options) {
+    const { rules } = await actionsService.getByIdWithRules(id)
+    let rulesPassed = false
+    const rulesPass = () => {
+      rulesPassed = true
+    }
+    await rulesEngine.doFullRun(rules, [landParcel], { requestedLength: options.quantity }, rulesPass)
+    return rulesPassed
   }
 }

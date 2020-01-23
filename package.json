@@ -26,19 +26,19 @@
   "license": "OGL-UK-3.0",
   "dependencies": {
     "@hapi/hapi": "^18.4.0",
-    "@hapi/joi": "^16.1.4",
+    "@hapi/joi": "^16.1.8",
     "json-rules-engine": "^5.0.0",
     "jsonpath": "^1.0.2",
     "moment": "^2.24.0"
   },
   "devDependencies": {
-    "@hapi/good": "^8.2.3",
+    "@hapi/good": "^8.2.4",
     "@hapi/good-console": "^8.1.2",
     "@hapi/good-squeeze": "^5.2.1",
     "blipp": "^4.0.1",
     "jest": "^24.9.0",
     "jest-junit": "^8.0.0",
-    "nodemon": "^1.19.2",
+    "nodemon": "^1.19.4",
     "standard": "14.3.1"
   },
   "standard": {
