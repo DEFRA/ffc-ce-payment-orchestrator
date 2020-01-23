@@ -24,20 +24,20 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
     await server.stop()
   })
 
-  test.skip('parcel SD78379604 is eligible for a payment under action FG1', async () => {
-    const response = await server.inject(generateRequestOptions('SD78379604', 'FG1', { quantity: 45.2 }))
+  test('parcel SD74445738 is eligible for a payment under action FG1', async () => {
+    const response = await server.inject(generateRequestOptions('SD74445738', 'FG1', { quantity: 139.2 }))
     const payload = JSON.parse(response.payload)
     expect(response.statusCode).toBe(200)
     expect(payload).toEqual(
       expect.objectContaining({
         eligible: true,
-        value: 180.8
+        value: 556.8
       })
     )
   })
 
   test('parcel SD75492628 isn\'t eligible for a payment under action FG1 - it has a previous action', async () => {
-    const response = await server.inject(generateRequestOptions('SD75492628', 'FG1', { quantity: 104 }))
+    const response = await server.inject(generateRequestOptions('SD75492628', 'FG1', { quantity: 104.8 }))
     const payload = JSON.parse(response.payload)
     expect(response.statusCode).toBe(200)
     expect(payload).toEqual(
