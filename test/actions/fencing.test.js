@@ -114,6 +114,11 @@ describe('Fencing action tests', () => {
       expect.any(Function)
     )
   })
+
+  test('resets rules engine when doing full run', async () => {
+    await fencing.isEligible({}, { quantity: 1 })
+    expect(rulesEngine.resetEngine).toHaveBeenCalled()
+  })
 })
 
 const generateAction = (id, numberOfRules) => {
