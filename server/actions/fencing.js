@@ -10,12 +10,12 @@ module.exports = {
   },
 
   isEligible: async function (landParcel, options) {
-    const { rules } = actionsService.getByIdWithRules(id)
+    const { rules } = await actionsService.getByIdWithRules(id)
     let rulesPassed = false
     const rulesPass = () => {
       rulesPassed = true
     }
-    await rulesEngine.doFullRun(rules, landParcel, { requestedLength: options.quantity }, rulesPass)
+    await rulesEngine.doFullRun(rules, [landParcel], { requestedLength: options.quantity }, rulesPass)
     return rulesPassed
   }
 }

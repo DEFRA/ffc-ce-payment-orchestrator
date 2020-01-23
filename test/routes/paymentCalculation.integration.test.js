@@ -4,8 +4,8 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
   let server
 
   const generateRequestOptions = (
-    parcelRef = 'AA1111',
-    actionId = 'aaa111',
+    parcelRef = 'SD74445738',
+    actionId = 'FG1',
     actionData = { quantity: 50 }
   ) => ({
     method: 'POST',

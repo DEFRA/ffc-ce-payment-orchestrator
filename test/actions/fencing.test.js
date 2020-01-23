@@ -73,7 +73,7 @@ describe('Fencing action tests', () => {
     await fencing.isEligible({}, { quantity: 1 })
     expect(rulesEngine.doFullRun).toHaveBeenCalledWith(
       expect.arrayContaining(action.rules),
-      expect.any(Object),
+      expect.any(Array),
       expect.any(Object),
       expect.any(Function)
     )
@@ -98,7 +98,7 @@ describe('Fencing action tests', () => {
     await fencing.isEligible(parcelData, { quantity: 1 })
     expect(rulesEngine.doFullRun).toHaveBeenCalledWith(
       expect.any(Array),
-      expect.objectContaining(parcelData),
+      expect.arrayContaining([parcelData]),
       expect.any(Object),
       expect.any(Function)
     )
@@ -109,7 +109,7 @@ describe('Fencing action tests', () => {
     await fencing.isEligible({}, actionData)
     expect(rulesEngine.doFullRun).toHaveBeenCalledWith(
       expect.any(Array),
-      expect.any(Object),
+      expect.any(Array),
       expect.objectContaining({ requestedLength: actionData.quantity }),
       expect.any(Function)
     )
