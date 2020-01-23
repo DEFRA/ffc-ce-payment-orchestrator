@@ -53,13 +53,19 @@
         "id": "previousActions",
         "description": "Previous Action Dates"
       }
-    ]
+    ],
+    "conditions": [{
+      "fact": "previousActions",
+      "path": "$..date",
+      "operator": "lessThan5Years",
+      "value": "2020-01-20T00:00:01.000Z"
+    }]
   },
   {
     "id": 5,
     "types": ["eligibility"],
     "description": "Parcel within SSSI",
-    "enabled": true,
+    "enabled": false,
     "facts": [
       {
         "id": "SSSI",
