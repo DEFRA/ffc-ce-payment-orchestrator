@@ -1,13 +1,18 @@
 const fencing = require('../../server/actions/fencing')
 const config = require('../../server/config')
 const rulesEngine = require('../../server/rules-engine')
+const actionsService = require('../../server/services/actionsService')
 
 jest.mock('../../server/config')
 jest.mock('../../server/rules-engine')
+jest.mock('../../server/services/actionsService')
 
 describe('Fencing action tests', () => {
   beforeEach(() => {
     config.actions.fencingPricePerMetre = 4
+    actionsService.getByIdWithRules.mockReturnValue(
+      generateAction('AAA111', 3)
+    )
     jest.clearAllMocks()
   })
 
@@ -57,10 +62,17 @@ describe('Fencing action tests', () => {
     expect(await fencing.isEligible({}, { quantity: 12 })).toBeFalsy()
   })
 
+  test('provides id to actionsService when getting rules', async () => {
+    await fencing.isEligible({}, { quantity: 1 })
+    expect(actionsService.getByIdWithRules).toHaveBeenCalledWith('FG1')
+  })
+
   test('provides rules to rules engine', async () => {
+    const action = generateAction('ABC123', 5)
+    actionsService.getByIdWithRules.mockReturnValue(action)
     await fencing.isEligible({}, { quantity: 1 })
     expect(rulesEngine.doFullRun).toHaveBeenCalledWith(
-      expect.any(Object),
+      expect.arrayContaining(action.rules),
       expect.any(Object),
       expect.any(Object),
       expect.any(Function)
@@ -85,7 +97,7 @@ describe('Fencing action tests', () => {
     }
     await fencing.isEligible(parcelData, { quantity: 1 })
     expect(rulesEngine.doFullRun).toHaveBeenCalledWith(
-      expect.any(Object),
+      expect.any(Array),
       expect.objectContaining(parcelData),
       expect.any(Object),
       expect.any(Function)
@@ -96,10 +108,22 @@ describe('Fencing action tests', () => {
     const actionData = { quantity: 91 }
     await fencing.isEligible({}, actionData)
     expect(rulesEngine.doFullRun).toHaveBeenCalledWith(
-      expect.any(Object),
+      expect.any(Array),
       expect.any(Object),
       expect.objectContaining({ requestedLength: actionData.quantity }),
       expect.any(Function)
     )
   })
 })
+
+const generateAction = (id, numberOfRules) => {
+  const action = {
+    id: 'AAA111',
+    description: 'Action description',
+    rules: []
+  }
+  for (let x = 0; x < numberOfRules; x++) {
+    action.rules.push({ id: x + 1, description: `Rule ${x + 1}`, enabled: true })
+  }
+  return action
+}
