@@ -5,6 +5,9 @@ version: '3.7'
 
 services:
   ffc-ce-payment-orchestrator:
+    command: npm run test:watch
     environment:
       NODE_ENV: development
-    command: npm run test:watch
+    volumes:
+      - ./test/:/usr/src/app/test/
+      - ./test-output/:/usr/src/app/test-output/

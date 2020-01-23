@@ -8,3 +8,6 @@ services:
     command: npm run test
     environment:
       NODE_ENV: test
+    volumes:
+      - ./test/:/usr/src/app/test/
+      - ./test-output/:/usr/src/app/test-output/
