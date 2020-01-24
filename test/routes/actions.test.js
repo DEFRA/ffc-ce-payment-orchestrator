@@ -15,7 +15,7 @@ describe('Actions route test', () => {
   ]
 
   const mockActionsService = {
-    get: jest.fn().mockResolvedValue(mockActionList)
+    getConfiguration: jest.fn().mockResolvedValue(mockActionList)
   }
 
   beforeAll(async () => {
@@ -35,7 +35,7 @@ describe('Actions route test', () => {
 
   test('fetches data from actionsService', async () => {
     await server.inject(request)
-    expect(mockActionsService.get).toHaveBeenCalled()
+    expect(mockActionsService.getConfiguration).toHaveBeenCalled()
   })
 
   test('returns the data provided by actionsService', async () => {
