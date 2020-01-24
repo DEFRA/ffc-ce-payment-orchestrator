@@ -25,10 +25,14 @@ The following environment variables are required by the application container. V
 
 ## How to run tests
 
-A convenience script is provided to run automated tests in a containerised environment. The test script will cleanup and build the project prior to running the tests.
+A convenience script is provided to run automated tests in a containerised environment. The test script will cleanup and build the project prior to running the tests (use the `--build` or `-b` flag to force a rebuild).
 
 ```
+# Run tests
 ./scripts/test
+
+# Force rebuild and run tests
+./scripts/test -b
 ```
 
 The test script passes all arguments through to the `docker-compose run` command. For example, to run the test watcher:

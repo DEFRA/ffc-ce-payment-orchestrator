@@ -3,6 +3,3 @@ services:
   ffc-ce-payment-orchestrator:
     ports:
       - "3002:3002"
-    volumes:
-      - node_modules:/usr/src/app/node_modules
-      - .:/usr/src/app
