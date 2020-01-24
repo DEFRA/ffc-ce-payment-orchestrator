@@ -1,7 +1,7 @@
 [
   {
     "id": 1,
-    "types": ["prevalidation"],
+    "type": "prevalidation",
     "groupname": "Perimeter",
     "description": "Proposed fence length is longer than Total Parcel Perimeter",
     "enabled": false,
@@ -14,7 +14,7 @@
   },
   {
     "id": 2,
-    "types": ["prevalidation"],
+    "type": "prevalidation",
     "groupname": "Perimeter",
     "description": "Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features",
     "enabled": true,
@@ -58,7 +58,7 @@
   },
   {
     "id": 3,
-    "types": ["prevalidation"],
+    "type": "prevalidation",
     "groupname": "Perimeter",
     "description": "Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features including the Tolerance",
     "enabled": false,
@@ -78,7 +78,7 @@
   },
   {
     "id": 4,
-    "types": ["eligibility"],
+    "type": "eligibility",
     "description": "Previous Action date is within the last 5 years",
     "enabled": false,
     "facts": [
@@ -96,7 +96,7 @@
   },
   {
     "id": 5,
-    "types": ["eligibility"],
+    "type": "eligibility",
     "description": "Parcel within SSSI",
     "enabled": false,
     "facts": [
