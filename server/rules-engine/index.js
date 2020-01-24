@@ -126,7 +126,8 @@ function RulesEngine () {
   this.Rule = Rule
 
   this.enabledEligibilityRules = function (rules) {
-    return rules.filter(rule => (('types' in rule) && rule.types.includes(enums.rulesTypes.eligibility) && rule.enabled))
+    const enabled = rules.filter(rule => (('type' in rule) && rule.type === enums.rulesTypes.eligibility && rule.enabled))
+    return enabled
   }
 
   this.enabledRules = function (rules) {

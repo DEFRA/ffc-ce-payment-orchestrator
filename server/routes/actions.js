@@ -5,7 +5,7 @@ module.exports = {
   path: '/actions',
   options: {
     handler: async (request, h) => {
-      const actions = await actionsService.get()
+      const actions = await actionsService.getConfiguration()
       return h.response({ actions }).code(200)
     }
   }

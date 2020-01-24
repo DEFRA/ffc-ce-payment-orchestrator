@@ -45,7 +45,7 @@
   },
   {
     "id": 4,
-    "types": ["eligibility"],
+    "type": "eligibility",
     "description": "Previous Action date is within the last 5 years",
     "enabled": true,
     "facts": [
@@ -63,7 +63,7 @@
   },
   {
     "id": 5,
-    "types": ["eligibility"],
+    "type": "eligibility",
     "description": "Parcel within SSSI",
     "enabled": false,
     "facts": [
