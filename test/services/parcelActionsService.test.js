@@ -5,8 +5,8 @@ const mockParcelsToReturn = [{
 {
   ref: 'XX12345678',
   SSSI: true
-}
-]
+}]
+
 jest.mock('../../server/services/parcelService', () => {
   return {
     getByRef: jest.fn((parcelRef) => {
@@ -14,6 +14,7 @@ jest.mock('../../server/services/parcelService', () => {
     })
   }
 })
+
 jest.mock('../../server/services/actionsService', () => {
   return {
     get: jest.fn(() => {
