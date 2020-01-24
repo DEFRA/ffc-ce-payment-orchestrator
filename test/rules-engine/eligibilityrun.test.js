@@ -9,11 +9,11 @@ describe('Eligibility rules test', () => {
   test('Only eligibility rules run', async () => {
     const testCases = [
       {
-        rules: [rulePreviousAction(['eligibility']), ruleSSSI(['prevalidation'])],
+        rules: [rulePreviousAction('eligibility'), ruleSSSI('prevalidation')],
         passingParcels: ['SD74445738', 'SD78379604', 'SD81525709']
       },
       {
-        rules: [rulePreviousAction(['eligibility']), ruleSSSI(['eligibility'])],
+        rules: [rulePreviousAction('eligibility'), ruleSSSI('eligibility')],
         passingParcels: ['SD78379604']
       }
     ]
@@ -33,9 +33,9 @@ describe('Eligibility rules test', () => {
   })
 })
 
-const rulePreviousAction = (types) => ({
+const rulePreviousAction = type => ({
   id: 1,
-  types,
+  type,
   description: 'Previous Action date is within the last 5 years',
   enabled: true,
   facts: [
@@ -52,9 +52,9 @@ const rulePreviousAction = (types) => ({
   }]
 })
 
-const ruleSSSI = (types) => ({
+const ruleSSSI = type => ({
   id: 2,
-  types,
+  type,
   description: 'Parcel within SSSI',
   enabled: true,
   facts: [
