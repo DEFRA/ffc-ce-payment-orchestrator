@@ -83,6 +83,11 @@ const _setupFullRun = function (rulesJson, dataJson, successFunc) {
   this.loadCalculationRules(calcRules)
 }
 
+const _doEligibilityRun = async function (rules, data, passedFacts, successFunc) {
+  const eligibilityRules = this.enabledEligibilityRules(rules)
+  await this.doFullRun(eligibilityRules, data, passedFacts, successFunc)
+}
+
 const _doFullRun = async function (rulesJson, dataJson, passedFacts, successFunc) {
   const retVal = []
   this.setupFullRun(rulesJson, dataJson, successFunc)
@@ -156,6 +161,8 @@ function RulesEngine () {
   this.loadCalculationRules = _setupCalculationRules
 
   this.setupFullRun = _setupFullRun
+
+  this.doEligibilityRun = _doEligibilityRun
 
   this.doFullRun = _doFullRun
 
