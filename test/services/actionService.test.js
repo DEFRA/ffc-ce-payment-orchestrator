@@ -8,14 +8,24 @@ const actionShape = expect.objectContaining({
   description: expect.any(String),
   rules: expect.arrayContaining([expect.objectContaining({
     id: expect.any(Number),
+    type: expect.any(String),
     description: expect.any(String),
-    enabled: expect.any(Boolean)
+    enabled: expect.any(Boolean),
+    facts: expect.arrayContaining([expect.objectContaining({
+      description: expect.any(String)
+    })])
   })])
 })
 
 describe('actionsService', () => {
   beforeEach(() => {
-    rulesService.get.mockReturnValue([{ id: 1, description: '', enabled: true }])
+    rulesService.get.mockReturnValue([{
+      id: 1,
+      description: '',
+      enabled: true,
+      type: '',
+      facts: [{ description: '' }]
+    }])
   })
 
   test('get returns an array of actions', async () => {
