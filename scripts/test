@@ -33,11 +33,6 @@ while :; do
       exit 0
       ;;
 
-    --)
-      shift
-      break
-      ;;
-
     -?*)
       echo "Unrecognised argument: $1"
       show_help
@@ -73,8 +68,8 @@ compose() {
     compose build
   fi
 
-  # Run tests
-  compose run ${containerName}
+  # Run tests (or an alternative command, if specified)
+  compose run ${containerName} $@
 
   # Clean up
   compose down --volumes
