@@ -1,21 +1,43 @@
-const actions = require('../../data/actions.json')
+const actionsData = require('../../data/actions.json')
 const rulesService = require('./rulesService')
 
-module.exports = {
-  get: async function () {
-    const rules = await rulesService.get()
-    return actions.map(action => {
-      action.rules = rules
-      return action
+function ActionService () {
+  this._doneInit = false
+  this._init = async function () {
+    if (this._doneInit) return
+    this.allRules = await rulesService.get()
+    this.actions = actionsData.map(action => {
+      const originalRule = action.rules
+      return {
+        id: action.id,
+        description: action.description,
+        rules: Object.assign({}, this.allRules.find(x => x.id === originalRule.id), originalRule)
+      }
     })
-  },
-  getByIdWithRules: async function (id) {
-    const match = actions.find(action => action.id === id)
-    match.rules = await rulesService.get()
+    this._doneInit = true
+  }
+
+  this.get = async function () {
+    await this._init()
+    return this.actions
+  }
+
+  this.getByIdWithRules = async function (id) {
+    await this._init()
+    const match = this.actions.find(action => action.id === id)
     return match
-  },
-  getById: function (id) {
-    const matches = actions.filter(action => action.id === id)
-    return matches.length ? matches[0] : null
+  }
+
+  this.getById = async function (id) {
+    await this._init()
+    const matches = this.actions.filter(action => action.id === id)
+    return matches.length ? matches[0].map(action => {
+      return {
+        id: action.id,
+        description: action.description
+      }
+    }) : null
   }
 }
+
+module.exports = new ActionService()
