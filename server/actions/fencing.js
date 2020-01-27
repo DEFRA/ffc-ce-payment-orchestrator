@@ -16,7 +16,7 @@ module.exports = {
       rulesPassed = true
     }
     rulesEngine.resetEngine()
-    await rulesEngine.doFullRun(rules, [landParcel], { requestedLength: options.quantity }, rulesPass)
+    await rulesEngine.doFullRun(rules, [landParcel], options, rulesPass)
     return rulesPassed
   }
 }

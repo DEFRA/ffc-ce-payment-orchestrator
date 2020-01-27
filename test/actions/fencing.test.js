@@ -110,7 +110,7 @@ describe('Fencing action tests', () => {
     expect(rulesEngine.doFullRun).toHaveBeenCalledWith(
       expect.any(Array),
       expect.any(Array),
-      expect.objectContaining({ requestedLength: actionData.quantity }),
+      expect.objectContaining({ quantity: actionData.quantity }),
       expect.any(Function)
     )
   })

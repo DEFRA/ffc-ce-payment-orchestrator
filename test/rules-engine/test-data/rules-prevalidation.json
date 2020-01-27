@@ -44,7 +44,7 @@
         }
       },
       {
-        "id": "requestedLength",
+        "id": "quantity",
         "description": "Metres of fencing requested"
       }
     ],
@@ -52,7 +52,7 @@
       "fact": "usablePerimeter",
       "operator": "lessThanInclusive",
       "value": {
-        "fact": "requestedLength"
+        "fact": "quantity"
       }
     }]
   },
