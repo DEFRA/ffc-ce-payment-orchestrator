@@ -15,8 +15,7 @@ module.exports = {
       }
       await rulesEngine.doEligibilityRun(action.rules, [parcelData], { }, successFunc)
       if (actionPassed) {
-        const returnAction = Object.assign({}, action)
-        delete returnAction.rules
+        const { rules, ...returnAction } = action
         returnActions.push(returnAction)
       }
     }
