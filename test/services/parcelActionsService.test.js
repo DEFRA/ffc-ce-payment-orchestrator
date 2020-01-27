@@ -25,7 +25,6 @@ jest.mock('../../server/services/actionsService', () => {
           {
             id: 5,
             type: 'eligibility',
-            types: ['eligibility'],
             description: 'Parcel within SSSI',
             enabled: true,
             facts: [
@@ -48,7 +47,6 @@ jest.mock('../../server/services/actionsService', () => {
           {
             id: 6,
             type: 'eligibility',
-            types: ['eligibility'],
             description: 'Parcel not within SSSI',
             enabled: true,
             facts: [
