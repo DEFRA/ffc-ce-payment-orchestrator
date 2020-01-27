@@ -17,52 +17,50 @@ jest.mock('../../server/services/parcelService', () => {
 
 jest.mock('../../server/services/actionsService', () => {
   return {
-    get: jest.fn(() => {
-      return [{
-        id: 'TE1',
-        description: 'Testing',
-        rules: [
-          {
-            id: 5,
-            type: 'eligibility',
-            description: 'Parcel within SSSI',
-            enabled: true,
-            facts: [
-              {
-                id: 'SSSI',
-                description: 'Parcel in SSSI area'
-              }
-            ],
-            conditions: [{
-              fact: 'SSSI',
-              operator: 'equal',
-              value: true
-            }]
+    get: jest.fn().mockResolvedValue([{
+      id: 'TE1',
+      description: 'Testing',
+      rules: [
+        {
+          id: 5,
+          type: 'eligibility',
+          description: 'Parcel within SSSI',
+          enabled: true,
+          facts: [
+            {
+              id: 'SSSI',
+              description: 'Parcel in SSSI area'
+            }
+          ],
+          conditions: [{
+            fact: 'SSSI',
+            operator: 'equal',
+            value: true
           }]
-      },
-      {
-        id: 'TE2',
-        description: 'Testing',
-        rules: [
-          {
-            id: 6,
-            type: 'eligibility',
-            description: 'Parcel not within SSSI',
-            enabled: true,
-            facts: [
-              {
-                id: 'SSSI',
-                description: 'Parcel in SSSI area'
-              }
-            ],
-            conditions: [{
-              fact: 'SSSI',
-              operator: 'notEqual',
-              value: true
-            }]
+        }]
+    },
+    {
+      id: 'TE2',
+      description: 'Testing',
+      rules: [
+        {
+          id: 6,
+          type: 'eligibility',
+          description: 'Parcel not within SSSI',
+          enabled: true,
+          facts: [
+            {
+              id: 'SSSI',
+              description: 'Parcel in SSSI area'
+            }
+          ],
+          conditions: [{
+            fact: 'SSSI',
+            operator: 'notEqual',
+            value: true
           }]
-      }]
-    })
+        }]
+    }])
   }
 })
 
