@@ -1,4 +1,4 @@
-const actionService = require('../services/actionsService')
+const actionsService = require('../services/actionsService')
 const parcelService = require('../services/parcelService')
 const paymentCalculationService = require('../services/paymentCalculationService')
 const schema = require('../schema/paymentCalculation')
@@ -23,7 +23,7 @@ module.exports = [
         const actions = await Promise.all(
           requestedActions.map(
             async ({ action, options }) => ({
-              action: await actionService.getById(action),
+              action: await actionsService.getById(action),
               options
             })
           )
@@ -48,7 +48,7 @@ module.exports = [
       console.log(`request for payment calculation. parcelRef: ${parcelRef}, actionId: ${actionId}, actionData:`, actionData)
 
       const landParcel = await parcelService.getByRef(parcelRef)
-      const actions = [{ action: await actionService.getById({ id: actionId }), options: actionData }]
+      const actions = [{ action: await actionsService.getById({ id: actionId }), options: actionData }]
       const response = {
         eligible: await paymentCalculationService.isEligible(landParcel, actions)
       }
