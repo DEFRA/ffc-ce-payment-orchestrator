@@ -2,6 +2,7 @@
     {
         "ref": "SD74445738",
         "totalPerimeter": 325.2,
+        "totalArea": 0.656,
         "perimeterFeatures": [
             {
                 "type": "barn",
@@ -17,6 +18,7 @@
     {
         "ref": "SD75492628",
         "totalPerimeter": 104.9,
+        "totalArea": 0.0676,
         "perimeterFeatures": [],
         "previousActions": [
             {
@@ -28,6 +30,7 @@
     {
         "ref": "SD78379604",
         "totalPerimeter": 45.3,
+        "totalArea": 0.0126,
         "perimeterFeatures": [],
         "previousActions": [],
         "SSSI": true
@@ -35,6 +38,7 @@
     {
         "ref": "SD81437506",
         "totalPerimeter": 363.7,
+        "totalArea": 0.826,
         "perimeterFeatures": [
             {
                 "type": "lake",
@@ -51,6 +55,7 @@
     {
         "ref": "SD81525709",
         "totalPerimeter": 281.0,
+        "totalArea": 0.493,
         "perimeterFeatures": [
             {
                 "type": "hedgerow",
