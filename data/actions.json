@@ -31,8 +31,8 @@
     "description": "Winter cover crops",
     "rules": [
       {
-        "id": "5",
-        "enabled": "true"
+        "id": 5,
+        "enabled": true
       }
     ]
   }
