@@ -25,5 +25,16 @@
         "enabled": true
       }
     ]
+  },
+  {
+    "id": "SW6",
+    "description": "Winter cover crops",
+    "rate": 114,
+    "rules": [
+      {
+        "id": 5,
+        "enabled": true
+      }
+    ]
   }
 ]
