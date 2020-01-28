@@ -1,4 +1,4 @@
-const actionService = require('../../server/services/actionsService')
+const actionsService = require('../../server/services/actionsService')
 const parcelService = require('../../server/services/parcelService')
 const paymentCalculationService = require('../../server/services/paymentCalculationService')
 
@@ -44,12 +44,12 @@ describe('POST /payment-calculation', () => {
 
   describe('with eligible request', () => {
     beforeAll(() => {
-      actionService.getById.mockClear()
+      actionsService.getById.mockClear()
       parcelService.getByRef.mockClear()
       paymentCalculationService.isEligible.mockClear()
       paymentCalculationService.getValue.mockClear()
 
-      actionService.getById.mockReturnValue(actions[0].action)
+      actionsService.getById.mockReturnValue(actions[0].action)
       parcelService.getByRef.mockReturnValue(landParcel)
       paymentCalculationService.isEligible.mockReturnValue(true)
       paymentCalculationService.getValue.mockReturnValue(mockEligibleResult.value)
@@ -84,11 +84,11 @@ describe('POST /payment-calculation', () => {
 
   describe('with ineligible request', () => {
     beforeAll(() => {
-      actionService.getById.mockClear()
+      actionsService.getById.mockClear()
       parcelService.getByRef.mockClear()
       paymentCalculationService.isEligible.mockClear()
 
-      actionService.getById.mockReturnValue(actions[0].action)
+      actionsService.getById.mockReturnValue(actions[0].action)
       parcelService.getByRef.mockReturnValue(landParcel)
       paymentCalculationService.isEligible.mockReturnValue(false)
     })
@@ -125,7 +125,7 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
   beforeEach(async () => {
     jest.clearAllMocks()
 
-    actionService.getById.mockReturnValue({ action: { id: 'FG1' } })
+    actionsService.getById.mockReturnValue({ action: { id: 'FG1' } })
     parcelService.getByRef.mockReturnValue({ ref: 'AA1111' })
     paymentCalculationService.isEligible.mockReturnValue(true)
     paymentCalculationService.getValue.mockReturnValue(80)
@@ -153,7 +153,7 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
     const actionId = 'action1'
     const options = generateRequestOptions(undefined, actionId)
     await server.inject(options)
-    expect(actionService.getById).toHaveBeenCalledWith(
+    expect(actionsService.getById).toHaveBeenCalledWith(
       expect.objectContaining({ id: actionId })
     )
   })
@@ -162,7 +162,7 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
     const sampleAction = { id: 'sample action' }
     const sampleParcel = { id: 'sample parcel' }
     const actionData = { quantity: 111 }
-    actionService.getById.mockReturnValue(sampleAction)
+    actionsService.getById.mockReturnValue(sampleAction)
     parcelService.getByRef.mockReturnValue(sampleParcel)
     await server.inject(generateRequestOptions(undefined, undefined, actionData))
     expect(paymentCalculationService.isEligible).toHaveBeenCalledWith(
