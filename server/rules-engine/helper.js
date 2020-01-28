@@ -1,10 +1,15 @@
-const rulesEngine = require('../../server/rules-engine')
+const rulesEngine = require('./index')
+const { quantityFactName, rateFactName } = require('./enums')
 
-async function fullRun (rules, parcel, options) {
-  let success = false
+async function fullRun (action, parcel, options) {
+  const runResult = { eligible: false }
   rulesEngine.resetEngine()
-  await rulesEngine.doFullRun(rules, [parcel], options, () => { success = true })
-  return success
+  const successCallback = () => {
+    runResult.eligible = true
+    runResult.value = action[rateFactName] * options[quantityFactName]
+  }
+  await rulesEngine.doFullRun(action.rules, [parcel], options, successCallback)
+  return runResult
 }
 
 module.exports = {

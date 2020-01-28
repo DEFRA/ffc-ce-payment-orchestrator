@@ -1,6 +1,7 @@
 [
   {
     "id": "FG1",
-    "description": "Fencing"
+    "description": "Fencing",
+    "rate": 4
   }
 ]

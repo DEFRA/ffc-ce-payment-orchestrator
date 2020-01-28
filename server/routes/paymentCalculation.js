@@ -2,6 +2,7 @@ const actionService = require('../services/actionsService')
 const parcelService = require('../services/parcelService')
 const paymentCalculationService = require('../services/paymentCalculationService')
 const schema = require('../schema/paymentCalculation')
+const rulesEngineHelper = require('../rules-engine/helper')
 
 module.exports = [
   {
@@ -48,14 +49,8 @@ module.exports = [
       console.log(`request for payment calculation. parcelRef: ${parcelRef}, actionId: ${actionId}, actionData:`, actionData)
 
       const landParcel = await parcelService.getByRef(parcelRef)
-      const actions = [{ action: await actionService.getById({ id: actionId }), options: actionData }]
-      const response = {
-        eligible: await paymentCalculationService.isEligible(landParcel, actions)
-      }
-
-      if (response.eligible) {
-        response.value = await paymentCalculationService.getValue(landParcel, actions)
-      }
+      const action = await actionService.getByIdWithRules(actionId)
+      const response = await rulesEngineHelper.fullRun(action, landParcel, actionData)
 
       return h.response(response).code(200)
     }

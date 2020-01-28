@@ -1,10 +1,12 @@
 const actionService = require('../../server/services/actionsService')
 const parcelService = require('../../server/services/parcelService')
 const paymentCalculationService = require('../../server/services/paymentCalculationService')
+const rulesEngineHelper = require('../../server/rules-engine/helper')
 
 jest.mock('../../server/services/actionsService')
 jest.mock('../../server/services/parcelService')
 jest.mock('../../server/services/paymentCalculationService')
+jest.mock('../../server/rules-engine/helper')
 
 describe('POST /payment-calculation', () => {
   let createServer
@@ -125,10 +127,12 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
   beforeEach(async () => {
     jest.clearAllMocks()
 
-    actionService.getById.mockReturnValue({ action: { id: 'FG1' } })
+    actionService.getById.mockReturnValue({ action: { id: 'action-1' } })
+    actionService.getByIdWithRules.mockReturnValue(getSampleAction())
     parcelService.getByRef.mockReturnValue({ ref: 'AA1111' })
     paymentCalculationService.isEligible.mockReturnValue(true)
     paymentCalculationService.getValue.mockReturnValue(80)
+    rulesEngineHelper.fullRun.mockResolvedValue(true)
 
     server = await createServer()
     await server.initialize()
@@ -149,44 +153,41 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
     expect(parcelService.getByRef).toHaveBeenCalledWith(parcelRef)
   })
 
-  test('provides action when retrieving action id from action service', async () => {
+  test('provides action id when retrieving action from action service', async () => {
     const actionId = 'action1'
     const options = generateRequestOptions(undefined, actionId)
     await server.inject(options)
-    expect(actionService.getById).toHaveBeenCalledWith(
-      expect.objectContaining({ id: actionId })
-    )
+    expect(actionService.getByIdWithRules).toHaveBeenCalledWith(actionId)
   })
 
-  test('provides land parcel and actions to payment calculation service when determining eligibility', async () => {
-    const sampleAction = { id: 'sample action' }
+  test('provides correct parameters to rules engine', async () => {
+    const sampleAction = getSampleAction()
     const sampleParcel = { id: 'sample parcel' }
     const actionData = { quantity: 111 }
-    actionService.getById.mockReturnValue(sampleAction)
-    parcelService.getByRef.mockReturnValue(sampleParcel)
+    actionService.getByIdWithRules.mockResolvedValue(sampleAction)
+    parcelService.getByRef.mockResolvedValue(sampleParcel)
     await server.inject(generateRequestOptions(undefined, undefined, actionData))
-    expect(paymentCalculationService.isEligible).toHaveBeenCalledWith(
+    expect(rulesEngineHelper.fullRun).toHaveBeenCalledWith(
+      expect.objectContaining(sampleAction),
       expect.objectContaining(sampleParcel),
-      expect.arrayContaining([
-        { action: sampleAction, options: expect.objectContaining(actionData) }
-      ])
+      expect.objectContaining(actionData)
     )
   })
 
-  test('provides eligible flag matching flag from paymentCalculationService.isEligible', async () => {
+  test('provides eligible flag matching flag from rulesEngineHelper.fullRun', async () => {
     const testCases = [true, false]
     for (const testCase of testCases) {
-      paymentCalculationService.isEligible.mockReturnValue(testCase)
+      rulesEngineHelper.fullRun.mockResolvedValue({ eligible: testCase })
       const response = await server.inject(generateRequestOptions())
       const responseData = JSON.parse(response.payload)
       expect(responseData).toEqual(expect.objectContaining({ eligible: testCase }))
     }
   })
 
-  test('provides value matching calculated payment from paymentCalculationService.getValue', async () => {
+  test('provides value matching calculated payment from rulesEngineHelper.fullRun', async () => {
     const testCases = [12, 38, 872]
     for (const testCase of testCases) {
-      paymentCalculationService.getValue.mockReturnValue(testCase)
+      rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: testCase })
       const response = await server.inject(generateRequestOptions())
       const responseData = JSON.parse(response.payload)
       expect(responseData).toEqual(expect.objectContaining({ value: testCase }))
@@ -194,9 +195,35 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
   })
 
   test('omits value from payload when parcel and action are ineligible for a payment', async () => {
-    paymentCalculationService.isEligible.mockReturnValue(false)
+    rulesEngineHelper.fullRun.mockResolvedValue(false)
     const response = await server.inject(generateRequestOptions())
     const responseData = JSON.parse(response.payload)
     expect(Object.keys(responseData).includes('value')).toBeFalsy()
+  })
+
+  const getSampleAction = () => ({
+    id: 'action-1',
+    rules: [
+      {
+        id: 1,
+        type: 'prevalidation',
+        groupname: 'Perimeter',
+        description: 'Proposed fence length is longer than Total Parcel Perimeter',
+        enabled: true,
+        facts: [
+          {
+            id: 'totalPerimeter',
+            description: 'Total Parcel Perimeter'
+          }
+        ],
+        conditions: [{
+          fact: 'requestedLength',
+          operator: 'greaterThan',
+          value: {
+            fact: 'totalPerimeter'
+          }
+        }]
+      }
+    ]
   })
 })
