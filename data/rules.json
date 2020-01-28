@@ -152,7 +152,7 @@
         }
       },
       {
-        "id": "requestedArea",
+        "id": "quantity",
         "description": "Area requested"
       }
     ],
@@ -161,7 +161,7 @@
         "fact": "usableArea",
         "operator": "lessThanInclusive",
         "value": {
-          "fact": "requestedArea"
+          "fact": "quantity"
         }
       }
     ]

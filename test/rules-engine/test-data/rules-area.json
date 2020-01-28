@@ -17,7 +17,7 @@
         "calculation": {
           "operator": "sumall",
           "sourcefact": "areaFeatures",
-          "path": "$..areaCovered[?(@.type=='pond')]"
+          "path": "$..[?(@.type==='pond')].areaCovered"
         }
       },
       {

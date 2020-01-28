@@ -12,7 +12,7 @@ describe('Rules engine Area rule test', () => {
     rulesEngine.resetEngine()
   })
 
-  test('area rule discards parcels with an action date in the last 5 years', async () => {
+  test('area rule discards parcels with an usable area too low', async () => {
     const acceptedParcels = []
     const successFunc = async function (event, almanac, ruleResult) {
       const ref = await almanac.factValue('ref')
@@ -20,7 +20,7 @@ describe('Rules engine Area rule test', () => {
     }
     await rulesEngine.doFullRun(testRules, parcelsTestData, { quantity: 1000 }, successFunc)
     expect(acceptedParcels).toHaveLength(areaParcelRefs.length)
-    expect(acceptedParcels).arrayContaining(areaParcelRefs)
+    expect(acceptedParcels).toEqual(expect.arrayContaining(areaParcelRefs))
   })
 
   afterEach(() => {
