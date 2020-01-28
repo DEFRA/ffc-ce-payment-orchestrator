@@ -46,4 +46,26 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
       })
     )
   })
+
+  test('parcel SD74445738 isn\'t eligible for a payment under action FG1 - claimed perimeter is greater than parcel perimeter', async () => {
+    const response = await server.inject(generateRequestOptions('SD74445738', 'FG1', { quantity: 326 }))
+    const payload = JSON.parse(response.payload)
+    expect(response.statusCode).toBe(200)
+    expect(payload).toEqual(
+      expect.objectContaining({
+        eligible: false
+      })
+    )
+  })
+
+  test('parcel SD78379604 isn\'t eligible for a payment under action FG1 - it is an SSSI', async () => {
+    const response = await server.inject(generateRequestOptions('SD78379604', 'FG1', { quantity: 104.8 }))
+    const payload = JSON.parse(response.payload)
+    expect(response.statusCode).toBe(200)
+    expect(payload).toEqual(
+      expect.objectContaining({
+        eligible: false
+      })
+    )
+  })
 })
