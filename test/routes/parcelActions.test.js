@@ -62,3 +62,30 @@ describe('Parcel Actions route test', () => {
     await server.stop()
   })
 })
+
+describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
+  const createServer = require('../../server/createServer')
+  let server
+
+  const generateRequestOptions = (
+    parcelRef = 'AA1111',
+    actionId = 'aaa111'
+  ) => ({
+    method: 'GET',
+    url: `/parcels/${parcelRef}/actions/${actionId}`
+  })
+
+  beforeEach(async () => {
+    server = await createServer()
+    await server.initialize()
+  })
+
+  afterEach(async () => {
+    await server.stop()
+  })
+
+  test('responds with status code 200', async () => {
+    const response = await server.inject(generateRequestOptions())
+    expect(response.statusCode).toBe(200)
+  })
+})

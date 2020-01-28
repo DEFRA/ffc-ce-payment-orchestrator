@@ -1,7 +1,7 @@
 const validationSchema = require('../schema/parcelActions')
 const parcelActionsService = require('../services/parcelActionsService')
 
-module.exports = {
+module.exports = [{
   method: 'GET',
   path: '/parcels/{parcelRef}/actions',
   options: {
@@ -19,4 +19,10 @@ module.exports = {
       return h.response({ actions }).code(200)
     }
   }
-}
+}, {
+  method: 'GET',
+  path: '/parcels/{parcelRef}/actions/{actionId}',
+  handler: async (request, h) => {
+    return h.response({}).code(200)
+  }
+}]
