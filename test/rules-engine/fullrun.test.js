@@ -18,9 +18,10 @@ describe('Rules engine prevalidation rules test', () => {
       acceptedParcels.push(ref)
     }
     await rulesEngine.doFullRun(testRules, parcelsTestData, { quantity: 100 }, successFunc)
-    expect(acceptedParcels).toHaveLength(2)
+    expect(acceptedParcels).toHaveLength(3)
     expect(acceptedParcels).toContain('SD81525709')
     expect(acceptedParcels).toContain('SD74445738')
+    expect(acceptedParcels).toContain('SD78379604')
   })
 
   afterEach(() => {

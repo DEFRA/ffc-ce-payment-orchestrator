@@ -17,8 +17,8 @@
     },
     {
         "ref": "SD75492628",
-        "totalPerimeter": 104.9,
-        "totalArea": 0.0676,
+        "totalPerimeter": 504.9,
+        "totalArea": 1.587,
         "perimeterFeatures": [],
         "previousActions": [
             {
@@ -29,8 +29,8 @@
     },
     {
         "ref": "SD78379604",
-        "totalPerimeter": 45.3,
-        "totalArea": 0.0126,
+        "totalPerimeter": 645.3,
+        "totalArea": 2.602,
         "perimeterFeatures": [],
         "previousActions": [],
         "SSSI": true

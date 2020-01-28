@@ -18,11 +18,11 @@ describe('Rules engine prevalidation rules test', () => {
       },
       {
         ref: 'SD75492628',
-        value: 104.9
+        value: 504.9
       },
       {
         ref: 'SD78379604',
-        value: 45.3
+        value: 645.3
       },
       {
         ref: 'SD81437506',
