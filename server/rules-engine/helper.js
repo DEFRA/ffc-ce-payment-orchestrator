@@ -1,4 +1,4 @@
-const rulesEngine = require('./index')
+const rulesEngine = require('../services/rulesEngineService')
 const { quantityFactName, rateFactName } = require('./enums')
 
 async function fullRun (action, parcel, options) {

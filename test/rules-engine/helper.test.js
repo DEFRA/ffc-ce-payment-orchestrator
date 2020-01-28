@@ -1,7 +1,7 @@
 const rulesEngineHelper = require('../../server/rules-engine/helper')
-const rulesEngine = require('../../server/rules-engine')
+const rulesEngine = require('../../server/services/rulesEngineService')
 
-jest.mock('../../server/rules-engine')
+jest.mock('../../server/services/rulesEngineService')
 
 describe('Rules engine helper', () => {
   beforeEach(() => {
