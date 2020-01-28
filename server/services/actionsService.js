@@ -8,7 +8,7 @@ function ActionsService () {
     this.allRules = await rulesService.get()
     this.actions = actionsData.map(action => {
       const { rules, ...retVal } = action
-      retVal.rules = action.rules.map(originalRule => Object.assign({}, this.allRules.find(x => x.id === originalRule.id), originalRule))
+      retVal.rules = action.rules.map(originalRule => ({ ...this.allRules.find(x => x.id === originalRule.id), ...originalRule }))
       return retVal
     })
     this._doneInit = true
