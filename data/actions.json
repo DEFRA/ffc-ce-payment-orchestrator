@@ -38,6 +38,10 @@
       {
         "id": 6,
         "enabled": true
+      },
+      {
+        "id": 7,
+        "enabled": false
       }
     ]
   }
