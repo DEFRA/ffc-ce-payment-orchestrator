@@ -1,6 +1,6 @@
 const paramsSchema = require('../schema/actionRulesParams')
 const payloadSchema = require('../schema/actionRulesPayload')
-const actionRulesService = require('../services/actionRulesService')
+const actionsService = require('../services/actionsService')
 
 module.exports = {
   method: 'PUT',
@@ -21,7 +21,7 @@ module.exports = {
       const ruleID = request.params.ruleID
       const enabled = request.payload.enabled
       console.log(`actionRules: set rule ${ruleID} on action ${actionID} to ${enabled}`)
-      const updatedRule = await actionRulesService.update(actionID, ruleID, enabled)
+      const updatedRule = await actionsService.updateRuleEnabled(actionID, ruleID, enabled)
       return updatedRule ? h.response(updatedRule).code(200) : h.response().code(400)
     }
   }

@@ -30,12 +30,12 @@ describe('Action rules route test', () => {
     facts: [{ description: 'Total Parcel Perimeter' }]
   }
 
-  const mockActionRulesService = {
-    update: jest.fn().mockResolvedValue(mockUpdatedRule)
+  const mockActionsService = {
+    updateRuleEnabled: jest.fn().mockResolvedValue(mockUpdatedRule)
   }
 
   beforeAll(async () => {
-    jest.mock('../../server/services/actionRulesService', () => mockActionRulesService)
+    jest.mock('../../server/services/actionsService', () => mockActionsService)
     createServer = require('../../server/createServer')
   })
 
@@ -44,12 +44,12 @@ describe('Action rules route test', () => {
     await server.initialize()
   })
 
-  test('calls the actionRulesService', async () => {
+  test('calls the actionsService', async () => {
     await server.inject(goodRequest)
-    expect(mockActionRulesService.update).toHaveBeenCalledWith(actionID, ruleID, goodRequest.payload.enabled)
+    expect(mockActionsService.updateRuleEnabled).toHaveBeenCalledWith(actionID, ruleID, goodRequest.payload.enabled)
   })
 
-  test('returns the updated data from actionRulesService', async () => {
+  test('returns the updated data from actionsService', async () => {
     const response = await server.inject(goodRequest)
     const payload = JSON.parse(response.payload)
     expect(payload).toEqual(mockUpdatedRule)
@@ -71,7 +71,7 @@ describe('Action rules route test', () => {
   })
 
   afterAll(() => {
-    jest.unmock('../../server/services/actionRulesService')
+    jest.unmock('../../server/services/actionsService')
   })
 
   afterEach(async () => {

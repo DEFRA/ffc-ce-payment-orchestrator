@@ -1,4 +1,4 @@
-const actionService = require('../../server/services/actionsService')
+const actionsService = require('../../server/services/actionsService')
 const parcelService = require('../../server/services/parcelService')
 const rulesEngineHelper = require('../../server/rules-engine/helper')
 
@@ -25,7 +25,7 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
   beforeEach(async () => {
     jest.clearAllMocks()
 
-    actionService.getByIdWithRules.mockReturnValue(getSampleAction())
+    actionsService.getByIdWithRules.mockReturnValue(getSampleAction())
     parcelService.getByRef.mockReturnValue({ ref: 'AA1111' })
     rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: 1 })
 
@@ -52,14 +52,14 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
     const actionId = 'action1'
     const options = generateRequestOptions(undefined, actionId)
     await server.inject(options)
-    expect(actionService.getByIdWithRules).toHaveBeenCalledWith(actionId)
+    expect(actionsService.getByIdWithRules).toHaveBeenCalledWith(actionId)
   })
 
   test('provides correct parameters to rules engine', async () => {
     const sampleAction = getSampleAction()
     const sampleParcel = { id: 'sample parcel' }
     const actionData = { quantity: 111 }
-    actionService.getByIdWithRules.mockResolvedValue(sampleAction)
+    actionsService.getByIdWithRules.mockResolvedValue(sampleAction)
     parcelService.getByRef.mockResolvedValue(sampleParcel)
     await server.inject(generateRequestOptions(undefined, undefined, actionData))
     expect(rulesEngineHelper.fullRun).toHaveBeenCalledWith(

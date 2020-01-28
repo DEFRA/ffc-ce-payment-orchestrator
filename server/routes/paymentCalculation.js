@@ -1,4 +1,4 @@
-const actionService = require('../services/actionsService')
+const actionsService = require('../services/actionsService')
 const parcelService = require('../services/parcelService')
 const schema = require('../schema/paymentCalculation')
 const rulesEngineHelper = require('../rules-engine/helper')
@@ -21,7 +21,7 @@ module.exports = [
       console.log(`request for payment calculation. parcelRef: ${parcelRef}, actionId: ${actionId}, actionData:`, actionData)
 
       const landParcel = await parcelService.getByRef(parcelRef)
-      const action = await actionService.getByIdWithRules(actionId)
+      const action = await actionsService.getByIdWithRules(actionId)
       const response = await rulesEngineHelper.fullRun(action, landParcel, actionData)
 
       return h.response(response).code(200)
