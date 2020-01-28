@@ -22,18 +22,17 @@ function ActionsService () {
   this.getByIdWithRules = async function (id) {
     await this._init()
     const match = this.actions.find(action => action.id === id)
-    return match
+    return match || null
   }
 
   this.getById = async function (id) {
     await this._init()
     const match = this.actions.find(action => action.id === id)
-    if (typeof match !== 'undefined') {
+    if (match) {
       const { rules, ...retVal } = match
       return retVal
-    } else {
-      return null
     }
+    return null
   }
 
   this.updateRuleEnabled = async function (actionID, ruleID, enabled) {

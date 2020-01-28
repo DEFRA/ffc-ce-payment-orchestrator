@@ -124,6 +124,11 @@ describe('actionsService', () => {
     expect(action).toBe(null)
   })
 
+  test('getByIdWithRules returns null if no action has the requested ID', async () => {
+    const action = await actionsService.getByIdWithRules('not-a-real-id')
+    expect(action).toBe(null)
+  })
+
   test('getByIdWithRules returns an action matching the requested ID', async () => {
     const actionId = 'TE1'
     const action = await actionsService.getByIdWithRules(actionId)
