@@ -25,10 +25,9 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
   beforeEach(async () => {
     jest.clearAllMocks()
 
-    actionService.getById.mockReturnValue({ action: { id: 'action-1' } })
     actionService.getByIdWithRules.mockReturnValue(getSampleAction())
     parcelService.getByRef.mockReturnValue({ ref: 'AA1111' })
-    rulesEngineHelper.fullRun.mockResolvedValue(true)
+    rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: 1 })
 
     server = await createServer()
     await server.initialize()
@@ -91,7 +90,7 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
   })
 
   test('omits value from payload when parcel and action are ineligible for a payment', async () => {
-    rulesEngineHelper.fullRun.mockResolvedValue(false)
+    rulesEngineHelper.fullRun.mockResolvedValue({ eligible: false })
     const response = await server.inject(generateRequestOptions())
     const responseData = JSON.parse(response.payload)
     expect(Object.keys(responseData).includes('value')).toBeFalsy()
