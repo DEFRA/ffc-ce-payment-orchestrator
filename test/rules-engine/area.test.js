@@ -2,7 +2,7 @@ describe('Rules engine Area rule test', () => {
   let rulesEngine
   const parcelsTestData = require('./test-data/parcels-area.json')
   const testRules = require('./test-data/rules-area.json')
-  const areaParcelRefs = ['SD78379604', 'SD81437506']
+  const areaParcelRefs = ['SD75492628', 'SD78379604', 'SD81437506']
 
   beforeAll(() => {
     rulesEngine = require('../../server/rules-engine')
@@ -18,7 +18,7 @@ describe('Rules engine Area rule test', () => {
       const ref = await almanac.factValue('ref')
       acceptedParcels.push(ref)
     }
-    await rulesEngine.doFullRun(testRules, parcelsTestData, { quantity: 1000 }, successFunc)
+    await rulesEngine.doFullRun(testRules, parcelsTestData, { quantity: 0.6 }, successFunc)
     expect(acceptedParcels).toHaveLength(areaParcelRefs.length)
     expect(acceptedParcels).toEqual(expect.arrayContaining(areaParcelRefs))
   })
