@@ -1,10 +1,16 @@
 const mockParcelsToReturn = [{
   ref: 'SS12345678',
-  SSSI: false
+  SSSI: false,
+  totalPerimeter: 45,
+  perimeterFeatures: [],
+  previousActions: []
 },
 {
   ref: 'XX12345678',
-  SSSI: true
+  SSSI: true,
+  totalPerimeter: 45,
+  perimeterFeatures: [],
+  previousActions: []
 }]
 
 jest.mock('../../server/services/parcelService', () => {
@@ -42,24 +48,7 @@ jest.mock('../../server/services/actionsService', () => {
     {
       id: 'TE2',
       description: 'Testing',
-      rules: [
-        {
-          id: 6,
-          type: 'eligibility',
-          description: 'Parcel not within SSSI',
-          enabled: true,
-          facts: [
-            {
-              id: 'SSSI',
-              description: 'Parcel in SSSI area'
-            }
-          ],
-          conditions: [{
-            fact: 'SSSI',
-            operator: 'notEqual',
-            value: true
-          }]
-        }]
+      rules: []
     }])
   }
 })
@@ -74,19 +63,17 @@ describe('parcelActionService', () => {
     expect(Array.isArray(actions)).toEqual(true)
   })
 
-  test('for an SSSI disabled parcel actions service returns an array where the first element has an id of TE1', async () => {
+  test('returns all actions if parcel is eligible for all actions', async () => {
     const actions = await parcelActionsService.get(SSSIparcelRef)
-    expect(actions[0]).toMatchObject({
-      id: 'TE1',
-      description: 'Testing'
-    })
+    expect(actions).toEqual([
+      { id: 'TE1', description: 'Testing' },
+      { id: 'TE2', description: 'Testing' }
+    ])
   })
 
-  test('for an SSSI enable parcel actions service returns an array where the first element has an id of TE2', async () => {
+  test('returns only eligible actions if the parcel is eligible for some actions', async () => {
     const actions = await parcelActionsService.get(nonSSSIparcelRef)
-    expect(actions[0]).toMatchObject({
-      id: 'TE2',
-      description: 'Testing'
-    })
+    expect(actions).toEqual([
+      { id: 'TE2', description: 'Testing' }])
   })
 })
