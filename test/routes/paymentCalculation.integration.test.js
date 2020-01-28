@@ -28,106 +28,18 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
 
   test('parcel SD74445738 is eligible for a payment under action FG1 - all rules enabled (except adjusted perimeter rule)', async () => {
     jest.mock(
-      '../../data/rules.json',
+      '../../data/actions.json',
       () => [
         {
-          id: 1,
-          type: 'prevalidation',
-          groupname: 'Perimeter',
-          description: 'Proposed fence length is longer than Total Parcel Perimeter',
-          enabled: true,
-          facts: [
-            {
-              id: 'totalPerimeter',
-              description: 'Total Parcel Perimeter'
-            }
-          ],
-          conditions: [{
-            fact: 'requestedLength',
-            operator: 'greaterThan',
-            value: {
-              fact: 'totalPerimeter'
-            }
-          }]
-        },
-        {
-          id: 2,
-          type: 'prevalidation',
-          groupname: 'Perimeter',
-          description: 'Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features',
-          enabled: false,
-          facts: [
-            {
-              id: 'totalPerimeter',
-              description: 'Total Parcel Perimeter'
-            },
-            {
-              id: 'perimeterRemoved',
-              description: 'Total Feature Length',
-              calculated: true,
-              calculation: {
-                operator: 'sumall',
-                sourcefact: 'perimeterFeatures',
-                path: '$..length'
-              }
-            },
-            {
-              id: 'usablePerimeter',
-              description: 'Total usable perimeter length',
-              calculated: true,
-              calculation: {
-                operator: 'subtract',
-                value1: 'totalPerimeter',
-                value2: 'perimeterRemoved'
-              }
-            },
-            {
-              id: 'requestedLength',
-              description: 'Metres of fencing requested'
-            }
-          ],
-          conditions: [{
-            fact: 'usablePerimeter',
-            operator: 'lessThanInclusive',
-            value: {
-              fact: 'requestedLength'
-            }
-          }]
-        },
-        {
-          id: 4,
-          type: 'eligibility',
-          description: 'Previous Action date is within the last 5 years',
-          enabled: true,
-          facts: [
-            {
-              id: 'previousActions',
-              description: 'Previous Action Dates'
-            }
-          ],
-          conditions: [{
-            fact: 'previousActions',
-            path: '$..date',
-            operator: 'lessThan5Years',
-            value: '2020-01-20T00:00:01.000Z'
-          }]
-        },
-        {
-          id: 5,
-          type: 'eligibility',
-          description: 'Parcel within SSSI',
-          enabled: true,
-          facts: [
-            {
-              id: 'SSSI',
-              description: 'Parcel in SSSI area'
-            }
-          ],
-          conditions: [{
-            fact: 'SSSI',
-            operator: 'equal',
-            value: true
-          }]
+          id: 'FG1',
+          description: 'Fencing',
+          rules: [
+            { id: 1, enabled: true },
+            { id: 2, enabled: false },
+            { id: 3, enabled: false },
+            { id: 4, enabled: true },
+            { id: 5, enabled: true }
+          ]
         }
       ]
     )
@@ -145,106 +57,18 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
 
   test('parcel SD74445738 is eligible for a payment under action FG1 - all rules enabled (except perimeter rule)', async () => {
     jest.mock(
-      '../../data/rules.json',
+      '../../data/actions.json',
       () => [
         {
-          id: 1,
-          type: 'prevalidation',
-          groupname: 'Perimeter',
-          description: 'Proposed fence length is longer than Total Parcel Perimeter',
-          enabled: false,
-          facts: [
-            {
-              id: 'totalPerimeter',
-              description: 'Total Parcel Perimeter'
-            }
-          ],
-          conditions: [{
-            fact: 'requestedLength',
-            operator: 'greaterThan',
-            value: {
-              fact: 'totalPerimeter'
-            }
-          }]
-        },
-        {
-          id: 2,
-          type: 'prevalidation',
-          groupname: 'Perimeter',
-          description: 'Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features',
-          enabled: true,
-          facts: [
-            {
-              id: 'totalPerimeter',
-              description: 'Total Parcel Perimeter'
-            },
-            {
-              id: 'perimeterRemoved',
-              description: 'Total Feature Length',
-              calculated: true,
-              calculation: {
-                operator: 'sumall',
-                sourcefact: 'perimeterFeatures',
-                path: '$..length'
-              }
-            },
-            {
-              id: 'usablePerimeter',
-              description: 'Total usable perimeter length',
-              calculated: true,
-              calculation: {
-                operator: 'subtract',
-                value1: 'totalPerimeter',
-                value2: 'perimeterRemoved'
-              }
-            },
-            {
-              id: 'requestedLength',
-              description: 'Metres of fencing requested'
-            }
-          ],
-          conditions: [{
-            fact: 'usablePerimeter',
-            operator: 'lessThanInclusive',
-            value: {
-              fact: 'requestedLength'
-            }
-          }]
-        },
-        {
-          id: 4,
-          type: 'eligibility',
-          description: 'Previous Action date is within the last 5 years',
-          enabled: true,
-          facts: [
-            {
-              id: 'previousActions',
-              description: 'Previous Action Dates'
-            }
-          ],
-          conditions: [{
-            fact: 'previousActions',
-            path: '$..date',
-            operator: 'lessThan5Years',
-            value: '2020-01-20T00:00:01.000Z'
-          }]
-        },
-        {
-          id: 5,
-          type: 'eligibility',
-          description: 'Parcel within SSSI',
-          enabled: true,
-          facts: [
-            {
-              id: 'SSSI',
-              description: 'Parcel in SSSI area'
-            }
-          ],
-          conditions: [{
-            fact: 'SSSI',
-            operator: 'equal',
-            value: true
-          }]
+          id: 'FG1',
+          description: 'Fencing',
+          rules: [
+            { id: 1, enabled: false },
+            { id: 2, enabled: true },
+            { id: 3, enabled: false },
+            { id: 4, enabled: true },
+            { id: 5, enabled: true }
+          ]
         }
       ]
     )
@@ -262,25 +86,18 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
 
   test('parcel SD75492628 isn\'t eligible for a payment under action FG1 - it has a previous action', async () => {
     jest.mock(
-      '../../data/rules.json',
+      '../../data/actions.json',
       () => [
         {
-          id: 4,
-          type: 'eligibility',
-          description: 'Previous Action date is within the last 5 years',
-          enabled: true,
-          facts: [
-            {
-              id: 'previousActions',
-              description: 'Previous Action Dates'
-            }
-          ],
-          conditions: [{
-            fact: 'previousActions',
-            path: '$..date',
-            operator: 'lessThan5Years',
-            value: '2020-01-20T00:00:01.000Z'
-          }]
+          id: 'FG1',
+          description: 'Fencing',
+          rules: [
+            { id: 1, enabled: false },
+            { id: 2, enabled: false },
+            { id: 3, enabled: false },
+            { id: 4, enabled: true },
+            { id: 5, enabled: false }
+          ]
         }
       ]
     )
@@ -297,27 +114,18 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
 
   test('parcel SD74445738 isn\'t eligible for a payment under action FG1 - claimed perimeter is greater than parcel perimeter', async () => {
     jest.mock(
-      '../../data/rules.json',
+      '../../data/actions.json',
       () => [
         {
-          id: 1,
-          type: 'prevalidation',
-          groupname: 'Perimeter',
-          description: 'Proposed fence length is longer than Total Parcel Perimeter',
-          enabled: true,
-          facts: [
-            {
-              id: 'totalPerimeter',
-              description: 'Total Parcel Perimeter'
-            }
-          ],
-          conditions: [{
-            fact: 'requestedLength',
-            operator: 'greaterThan',
-            value: {
-              fact: 'totalPerimeter'
-            }
-          }]
+          id: 'FG1',
+          description: 'Fencing',
+          rules: [
+            { id: 1, enabled: true },
+            { id: 2, enabled: false },
+            { id: 3, enabled: false },
+            { id: 4, enabled: false },
+            { id: 5, enabled: false }
+          ]
         }
       ]
     )
@@ -334,51 +142,18 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
 
   test('parcel SD74445738 isn\'t eligible for a payment under action FG1 - claimed perimeter is greater than adjusted perimeter', async () => {
     jest.mock(
-      '../../data/rules.json',
+      '../../data/actions.json',
       () => [
         {
-          id: 2,
-          type: 'prevalidation',
-          groupname: 'Perimeter',
-          description: 'Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features',
-          enabled: true,
-          facts: [
-            {
-              id: 'totalPerimeter',
-              description: 'Total Parcel Perimeter'
-            },
-            {
-              id: 'perimeterRemoved',
-              description: 'Total Feature Length',
-              calculated: true,
-              calculation: {
-                operator: 'sumall',
-                sourcefact: 'perimeterFeatures',
-                path: '$..length'
-              }
-            },
-            {
-              id: 'usablePerimeter',
-              description: 'Total usable perimeter length',
-              calculated: true,
-              calculation: {
-                operator: 'subtract',
-                value1: 'totalPerimeter',
-                value2: 'perimeterRemoved'
-              }
-            },
-            {
-              id: 'requestedLength',
-              description: 'Metres of fencing requested'
-            }
-          ],
-          conditions: [{
-            fact: 'usablePerimeter',
-            operator: 'lessThanInclusive',
-            value: {
-              fact: 'requestedLength'
-            }
-          }]
+          id: 'FG1',
+          description: 'Fencing',
+          rules: [
+            { id: 1, enabled: false },
+            { id: 2, enabled: true },
+            { id: 3, enabled: false },
+            { id: 4, enabled: false },
+            { id: 5, enabled: false }
+          ]
         }
       ]
     )
@@ -395,24 +170,18 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
 
   test('parcel SD78379604 isn\'t eligible for a payment under action FG1 - it is an SSSI', async () => {
     jest.mock(
-      '../../data/rules.json',
+      '../../data/actions.json',
       () => [
         {
-          id: 5,
-          type: 'eligibility',
-          description: 'Parcel within SSSI',
-          enabled: true,
-          facts: [
-            {
-              id: 'SSSI',
-              description: 'Parcel in SSSI area'
-            }
-          ],
-          conditions: [{
-            fact: 'SSSI',
-            operator: 'equal',
-            value: true
-          }]
+          id: 'FG1',
+          description: 'Fencing',
+          rules: [
+            { id: 1, enabled: false },
+            { id: 2, enabled: false },
+            { id: 3, enabled: false },
+            { id: 4, enabled: false },
+            { id: 5, enabled: true }
+          ]
         }
       ]
     )
