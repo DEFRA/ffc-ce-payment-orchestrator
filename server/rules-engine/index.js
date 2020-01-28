@@ -144,7 +144,7 @@ function RulesEngine () {
   }
 
   this.runEngine = function (facts, passedFacts) {
-    const factsToRun = Object.assign({}, facts, passedFacts)
+    const factsToRun = { ...facts, ...passedFacts }
     return this.engine.run(factsToRun)
   }
 
