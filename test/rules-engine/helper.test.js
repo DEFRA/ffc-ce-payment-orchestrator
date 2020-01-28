@@ -81,7 +81,7 @@ describe('Rules engine helper', () => {
         }
       ],
       conditions: [{
-        fact: 'requestedLength',
+        fact: 'quantity',
         operator: 'greaterThan',
         value: {
           fact: 'totalPerimeter'

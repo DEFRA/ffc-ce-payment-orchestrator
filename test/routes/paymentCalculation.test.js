@@ -112,7 +112,7 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
           }
         ],
         conditions: [{
-          fact: 'requestedLength',
+          fact: 'quantity',
           operator: 'greaterThan',
           value: {
             fact: 'totalPerimeter'
