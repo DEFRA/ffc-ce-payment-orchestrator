@@ -6,6 +6,8 @@ const ruleAccepted = '_rule_accepted'
 const ruleRejected = '_rule_rejected'
 const acceptedEventName = '_accepted_event'
 const rejectedFactAdder = '_rejected_fact_adder'
+const quantityFactName = 'quantity'
+const rateFactName = 'rate'
 
 module.exports =
 {
@@ -13,5 +15,7 @@ module.exports =
   ruleAccepted,
   ruleRejected,
   acceptedEventName,
-  rejectedFactAdder
+  rejectedFactAdder,
+  quantityFactName,
+  rateFactName
 }

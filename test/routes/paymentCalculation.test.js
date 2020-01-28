@@ -1,110 +1,10 @@
 const actionsService = require('../../server/services/actionsService')
 const parcelService = require('../../server/services/parcelService')
-const paymentCalculationService = require('../../server/services/paymentCalculationService')
+const rulesEngineHelper = require('../../server/rules-engine/helper')
 
 jest.mock('../../server/services/actionsService')
 jest.mock('../../server/services/parcelService')
-jest.mock('../../server/services/paymentCalculationService')
-
-describe('POST /payment-calculation', () => {
-  let createServer
-  let server
-
-  const landParcel = { ref: '111111' }
-
-  const actions = [
-    {
-      action: { id: 'FG1' },
-      options: { quantity: 50 }
-    }
-  ]
-  const request = {
-    method: 'POST',
-    url: '/payment-calculation',
-    payload: {
-      parcelRef: landParcel.ref,
-      actions
-    }
-  }
-  const mockEligibleResult = { value: '80', eligible: true }
-  const mockIneligibleResult = { eligible: false }
-
-  beforeAll(async () => {
-    createServer = require('../../server/createServer')
-  })
-
-  beforeEach(async () => {
-    server = await createServer()
-    await server.initialize()
-  })
-
-  afterEach(async () => {
-    await server.stop()
-  })
-
-  describe('with eligible request', () => {
-    beforeAll(() => {
-      actionsService.getById.mockClear()
-      parcelService.getByRef.mockClear()
-      paymentCalculationService.isEligible.mockClear()
-      paymentCalculationService.getValue.mockClear()
-
-      actionsService.getById.mockReturnValue(actions[0].action)
-      parcelService.getByRef.mockReturnValue(landParcel)
-      paymentCalculationService.isEligible.mockReturnValue(true)
-      paymentCalculationService.getValue.mockReturnValue(mockEligibleResult.value)
-    })
-
-    test('responds with status code 200', async () => {
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-    })
-
-    test('fetches parcel data from parcelService', async () => {
-      await server.inject(request)
-      expect(parcelService.getByRef).toHaveBeenCalledWith(request.payload.parcelRef)
-    })
-
-    test('tests eligibility with paymentCalculationService', async () => {
-      await server.inject(request)
-      expect(paymentCalculationService.isEligible).toHaveBeenCalledWith(landParcel, actions)
-    })
-
-    test('fetches total value from paymentCalculationService', async () => {
-      await server.inject(request)
-      expect(paymentCalculationService.getValue).toHaveBeenCalledWith(landParcel, actions)
-    })
-
-    test('returns the data provided by paymentCalculationService', async () => {
-      const response = await server.inject(request)
-      const responseData = JSON.parse(response.payload)
-      expect(responseData).toEqual(mockEligibleResult)
-    })
-  })
-
-  describe('with ineligible request', () => {
-    beforeAll(() => {
-      actionsService.getById.mockClear()
-      parcelService.getByRef.mockClear()
-      paymentCalculationService.isEligible.mockClear()
-
-      actionsService.getById.mockReturnValue(actions[0].action)
-      parcelService.getByRef.mockReturnValue(landParcel)
-      paymentCalculationService.isEligible.mockReturnValue(false)
-    })
-
-    test('responds with status code 200', async () => {
-      const response = await server.inject(request)
-      expect(response.statusCode).toBe(200)
-    })
-
-    test('returns the fact that the land parcel is ineligible for the requested actions', async () => {
-      const response = await server.inject(request)
-      const responseData = JSON.parse(response.payload)
-      expect(responseData).toEqual(mockIneligibleResult)
-    })
-  })
-})
+jest.mock('../../server/rules-engine/helper')
 
 describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () => {
   const createServer = require('../../server/createServer')
@@ -125,10 +25,9 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
   beforeEach(async () => {
     jest.clearAllMocks()
 
-    actionsService.getById.mockReturnValue({ action: { id: 'FG1' } })
+    actionsService.getByIdWithRules.mockReturnValue(getSampleAction())
     parcelService.getByRef.mockReturnValue({ ref: 'AA1111' })
-    paymentCalculationService.isEligible.mockReturnValue(true)
-    paymentCalculationService.getValue.mockReturnValue(80)
+    rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: 1 })
 
     server = await createServer()
     await server.initialize()
@@ -149,44 +48,41 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
     expect(parcelService.getByRef).toHaveBeenCalledWith(parcelRef)
   })
 
-  test('provides action when retrieving action id from action service', async () => {
+  test('provides action id when retrieving action from action service', async () => {
     const actionId = 'action1'
     const options = generateRequestOptions(undefined, actionId)
     await server.inject(options)
-    expect(actionsService.getById).toHaveBeenCalledWith(
-      expect.objectContaining({ id: actionId })
-    )
+    expect(actionsService.getByIdWithRules).toHaveBeenCalledWith(actionId)
   })
 
-  test('provides land parcel and actions to payment calculation service when determining eligibility', async () => {
-    const sampleAction = { id: 'sample action' }
+  test('provides correct parameters to rules engine', async () => {
+    const sampleAction = getSampleAction()
     const sampleParcel = { id: 'sample parcel' }
     const actionData = { quantity: 111 }
-    actionsService.getById.mockReturnValue(sampleAction)
-    parcelService.getByRef.mockReturnValue(sampleParcel)
+    actionsService.getByIdWithRules.mockResolvedValue(sampleAction)
+    parcelService.getByRef.mockResolvedValue(sampleParcel)
     await server.inject(generateRequestOptions(undefined, undefined, actionData))
-    expect(paymentCalculationService.isEligible).toHaveBeenCalledWith(
+    expect(rulesEngineHelper.fullRun).toHaveBeenCalledWith(
+      expect.objectContaining(sampleAction),
       expect.objectContaining(sampleParcel),
-      expect.arrayContaining([
-        { action: sampleAction, options: expect.objectContaining(actionData) }
-      ])
+      expect.objectContaining(actionData)
     )
   })
 
-  test('provides eligible flag matching flag from paymentCalculationService.isEligible', async () => {
+  test('provides eligible flag matching flag from rulesEngineHelper.fullRun', async () => {
     const testCases = [true, false]
     for (const testCase of testCases) {
-      paymentCalculationService.isEligible.mockReturnValue(testCase)
+      rulesEngineHelper.fullRun.mockResolvedValue({ eligible: testCase })
       const response = await server.inject(generateRequestOptions())
       const responseData = JSON.parse(response.payload)
       expect(responseData).toEqual(expect.objectContaining({ eligible: testCase }))
     }
   })
 
-  test('provides value matching calculated payment from paymentCalculationService.getValue', async () => {
+  test('provides value matching calculated payment from rulesEngineHelper.fullRun', async () => {
     const testCases = [12, 38, 872]
     for (const testCase of testCases) {
-      paymentCalculationService.getValue.mockReturnValue(testCase)
+      rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: testCase })
       const response = await server.inject(generateRequestOptions())
       const responseData = JSON.parse(response.payload)
       expect(responseData).toEqual(expect.objectContaining({ value: testCase }))
@@ -194,9 +90,35 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
   })
 
   test('omits value from payload when parcel and action are ineligible for a payment', async () => {
-    paymentCalculationService.isEligible.mockReturnValue(false)
+    rulesEngineHelper.fullRun.mockResolvedValue({ eligible: false })
     const response = await server.inject(generateRequestOptions())
     const responseData = JSON.parse(response.payload)
     expect(Object.keys(responseData).includes('value')).toBeFalsy()
+  })
+
+  const getSampleAction = () => ({
+    id: 'action-1',
+    rules: [
+      {
+        id: 1,
+        type: 'prevalidation',
+        groupname: 'Perimeter',
+        description: 'Proposed fence length is longer than Total Parcel Perimeter',
+        enabled: true,
+        facts: [
+          {
+            id: 'totalPerimeter',
+            description: 'Total Parcel Perimeter'
+          }
+        ],
+        conditions: [{
+          fact: 'quantity',
+          operator: 'greaterThan',
+          value: {
+            fact: 'totalPerimeter'
+          }
+        }]
+      }
+    ]
   })
 })

@@ -12,7 +12,7 @@
       }
     ],
     "conditions": [{
-      "fact": "requestedLength",
+      "fact": "quantity",
       "operator": "greaterThan",
       "value": {
         "fact": "totalPerimeter"
@@ -51,7 +51,7 @@
         }
       },
       {
-        "id": "requestedLength",
+        "id": "quantity",
         "description": "Metres of fencing requested"
       }
     ],
@@ -59,7 +59,7 @@
       "fact": "usablePerimeter",
       "operator": "lessThanInclusive",
       "value": {
-        "fact": "requestedLength"
+        "fact": "quantity"
       }
     }]
   },

@@ -2,6 +2,7 @@
   {
     "id": "FG1",
     "description": "Fencing",
+    "rate": 4,
     "rules": [
       {
         "id": 1,

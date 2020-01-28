@@ -3,17 +3,13 @@ const joi = require('@hapi/joi')
 // Define config schema
 const schema = joi.object({
   port: joi.number().default(3002),
-  env: joi.string().valid('development', 'test', 'production').default('development'),
-  actions: {
-    fencingPricePerMetre: joi.number().default(4)
-  }
+  env: joi.string().valid('development', 'test', 'production').default('development')
 })
 
 // Build config
 const config = {
   port: process.env.PORT,
-  env: process.env.NODE_ENV,
-  actions: { fencingPricePerMetre: process.env.FENCING_PRICE_PER_METRE }
+  env: process.env.NODE_ENV
 }
 
 // Validate config
