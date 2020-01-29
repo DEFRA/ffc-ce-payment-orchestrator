@@ -84,6 +84,8 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
+    rulesEngineHelper.fullRun.mockResolvedValue({})
+    actionsService.getByIdWithRules.mockResolvedValue({ input: {} })
     server = await createServer()
     await server.initialize()
   })
@@ -113,7 +115,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
     const options = generateRequestOptions()
     const sampleParcel = getSampleParcel()
     const sampleAction = getSampleAction()
-    parcelService.getByRef.mockResolvedValue(sampleParcel)
+    parcelService.getByRef.mockReturnValue(sampleParcel)
     actionsService.getByIdWithRules.mockResolvedValue(sampleAction)
 
     await server.inject(options)
@@ -125,6 +127,45 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
     )
   })
 
+  test('provides input description as given in action', async () => {
+    const sampleAction = getSampleAction()
+    actionsService.getByIdWithRules.mockResolvedValue(sampleAction)
+    const response = await server.inject(generateRequestOptions())
+    const responseData = JSON.parse(response.payload)
+
+    expect(responseData).toEqual(
+      expect.objectContaining({
+        id: sampleAction.id,
+        description: sampleAction.description,
+        input: sampleAction.input
+      })
+    )
+  })
+
+  test('elaborates input description with upperbound provided by rules engine runner', async () => {
+    const upperbound = 40
+    rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: 100, upperbound })
+    const response = await server.inject(generateRequestOptions())
+    const responseData = JSON.parse(response.payload)
+
+    expect(responseData.input).toEqual(
+      expect.objectContaining({ upperbound })
+    )
+  })
+
+  test('omits action properties other than id, description and input', async () => {
+    const sampleAction = getSampleAction()
+    actionsService.getByIdWithRules.mockResolvedValue(sampleAction)
+    const response = await server.inject(generateRequestOptions())
+    const responseData = JSON.parse(response.payload)
+
+    const responseKeys = Object.keys(responseData)
+    expect(responseKeys).toHaveLength(3)
+    expect(responseKeys).toEqual(
+      expect.arrayContaining(['id', 'description', 'input'])
+    )
+  })
+
   const getSampleParcel = () => ({
     ref: 'SD12345678',
     totalPerimeter: 100,
@@ -133,10 +174,15 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
   })
 
   const getSampleAction = (rate = 1) => ({
-    id: 'action-1',
-    description: 'Action 1',
+    id: 'crop-circle',
+    description: 'Damages claim for UFO landings in field',
     rate,
-    rules: getSampleRules()
+    rules: getSampleRules(),
+    input: {
+      unit: 'metres',
+      description: 'radius of flying saucer that landed in field',
+      lowerBound: 10
+    }
   })
 
   const getSampleRules = () => [

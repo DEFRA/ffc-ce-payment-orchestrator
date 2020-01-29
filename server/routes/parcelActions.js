@@ -27,10 +27,18 @@ module.exports = [{
   path: '/parcels/{parcelRef}/actions/{actionId}',
   handler: async (request, h) => {
     const { actionId, parcelRef } = request.params
-    const parcel = await parcelService.getByRef(parcelRef)
+    const parcel = parcelService.getByRef(parcelRef)
     const action = await actionsService.getByIdWithRules(actionId)
-    await rulesEngineHelper.fullRun(action, parcel, { quantity: 1 })
+    const runResult = await rulesEngineHelper.fullRun(action, parcel, { quantity: 1 })
+    const response = {
+      id: action.id,
+      description: action.description,
+      input: {
+        ...action.input,
+        upperbound: runResult.upperbound
+      }
+    }
 
-    return h.response({}).code(200)
+    return h.response(response).code(200)
   }
 }]
