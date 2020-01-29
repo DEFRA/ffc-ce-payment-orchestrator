@@ -1,5 +1,8 @@
 const validationSchema = require('../schema/parcelActions')
 const parcelActionsService = require('../services/parcelActionsService')
+const parcelService = require('../services/parcelService')
+const actionsService = require('../services/actionsService')
+const rulesEngineHelper = require('../rules-engine/helper')
 
 module.exports = [{
   method: 'GET',
@@ -23,6 +26,11 @@ module.exports = [{
   method: 'GET',
   path: '/parcels/{parcelRef}/actions/{actionId}',
   handler: async (request, h) => {
+    const { actionId, parcelRef } = request.params
+    const parcel = await parcelService.getByRef(parcelRef)
+    const action = await actionsService.getByIdWithRules(actionId)
+    await rulesEngineHelper.fullRun(action, parcel, { quantity: 1 })
+
     return h.response({}).code(200)
   }
 }]
