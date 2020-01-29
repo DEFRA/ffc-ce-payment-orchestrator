@@ -33,6 +33,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
         {
           id: 'FG1',
           description: 'Fencing',
+          rate: 4,
           rules: [
             { id: 1, enabled: true },
             { id: 2, enabled: false },
@@ -62,6 +63,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
         {
           id: 'FG1',
           description: 'Fencing',
+          rate: 4,
           rules: [
             { id: 1, enabled: false },
             { id: 2, enabled: true },
@@ -91,6 +93,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
         {
           id: 'FG1',
           description: 'Fencing',
+          rate: 4,
           rules: [
             { id: 1, enabled: false },
             { id: 2, enabled: false },
@@ -119,6 +122,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
         {
           id: 'FG1',
           description: 'Fencing',
+          rate: 4,
           rules: [
             { id: 1, enabled: true },
             { id: 2, enabled: false },
@@ -147,6 +151,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
         {
           id: 'FG1',
           description: 'Fencing',
+          rate: 4,
           rules: [
             { id: 1, enabled: false },
             { id: 2, enabled: true },
@@ -175,6 +180,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
         {
           id: 'FG1',
           description: 'Fencing',
+          rate: 4,
           rules: [
             { id: 1, enabled: false },
             { id: 2, enabled: false },
