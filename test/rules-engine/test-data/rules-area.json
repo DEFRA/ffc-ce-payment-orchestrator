@@ -1,0 +1,48 @@
+[
+  {
+    "id": 6,
+    "type": "prevalidation",
+    "groupname": "Area",
+    "enabled": true,
+    "description": "Proposed area is larger than the Total Parcel Area minus the Pond area of the Parcel Features",
+    "facts": [
+      {
+        "id": "totalArea",
+        "description": "Total Parcel Area"
+      },
+      {
+        "id": "areaRemoved",
+        "description": "Feature Area Removed",
+        "calculated": true,
+        "calculation": {
+          "operator": "sumall",
+          "sourcefact": "areaFeatures",
+          "path": "$..[?(@.type==='pond')].areaCovered"
+        }
+      },
+      {
+        "id": "usableArea",
+        "description": "Total usable area",
+        "calculated": true,
+        "calculation": {
+          "operator": "subtract",
+          "value1": "totalArea",
+          "value2": "areaRemoved"
+        }
+      },
+      {
+        "id": "quantity",
+        "description": "Area requested"
+      }
+    ],
+    "conditions": [
+      {
+        "fact": "usableArea",
+        "operator": "lessThanInclusive",
+        "value": {
+          "fact": "quantity"
+        }
+      }
+    ]
+  }
+]
