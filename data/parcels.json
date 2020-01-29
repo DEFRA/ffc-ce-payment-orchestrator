@@ -72,6 +72,7 @@
   },
   {
     "ref": "SD81525709",
+    "description": "Hedge field",
     "totalPerimeter": 681.0,
     "totalArea": 1.493,
     "perimeterFeatures": [
