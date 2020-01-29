@@ -22,7 +22,11 @@ module.exports = [
 
       const landParcel = await parcelService.getByRef(parcelRef)
       const action = await actionsService.getByIdWithRules(actionId)
-      const response = await rulesEngineHelper.fullRun(action, landParcel, actionData)
+      const runResult = await rulesEngineHelper.fullRun(action, landParcel, actionData)
+      const response = { eligible: runResult.eligible }
+      if (runResult.value) {
+        response.value = runResult.value
+      }
 
       return h.response(response).code(200)
     }
