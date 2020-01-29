@@ -3,6 +3,7 @@
     "id": "FG1",
     "description": "Fencing",
     "rate": 4,
+    "pre-check": true,
     "rules": [
       {
         "id": 1,
@@ -30,6 +31,7 @@
     "id": "SW6",
     "description": "Winter cover crops",
     "rate": 114,
+    "pre-check": true,
     "rules": [
       {
         "id": 5,
