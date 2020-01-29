@@ -4,6 +4,11 @@
     "description": "Fencing",
     "rate": 4,
     "pre-check": true,
+    "input": {
+      "unit": "metre",
+      "description": "fence length",
+      "lowerbound": 2
+    },
     "rules": [
       {
         "id": 1,
@@ -32,6 +37,11 @@
     "description": "Winter cover crops",
     "rate": 114,
     "pre-check": true,
+    "input": {
+      "unit": "hectare",
+      "description": "claim area",
+      "lowerbound": 2
+    },
     "rules": [
       {
         "id": 5,
