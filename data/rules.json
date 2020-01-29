@@ -10,13 +10,15 @@
         "description": "Total Parcel Perimeter"
       }
     ],
-    "conditions": [{
-      "fact": "quantity",
-      "operator": "greaterThan",
-      "value": {
-        "fact": "totalPerimeter"
+    "conditions": [
+      {
+        "fact": "quantity",
+        "operator": "greaterThan",
+        "value": {
+          "fact": "totalPerimeter"
+        }
       }
-    }]
+    ]
   },
   {
     "id": 2,
@@ -53,13 +55,15 @@
         "description": "Metres of fencing requested"
       }
     ],
-    "conditions": [{
-      "fact": "usablePerimeter",
-      "operator": "lessThanInclusive",
-      "value": {
-        "fact": "quantity"
+    "conditions": [
+      {
+        "fact": "usablePerimeter",
+        "operator": "lessThanInclusive",
+        "value": {
+          "fact": "quantity"
+        }
       }
-    }]
+    ]
   },
   {
     "id": 3,
@@ -90,12 +94,14 @@
         "description": "Previous Action Dates"
       }
     ],
-    "conditions": [{
-      "fact": "previousActions",
-      "path": "$..date",
-      "operator": "lessThan5Years",
-      "value": "2020-01-20T00:00:01.000Z"
-    }]
+    "conditions": [
+      {
+        "fact": "previousActions",
+        "path": "$..date",
+        "operator": "lessThan5Years",
+        "value": "2020-01-20T00:00:01.000Z"
+      }
+    ]
   },
   {
     "id": 5,
@@ -107,10 +113,57 @@
         "description": "Parcel in SSSI area"
       }
     ],
-    "conditions": [{
-      "fact": "SSSI",
-      "operator": "equal",
-      "value": true
-    }]
+    "conditions": [
+      {
+        "fact": "SSSI",
+        "operator": "equal",
+        "value": true
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "type": "prevalidation",
+    "groupname": "Area",
+    "description": "Proposed area is larger than the Total Parcel Area minus the Pond area of the Parcel Features",
+    "facts": [
+      {
+        "id": "totalArea",
+        "description": "Total Parcel Area"
+      },
+      {
+        "id": "areaRemoved",
+        "description": "Feature Area Removed",
+        "calculated": true,
+        "calculation": {
+          "operator": "sumall",
+          "sourcefact": "areaFeatures",
+          "path": "$..[?(@.type==='pond')].areaCovered"
+        }
+      },
+      {
+        "id": "usableArea",
+        "description": "Total usable area",
+        "calculated": true,
+        "calculation": {
+          "operator": "subtract",
+          "value1": "totalArea",
+          "value2": "areaRemoved"
+        }
+      },
+      {
+        "id": "quantity",
+        "description": "Area requested"
+      }
+    ],
+    "conditions": [
+      {
+        "fact": "usableArea",
+        "operator": "lessThanInclusive",
+        "value": {
+          "fact": "quantity"
+        }
+      }
+    ]
   }
 ]
