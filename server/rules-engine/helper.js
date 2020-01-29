@@ -7,7 +7,7 @@ async function fullRun (action, parcel, options) {
   const successCallback = (event, almanac, ruleResult) => {
     runResult.eligible = true
     runResult.value = action[rateFactName] * options[quantityFactName]
-    runResult.upperBound = almanac.factMap.get('upperBound')
+    runResult.upperbound = almanac.factMap.get('upperbound')
   }
   await rulesEngine.doFullRun(action.rules, [parcel], options, successCallback)
   return runResult

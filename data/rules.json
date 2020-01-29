@@ -41,7 +41,7 @@
         }
       },
       {
-        "id": "upperBound",
+        "id": "upperbound",
         "description": "Total usable perimeter length",
         "calculated": true,
         "calculation": {
@@ -57,7 +57,7 @@
     ],
     "conditions": [
       {
-        "fact": "upperBound",
+        "fact": "upperbound",
         "operator": "lessThanInclusive",
         "value": {
           "fact": "quantity"
@@ -142,7 +142,7 @@
         }
       },
       {
-        "id": "upperBound",
+        "id": "upperbound",
         "description": "Total usable area",
         "calculated": true,
         "calculation": {
@@ -158,7 +158,7 @@
     ],
     "conditions": [
       {
-        "fact": "upperBound",
+        "fact": "upperbound",
         "operator": "lessThanInclusive",
         "value": {
           "fact": "quantity"

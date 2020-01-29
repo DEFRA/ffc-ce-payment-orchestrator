@@ -31,17 +31,17 @@ describe('Rules engine helper', () => {
     }
   })
 
-  test('provides an upperBound fact when rules pass and almanac provides this fact', async () => {
+  test('provides an upperbound fact when rules pass and almanac provides this fact', async () => {
     const testCases = [
-      { almanac: getSampleAlmanac([['upperBound', 101.2]]), expectedResult: 101.2 },
-      { almanac: getSampleAlmanac([['upperBound', 87]]), expectedResult: 87 },
-      { almanac: getSampleAlmanac([['upperBound', 3]]), expectedResult: 3 }
+      { almanac: getSampleAlmanac([['upperbound', 101.2]]), expectedResult: 101.2 },
+      { almanac: getSampleAlmanac([['upperbound', 87]]), expectedResult: 87 },
+      { almanac: getSampleAlmanac([['upperbound', 3]]), expectedResult: 3 }
     ]
     const sampleAction = getSampleAction()
     for (const testCase of testCases) {
       const runResult = await invokeRulesEngineHelperFullRun(
         sampleAction, { quantity: sampleAction.lowerBound }, testCase.almanac)
-      expect(runResult.upperBound).toBe(testCase.expectedResult)
+      expect(runResult.upperbound).toBe(testCase.expectedResult)
     }
   })
 
