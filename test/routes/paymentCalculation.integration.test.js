@@ -32,282 +32,261 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
     await server.stop()
   })
 
-  describe('action FG1', () => {
-    test('parcel is eligible if requested length is less than total perimeter, there are no previous actions and is is not in a SSSI', async () => {
-      jest.mock(
-        '../../data/actions.json',
-        () => [
-          {
-            id: 'FG1',
-            description: 'Fencing',
-            rate: 4,
-            rules: [
-              { id: 1, enabled: true },
-              { id: 4, enabled: true },
-              { id: 5, enabled: true }
-            ]
-          }
-        ]
-      )
-      await setUpServer()
+  describe('action FG1: Fencing', () => {
+    const actionId = 'FG1'
 
-      const quantity = perimeterOfParcelSD74445738
-      const response = await server.inject(generateRequestOptions('SD74445738', 'FG1', { quantity }))
-      const payload = JSON.parse(response.payload)
-      expect(response.statusCode).toBe(200)
-      expect(payload).toEqual(
-        expect.objectContaining({
-          eligible: true,
-          value: quantity * 4
-        })
-      )
+    describe('with total perimeter, previous actions and SSSI rules', () => {
+      const parcelRef = 'SD74445738'
+
+      beforeEach(async () => {
+        jest.mock(
+          '../../data/actions.json',
+          () => [
+            {
+              id: 'FG1',
+              description: 'Fencing',
+              rate: 4,
+              rules: [
+                { id: 1, enabled: true },
+                { id: 4, enabled: true },
+                { id: 5, enabled: true }
+              ]
+            }
+          ]
+        )
+        await setUpServer()
+      })
+
+      test('parcel is eligible if requested length is less than total perimeter, there are no previous actions and it is not in a SSSI', async () => {
+        const quantity = perimeterOfParcelSD74445738
+        const response = await server.inject(generateRequestOptions(parcelRef, actionId, { quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: true,
+            value: quantity * 4
+          })
+        )
+      })
+
+      test('parcel is ineligible if requested length is more than parcel perimeter', async () => {
+        const quantity = perimeterOfParcelSD74445738 + 0.1
+        const response = await server.inject(generateRequestOptions(parcelRef, actionId, { quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: false
+          })
+        )
+      })
     })
 
-    test('parcel is eligible if requested length is less than adjusted perimeter, with only adjusted perimeter rule enabled', async () => {
-      jest.mock(
-        '../../data/actions.json',
-        () => [
-          {
-            id: 'FG1',
-            description: 'Fencing',
-            rate: 4,
-            rules: [
-              { id: 2, enabled: true }
-            ]
-          }
-        ]
-      )
-      await setUpServer()
+    describe('with adjusted perimeter rule', () => {
+      const parcelId = 'SD74445738'
 
-      const quantity = adjustedPerimeterOfParcelSD74445738 - 0.1
-      const response = await server.inject(generateRequestOptions('SD74445738', 'FG1', { quantity }))
-      const payload = JSON.parse(response.payload)
-      expect(response.statusCode).toBe(200)
-      expect(payload).toEqual(
-        expect.objectContaining({
-          eligible: true,
-          value: quantity * 4
-        })
-      )
+      beforeEach(async () => {
+        jest.mock(
+          '../../data/actions.json',
+          () => [
+            {
+              id: 'FG1',
+              description: 'Fencing',
+              rate: 4,
+              rules: [
+                { id: 2, enabled: true }
+              ]
+            }
+          ]
+        )
+        await setUpServer()
+      })
+
+      test('parcel is eligible if requested length is less than adjusted perimeter', async () => {
+        const quantity = adjustedPerimeterOfParcelSD74445738 - 0.1
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: true,
+            value: quantity * 4
+          })
+        )
+      })
+
+      test('parcel is ineligible if requested length is more than adjusted perimeter', async () => {
+        const quantity = adjustedPerimeterOfParcelSD74445738 + 0.1
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: false
+          })
+        )
+      })
     })
 
-    test('parcel is ineligible if requested length is more than adjusted perimeter, with adjusted perimeter rule enabled', async () => {
-      jest.mock(
-        '../../data/actions.json',
-        () => [
-          {
-            id: 'FG1',
-            description: 'Fencing',
-            rate: 4,
-            rules: [
-              { id: 2, enabled: true }
-            ]
-          }
-        ]
-      )
-      await setUpServer()
+    describe('with previous actions rule', () => {
+      const parcelId = 'SD75492628'
 
-      const quantity = adjustedPerimeterOfParcelSD74445738 + 0.1
-      const response = await server.inject(generateRequestOptions('SD74445738', 'FG1', { quantity }))
-      const payload = JSON.parse(response.payload)
-      expect(response.statusCode).toBe(200)
-      expect(payload).toEqual(
-        expect.objectContaining({
-          eligible: false
-        })
-      )
+      beforeEach(async () => {
+        jest.mock(
+          '../../data/actions.json',
+          () => [
+            {
+              id: 'FG1',
+              description: 'Fencing',
+              rate: 4,
+              rules: [
+                { id: 4, enabled: true }
+              ]
+            }
+          ]
+        )
+        await setUpServer()
+      })
+
+      test('parcel is ineligible if it has a previous action', async () => {
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity: 10 }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: false
+          })
+        )
+      })
     })
 
-    test('parcel is ineligible if requested length is more than parcel perimeter, with total perimeter rule enabled', async () => {
-      jest.mock(
-        '../../data/actions.json',
-        () => [
-          {
-            id: 'FG1',
-            description: 'Fencing',
-            rate: 4,
-            rules: [
-              { id: 1, enabled: true }
-            ]
-          }
-        ]
-      )
-      await setUpServer()
+    describe('with SSSI rule enabled', () => {
+      const parcelId = 'SD78379604'
 
-      const quantity = perimeterOfParcelSD74445738 + 0.1
-      const response = await server.inject(generateRequestOptions('SD74445738', 'FG1', { quantity }))
-      const payload = JSON.parse(response.payload)
-      expect(response.statusCode).toBe(200)
-      expect(payload).toEqual(
-        expect.objectContaining({
-          eligible: false
-        })
-      )
-    })
+      beforeEach(async () => {
+        jest.mock(
+          '../../data/actions.json',
+          () => [
+            {
+              id: 'FG1',
+              description: 'Fencing',
+              rate: 4,
+              rules: [
+                { id: 5, enabled: true }
+              ]
+            }
+          ]
+        )
+        await setUpServer()
+      })
 
-    test('parcel is ineligible if it has a previous action and the previous actions rule is enabled', async () => {
-      jest.mock(
-        '../../data/actions.json',
-        () => [
-          {
-            id: 'FG1',
-            description: 'Fencing',
-            rate: 4,
-            rules: [
-              { id: 4, enabled: true }
-            ]
-          }
-        ]
-      )
-      await setUpServer()
-
-      const response = await server.inject(generateRequestOptions('SD75492628', 'FG1', { quantity: 10 }))
-      const payload = JSON.parse(response.payload)
-      expect(response.statusCode).toBe(200)
-      expect(payload).toEqual(
-        expect.objectContaining({
-          eligible: false
-        })
-      )
-    })
-
-    test('parcel is in eligible if it is in a SSSI, with SSSI rule enabled', async () => {
-      jest.mock(
-        '../../data/actions.json',
-        () => [
-          {
-            id: 'FG1',
-            description: 'Fencing',
-            rate: 4,
-            rules: [
-              { id: 5, enabled: true }
-            ]
-          }
-        ]
-      )
-      await setUpServer()
-
-      const response = await server.inject(generateRequestOptions('SD78379604', 'FG1', { quantity: 10 }))
-      const payload = JSON.parse(response.payload)
-      expect(response.statusCode).toBe(200)
-      expect(payload).toEqual(
-        expect.objectContaining({
-          eligible: false
-        })
-      )
+      test('parcel is in eligible if it is in a SSSI, with SSSI rule enabled', async () => {
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity: 10 }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: false
+          })
+        )
+      })
     })
   })
 
-  describe('action SW6', () => {
-    test('parcel is eligible if requested area is less than parcel area, with total parcel area rule enabled', async () => {
-      jest.mock(
-        '../../data/actions.json',
-        () => [
-          {
-            id: 'SW6',
-            description: 'Winter cover crops',
-            rate: 114,
-            rules: [
-              { id: 6, enabled: false },
-              { id: 7, enabled: true }
-            ]
-          }
-        ]
-      )
-      await setUpServer()
+  describe('action SW6: Winter cover crops', () => {
+    const actionId = 'SW6'
 
-      const quantity = areaOfParcelSD74445738 - 0.1
-      const response = await server.inject(generateRequestOptions('SD74445738', 'SW6', { quantity }))
-      const payload = JSON.parse(response.payload)
-      expect(response.statusCode).toBe(200)
-      expect(payload).toEqual(
-        expect.objectContaining({
-          eligible: true,
-          value: quantity * 114
-        })
-      )
+    describe('with total parcel area rule', () => {
+      const parcelId = 'SD74445738'
+
+      beforeEach(async () => {
+        jest.mock(
+          '../../data/actions.json',
+          () => [
+            {
+              id: 'SW6',
+              description: 'Winter cover crops',
+              rate: 114,
+              rules: [
+                { id: 7, enabled: true }
+              ]
+            }
+          ]
+        )
+        await setUpServer()
+      })
+
+      test('parcel is eligible if requested area is less than parcel area', async () => {
+        const quantity = areaOfParcelSD74445738 - 0.1
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: true,
+            value: quantity * 114
+          })
+        )
+      })
+
+      test('parcel is ineligible if requested area is greater than parcel area', async () => {
+        const quantity = areaOfParcelSD74445738 + 0.1
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: false
+          })
+        )
+      })
     })
 
-    test('parcel is eligible if requested area is less than adjusted parcel area, with adjusted area rule enabled', async () => {
-      jest.mock(
-        '../../data/actions.json',
-        () => [
-          {
-            id: 'SW6',
-            description: 'Winter cover crops',
-            rate: 114,
-            rules: [
-              { id: 6, enabled: true }
-            ]
-          }
-        ]
-      )
-      await setUpServer()
+    describe('with adjusted parcel area rule enabled', () => {
+      const parcelId = 'SD74445738'
 
-      const quantity = adjustedAreaOfParcelSD74445738 - 0.1
-      const response = await server.inject(generateRequestOptions('SD74445738', 'SW6', { quantity: quantity }))
-      const payload = JSON.parse(response.payload)
-      expect(response.statusCode).toBe(200)
-      expect(payload).toEqual(
-        expect.objectContaining({
-          eligible: true,
-          value: quantity * 114
-        })
-      )
-    })
+      beforeEach(async () => {
+        jest.mock(
+          '../../data/actions.json',
+          () => [
+            {
+              id: 'SW6',
+              description: 'Winter cover crops',
+              rate: 114,
+              rules: [
+                { id: 6, enabled: true }
+              ]
+            }
+          ]
+        )
+        await setUpServer()
+      })
 
-    test('parcel is ineligible if requested area is greater than parcel area, with total parcel area rule enabled', async () => {
-      jest.mock(
-        '../../data/actions.json',
-        () => [
-          {
-            id: 'SW6',
-            description: 'Winter cover crops',
-            rate: 114,
-            rules: [
-              { id: 7, enabled: true }
-            ]
-          }
-        ]
-      )
-      await setUpServer()
+      test('parcel is eligible if requested area is less than adjusted parcel area', async () => {
+        const quantity = adjustedAreaOfParcelSD74445738 - 0.1
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity: quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: true,
+            value: quantity * 114
+          })
+        )
+      })
 
-      const quantity = areaOfParcelSD74445738 + 0.1
-      const response = await server.inject(generateRequestOptions('SD74445738', 'SW6', { quantity }))
-      const payload = JSON.parse(response.payload)
-      expect(response.statusCode).toBe(200)
-      expect(payload).toEqual(
-        expect.objectContaining({
-          eligible: false
-        })
-      )
-    })
-
-    test('parcel is ineligible if requested area is greater than adjusted parcel area, with adjusted area rule enabled', async () => {
-      jest.mock(
-        '../../data/actions.json',
-        () => [
-          {
-            id: 'SW6',
-            description: 'Winter cover crops',
-            rate: 114,
-            rules: [
-              { id: 6, enabled: true }
-            ]
-          }
-        ]
-      )
-      await setUpServer()
-
-      const quantity = adjustedAreaOfParcelSD74445738 + 0.1
-      const response = await server.inject(generateRequestOptions('SD74445738', 'SW6', { quantity }))
-      const payload = JSON.parse(response.payload)
-      expect(response.statusCode).toBe(200)
-      expect(payload).toEqual(
-        expect.objectContaining({
-          eligible: false
-        })
-      )
+      test('parcel is ineligible if requested area is greater than adjusted parcel area', async () => {
+        const quantity = adjustedAreaOfParcelSD74445738 + 0.1
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: false
+          })
+        )
+      })
     })
   })
 })
