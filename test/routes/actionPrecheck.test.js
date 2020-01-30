@@ -64,10 +64,6 @@ describe('Action precheck put route test', () => {
     expect(response.statusCode).toBe(400)
   })
 
-  afterAll(() => {
-    jest.unmock('../../server/services/actionsService')
-  })
-
   afterEach(async () => {
     await server.stop()
   })
