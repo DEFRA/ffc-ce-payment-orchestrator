@@ -30,7 +30,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
       { parcelRef: 'SD81437506', expectedUpperbound: 431.6 },
       { parcelRef: 'SD81525709', expectedUpperbound: 540.4 }
     ]
-    await testParametersAreCorrectForAction(action, testCases)
+    await testOutputIsCorrect(action, testCases)
   })
 
   test('parcels have correct parameters for action SW6', async () => {
@@ -42,10 +42,10 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
       { parcelRef: 'SD81437506', expectedUpperbound: undefined },
       { parcelRef: 'SD81525709', expectedUpperbound: 1.49 }
     ]
-    await testParametersAreCorrectForAction(action, testCases)
+    await testOutputIsCorrect(action, testCases)
   })
 
-  const testParametersAreCorrectForAction = async (action, testCases) => {
+  const testOutputIsCorrect = async (action, testCases) => {
     for (const testCase of testCases) {
       const response = await server.inject(generateRequestOptions(testCase.parcelRef, action.id))
       const payload = JSON.parse(response.payload)
