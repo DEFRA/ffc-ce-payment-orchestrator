@@ -30,7 +30,8 @@ describe('Action precheck put route test', () => {
   }
 
   const mockActionsService = {
-    updatePrecheckEnabled: jest.fn().mockResolvedValue(mockUpdatedAction)
+    updatePrecheckEnabled: jest.fn().mockResolvedValue(mockUpdatedAction),
+    getByIdWithRules: jest.fn().mockResolvedValue(mockUpdatedAction)
   }
 
   beforeAll(async () => {
@@ -48,12 +49,6 @@ describe('Action precheck put route test', () => {
     expect(mockActionsService.updatePrecheckEnabled).toHaveBeenCalledWith(actionID, goodRequest.payload.enabled)
   })
 
-  test('returns the updated data from actionsService', async () => {
-    const response = await server.inject(goodRequest)
-    const payload = JSON.parse(response.payload)
-    expect(payload).toEqual(mockUpdatedAction)
-  })
-
   test('responds with status code 200 for a well formed request', async () => {
     const response = await server.inject(goodRequest)
     expect(response.statusCode).toBe(200)
@@ -66,5 +61,48 @@ describe('Action precheck put route test', () => {
 
   afterEach(async () => {
     await server.stop()
+  })
+
+  describe('PUT /actions/{actionID}', () => {
+    let createServer
+    let actionsService
+    let server
+
+    beforeAll(async () => {
+      jest.mock('../../server/services/actionsService', () => mockActionsService)
+      actionsService = require('../../server/services/actionsService')
+      createServer = require('../../server/createServer')
+    })
+
+    const generateRequestOptions = (
+      actionId = 'TE1',
+      enabled = true
+    ) => ({
+      method: 'PUT',
+      url: `/actions/${actionId}`,
+      payload: { enabled: enabled }
+    })
+
+    beforeEach(async () => {
+      jest.clearAllMocks()
+      actionsService.getByIdWithRules.mockResolvedValue(mockUpdatedAction)
+      server = await createServer()
+      await server.initialize()
+    })
+
+    afterEach(async () => {
+      await server.stop()
+    })
+
+    test('responds with status code 200', async () => {
+      const response = await server.inject(generateRequestOptions())
+      expect(response.statusCode).toBe(200)
+    })
+
+    test('returns the updated data from actionsService', async () => {
+      const response = await server.inject(generateRequestOptions())
+      const payload = JSON.parse(response.payload)
+      expect(payload).toEqual(mockUpdatedAction)
+    })
   })
 })
