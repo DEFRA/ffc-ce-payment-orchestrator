@@ -159,7 +159,8 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
       { upperbound: getUpperboundFact(40.2699999999999), expectedValue: 40.27 },
       { upperbound: getUpperboundFact(78.8383838383838), expectedValue: 78.84 },
       { upperbound: getUpperboundFact(44.4444444444444), expectedValue: 44.44 },
-      { upperbound: getUpperboundFact(55.5555555555555), expectedValue: 55.56 }
+      { upperbound: getUpperboundFact(55.5555555555555), expectedValue: 55.56 },
+      { upperbound: getUpperboundFact(1.005), expectedValue: 1.01 }
     ]
     for (const testCase of testCases) {
       const { upperbound, expectedValue } = testCase
@@ -180,7 +181,6 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
     }).not.toThrow()
   })
 
-  // also need test for action lowerbound being passed to rules runner, rather than 1...
   test('when initiating a rules run, the lowerbound from the action is used as the quantity', async () => {
     const testCases = [0.1, 1.2, 12, 82]
     for (const testCase of testCases) {

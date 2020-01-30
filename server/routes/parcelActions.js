@@ -9,7 +9,7 @@ const quantityBoundsResponseBuilder = (action, runResult) => ({
   description: action.description,
   input: {
     ...action.input,
-    upperbound: runResult.upperbound && Math.round(runResult.upperbound.value * 100) / 100
+    upperbound: runResult.upperbound && Math.round((runResult.upperbound.value + Number.EPSILON) * 100) / 100
   }
 })
 

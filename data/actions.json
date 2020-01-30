@@ -3,7 +3,7 @@
     "id": "FG1",
     "description": "Fencing",
     "rate": 4,
-    "pre-check": true,
+    "precheck": true,
     "input": {
       "unit": "metre",
       "description": "fence length",
@@ -36,7 +36,7 @@
     "id": "SW6",
     "description": "Winter cover crops",
     "rate": 114,
-    "pre-check": true,
+    "precheck": true,
     "input": {
       "unit": "hectare",
       "description": "claim area",
