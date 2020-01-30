@@ -38,7 +38,8 @@ module.exports = [{
     const { actionId, parcelRef } = request.params
     const parcel = parcelService.getByRef(parcelRef)
     const action = await actionsService.getByIdWithRules(actionId)
-    const runResult = await rulesEngineHelper.fullRun(action, parcel, { quantity: 1 })
+    const runData = { quantity: action.input.lowerbound }
+    const runResult = await rulesEngineHelper.fullRun(action, parcel, runData)
 
     return h.response(quantityBoundsResponseBuilder(action, runResult)).code(200)
   }

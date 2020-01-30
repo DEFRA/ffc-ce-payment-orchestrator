@@ -123,7 +123,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
     expect(rulesEngineHelper.fullRun).toHaveBeenCalledWith(
       expect.objectContaining(sampleAction),
       expect.objectContaining(sampleParcel),
-      expect.objectContaining({ quantity: 1 })
+      expect.objectContaining({ quantity: sampleAction.input.lowerbound })
     )
   })
 
@@ -181,6 +181,19 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
   })
 
   // also need test for action lowerbound being passed to rules runner, rather than 1...
+  test('when initiating a rules run, the lowerbound from the action is used as the quantity', async () => {
+    const testCases = [0.1, 1.2, 12, 82]
+    for (const testCase of testCases) {
+      const sampleAction = getSampleAction(undefined, testCase)
+      actionsService.getByIdWithRules.mockResolvedValue(sampleAction)
+      await server.inject(generateRequestOptions())
+      expect(rulesEngineHelper.fullRun).toHaveBeenCalledWith(
+        expect.any(Object),
+        expect.any(Object),
+        expect.objectContaining({ quantity: testCase })
+      )
+    }
+  })
 
   test('omits action properties other than id, description and input', async () => {
     const sampleAction = getSampleAction()
@@ -202,7 +215,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
     previousActions: []
   })
 
-  const getSampleAction = (rate = 1) => ({
+  const getSampleAction = (rate = 1, lowerbound = 10) => ({
     id: 'crop-circle',
     description: 'Damages claim for UFO landings in field',
     rate,
@@ -210,7 +223,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
     input: {
       unit: 'metres',
       description: 'radius of flying saucer that landed in field',
-      lowerBound: 10
+      lowerbound
     }
   })
 
