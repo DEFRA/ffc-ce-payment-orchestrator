@@ -40,7 +40,7 @@
     "input": {
       "unit": "hectare",
       "description": "claim area",
-      "lowerbound": 2
+      "lowerbound": 0.1
     },
     "rules": [
       {

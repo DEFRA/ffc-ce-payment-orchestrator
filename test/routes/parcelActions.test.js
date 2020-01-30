@@ -84,7 +84,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
-    rulesEngineHelper.fullRun.mockResolvedValue({})
+    rulesEngineHelper.fullRun.mockResolvedValue({ upperbound: {} })
     actionsService.getByIdWithRules.mockResolvedValue({ input: {} })
     server = await createServer()
     await server.initialize()
@@ -137,21 +137,50 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
       expect.objectContaining({
         id: sampleAction.id,
         description: sampleAction.description,
-        input: sampleAction.input
+        input: expect.objectContaining(sampleAction.input)
       })
     )
   })
 
   test('elaborates input description with upperbound provided by rules engine runner', async () => {
-    const upperbound = 40
+    const upperbound = getUpperboundFact(40)
     rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: 100, upperbound })
     const response = await server.inject(generateRequestOptions())
     const responseData = JSON.parse(response.payload)
 
     expect(responseData.input).toEqual(
-      expect.objectContaining({ upperbound })
+      expect.objectContaining({ upperbound: upperbound.value })
     )
   })
+
+  test('rounds upperbound provided by rules engine runner to two decimal places', async () => {
+    const testCases = [
+      { upperbound: getUpperboundFact(739.3000000000001), expectedValue: 739.3 },
+      { upperbound: getUpperboundFact(40.2699999999999), expectedValue: 40.27 },
+      { upperbound: getUpperboundFact(78.8383838383838), expectedValue: 78.84 },
+      { upperbound: getUpperboundFact(44.4444444444444), expectedValue: 44.44 },
+      { upperbound: getUpperboundFact(55.5555555555555), expectedValue: 55.56 }
+    ]
+    for (const testCase of testCases) {
+      const { upperbound, expectedValue } = testCase
+      rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: 100, upperbound })
+      const response = await server.inject(generateRequestOptions())
+      const responseData = JSON.parse(response.payload)
+
+      expect(responseData.input).toEqual(
+        expect.objectContaining({ upperbound: expectedValue })
+      )
+    }
+  })
+
+  test('handles failing rules run', async () => {
+    rulesEngineHelper.fullRun.mockResolvedValue({ eligible: false })
+    expect(async () => {
+      await server.inject(generateRequestOptions())
+    }).not.toThrow()
+  })
+
+  // also need test for action lowerbound being passed to rules runner, rather than 1...
 
   test('omits action properties other than id, description and input', async () => {
     const sampleAction = getSampleAction()
@@ -207,4 +236,12 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
       }]
     }
   ]
+
+  const getUpperboundFact = value => ({
+    id: 'upperbound',
+    options: { cache: true },
+    priority: 1,
+    type: 'CONSTANT',
+    value
+  })
 })

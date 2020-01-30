@@ -1,6 +1,6 @@
 const createServer = require('../../server/createServer')
 
-describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () => {
+describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () => {
   let server
 
   const generateRequestOptions = (

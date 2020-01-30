@@ -4,6 +4,15 @@ const parcelService = require('../services/parcelService')
 const actionsService = require('../services/actionsService')
 const rulesEngineHelper = require('../rules-engine/helper')
 
+const quantityBoundsResponseBuilder = (action, runResult) => ({
+  id: action.id,
+  description: action.description,
+  input: {
+    ...action.input,
+    upperbound: runResult.upperbound && Math.round(runResult.upperbound.value * 100) / 100
+  }
+})
+
 module.exports = [{
   method: 'GET',
   path: '/parcels/{parcelRef}/actions',
@@ -30,15 +39,7 @@ module.exports = [{
     const parcel = parcelService.getByRef(parcelRef)
     const action = await actionsService.getByIdWithRules(actionId)
     const runResult = await rulesEngineHelper.fullRun(action, parcel, { quantity: 1 })
-    const response = {
-      id: action.id,
-      description: action.description,
-      input: {
-        ...action.input,
-        upperbound: runResult.upperbound
-      }
-    }
 
-    return h.response(response).code(200)
+    return h.response(quantityBoundsResponseBuilder(action, runResult)).code(200)
   }
 }]
