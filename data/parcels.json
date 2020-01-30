@@ -1,6 +1,7 @@
 [
   {
     "ref": "SD74445738",
+    "description": "Fishponds",
     "totalPerimeter": 925.2,
     "totalArea": 1.856,
     "perimeterFeatures": [
@@ -23,6 +24,7 @@
   },
   {
     "ref": "SD75492628",
+    "description": "Low Lane",
     "totalPerimeter": 1004.9,
     "totalArea": 3.187,
     "perimeterFeatures": [],
@@ -36,6 +38,7 @@
   },
   {
     "ref": "SD78379604",
+    "description": "Woodlands",
     "totalPerimeter": 645.3,
     "totalArea": 2.602,
     "perimeterFeatures": [],
@@ -45,6 +48,7 @@
   },
   {
     "ref": "SD81437506",
+    "description": "High Lane",
     "totalPerimeter": 463.7,
     "totalArea": 1.226,
     "perimeterFeatures": [
@@ -68,6 +72,7 @@
   },
   {
     "ref": "SD81525709",
+    "description": "Fresh Fields",
     "totalPerimeter": 681.0,
     "totalArea": 1.493,
     "perimeterFeatures": [
