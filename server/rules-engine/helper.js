@@ -1,6 +1,14 @@
 const rulesEngine = require('./index')
 const { quantityFactName, rateFactName } = require('./enums')
 
+function eligibiltyRun (action, parcel, options) {
+  const eligibilityAction = {
+    ...action,
+    rules: action.rules.filter(r => r.type === 'eligibility')
+  }
+  return fullRun(eligibilityAction, parcel, options)
+}
+
 async function fullRun (action, parcel, options) {
   const runResult = { eligible: false }
   rulesEngine.resetEngine()
@@ -14,5 +22,6 @@ async function fullRun (action, parcel, options) {
 }
 
 module.exports = {
+  eligibiltyRun,
   fullRun
 }
