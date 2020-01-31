@@ -47,6 +47,16 @@ function ActionsService () {
     }
     return null
   }
+
+  this.updatePrecheckEnabled = async function (actionID, enabled) {
+    await this._init()
+    const action = await this.getByIdWithRules(actionID)
+    if (action) {
+      action.precheck = enabled
+      return action
+    }
+    return null
+  }
 }
 
 module.exports = new ActionsService()

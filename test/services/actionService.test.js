@@ -5,6 +5,7 @@ jest.mock('../../data/actions.json', () => {
   return [{
     id: 'TE1',
     description: 'Test action 1',
+    precheck: true,
     rules: [
       {
         id: 1,
@@ -31,6 +32,7 @@ jest.mock('../../data/actions.json', () => {
   {
     id: 'TE2',
     description: 'Test action 2',
+    precheck: true,
     rules: [
       {
         id: 4,
@@ -159,5 +161,29 @@ describe('actionsService', () => {
   test('update returns a rule object containing given id and enabled state', async () => {
     const rule = await actionsService.updateRuleEnabled(mockActionID, mockRuleID, mockEnabledChange)
     expect(rule).toMatchObject({ id: mockRuleID, enabled: mockEnabledChange })
+  })
+
+  test('update precheck returns null for unknown action id', async () => {
+    const action = await actionsService.updatePrecheckEnabled('XXX', true)
+    expect(action).toBeNull()
+  })
+
+  test('update precheck changes the state of the precheck flag', async () => {
+    const action = await actionsService.updatePrecheckEnabled('TE1', false)
+    expect(action.precheck).toBe(false)
+  })
+
+  test('update precheck changes the action returned by getById', async () => {
+    const startState = (await actionsService.getById('TE1')).precheck
+    await actionsService.updatePrecheckEnabled('TE1', !startState)
+    const newState = (await actionsService.getById('TE1')).precheck
+    expect(newState).not.toBe(startState)
+  })
+
+  test('update precheck changes the action returned by getByIdWithRules', async () => {
+    const startState = (await actionsService.getByIdWithRules('TE1')).precheck
+    await actionsService.updatePrecheckEnabled('TE1', !startState)
+    const newState = (await actionsService.getByIdWithRules('TE1')).precheck
+    expect(newState).not.toBe(startState)
   })
 })
