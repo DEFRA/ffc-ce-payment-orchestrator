@@ -96,6 +96,16 @@ describe('POST /parcels/{parcelRef}/actions/{actionId}/payment-calculation', () 
     expect(Object.keys(responseData).includes('value')).toBeFalsy()
   })
 
+  test('omits keys other than value and eligible from response', async () => {
+    const expectedResponse = { eligible: true, value: 31.8 }
+    const runResult = { ...expectedResponse, upperbound: 91.6 }
+    rulesEngineHelper.fullRun.mockResolvedValue(runResult)
+
+    const response = await server.inject(generateRequestOptions())
+    const responseData = JSON.parse(response.payload)
+    expect(Object.keys(responseData).includes('upperbound')).toBeFalsy()
+  })
+
   const getSampleAction = () => ({
     id: 'action-1',
     rules: [

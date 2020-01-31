@@ -17,7 +17,9 @@ describe('Rules engine helper', () => {
   })
 
   test('indicates that rules fail as per result from rules engine', async () => {
-    rulesEngine.doFullRun.mockReturnValue(Promise.resolve())
+    rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
+      successCallback({ facts: {}, isEligible: false })
+    })
     const runResult = await rulesEngineHelper.fullRun(getSampleAction(), getSampleParcel(), { quantity: 1 })
     expect(runResult.eligible).toBeFalsy()
   })
@@ -37,8 +39,24 @@ describe('Rules engine helper', () => {
     }
   })
 
-  test('resets rules engine', () => {
-    rulesEngineHelper.fullRun(getSampleRules(), getSampleParcel(), { parameterValue: 1 })
+  test('provides an upperbound fact when available', async () => {
+    const testCases = [
+      { upperbound: 101.2 },
+      { upperbound: 87 },
+      { upperbound: 3 }
+    ]
+    const sampleAction = getSampleAction()
+    for (const testCase of testCases) {
+      rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
+        successCallback({ facts: { adjustedPerimeter: testCase.upperbound }, isEligible: true })
+      })
+      const runResult = await rulesEngineHelper.fullRun(sampleAction, getSampleParcel(), { quantity: sampleAction.lowerBound })
+      expect(runResult.upperbound).toBe(testCase.upperbound)
+    }
+  })
+
+  test('resets rules engine', async () => {
+    await rulesEngineHelper.fullRun(getSampleRules(), getSampleParcel(), { parameterValue: 1 })
     expect(rulesEngine.resetEngine).toHaveBeenCalled()
   })
 
@@ -52,9 +70,10 @@ describe('Rules engine helper', () => {
     sssi: false
   })
 
-  const getSampleAction = (rate = 1) => ({
-    id: 'action-1',
-    description: 'Action 1',
+  const getSampleAction = (rate = 1, id = 'FG1') => ({
+    id,
+    description: 'An action',
+    lowerBound: 1,
     rate,
     rules: getSampleRules()
   })

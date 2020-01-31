@@ -37,7 +37,7 @@ module.exports = {
         parameters.quantity = passedFacts.quantity
       }
 
-      const result = await runEngine(enabledRules, { parcel, ...parameters }, undefined, returnFacts)
+      const result = await runEngine(enabledRules, { parcel, ...parameters }, returnFacts)
       const { events, facts } = result
       const isEligible = events.length === enabledRules.length
 

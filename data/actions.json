@@ -3,6 +3,12 @@
     "id": "FG1",
     "description": "Fencing",
     "rate": 4,
+    "precheck": true,
+    "input": {
+      "unit": "metre",
+      "description": "fence length",
+      "lowerbound": 2
+    },
     "rules": [
       {
         "id": 1,
@@ -30,6 +36,12 @@
     "id": "SW6",
     "description": "Winter cover crops",
     "rate": 114,
+    "precheck": true,
+    "input": {
+      "unit": "hectare",
+      "description": "claim area",
+      "lowerbound": 0.1
+    },
     "rules": [
       {
         "id": 5,
