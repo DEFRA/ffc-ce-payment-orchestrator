@@ -1,3 +1,6 @@
+# Command history
+.ash_history
+
 # Logs
 logs
 *.log
@@ -65,5 +68,9 @@ typings/
 # test output
 test-output
 
-#VS Code files
+# VS Code files
 .vscode
+
+# Vim files
+rules-engine-session.Vim
+Session.Vim

@@ -1,7 +1,7 @@
 const rulesEngineHelper = require('../../server/rules-engine/helper')
-const rulesEngine = require('../../server/rules-engine')
+const rulesEngine = require('../../server/services/rulesEngineService')
 
-jest.mock('../../server/rules-engine')
+jest.mock('../../server/services/rulesEngineService')
 
 describe('Rules engine helper', () => {
   beforeEach(() => {
@@ -9,74 +9,70 @@ describe('Rules engine helper', () => {
   })
 
   test('indicates that rules pass as per result from rules engine', async () => {
-    const runResult = await invokeRulesEngineHelperFullRun(getSampleAction, { quantity: 1 })
+    rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
+      successCallback({ facts: {}, isEligible: true })
+    })
+    const runResult = await rulesEngineHelper.fullRun(getSampleAction(), getSampleParcel(), { quantity: 1 })
     expect(runResult.eligible).toBeTruthy()
   })
 
   test('indicates that rules fail as per result from rules engine', async () => {
-    rulesEngine.doFullRun.mockReturnValue(Promise.resolve())
+    rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
+      successCallback({ facts: {}, isEligible: false })
+    })
     const runResult = await rulesEngineHelper.fullRun(getSampleAction(), getSampleParcel(), { quantity: 1 })
     expect(runResult.eligible).toBeFalsy()
   })
 
   test('provides a value when rules pass as per result from rules engine', async () => {
+    rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
+      successCallback({ facts: {}, isEligible: true })
+    })
     const testCases = [
       { action: getSampleAction(98), data: { quantity: 22 }, expectedResult: 98 * 22 },
       { action: getSampleAction(5), data: { quantity: 128 }, expectedResult: 5 * 128 },
       { action: getSampleAction(991), data: { quantity: 3 }, expectedResult: 991 * 3 }
     ]
     for (const testCase of testCases) {
-      const runResult = await invokeRulesEngineHelperFullRun(testCase.action, testCase.data)
+      const runResult = await rulesEngineHelper.fullRun(testCase.action, getSampleParcel(), testCase.data)
       expect(runResult.value).toBe(testCase.expectedResult)
     }
   })
 
-  test('provides an upperbound fact when rules pass and almanac provides this fact', async () => {
+  test('provides an upperbound fact when available', async () => {
     const testCases = [
-      { almanac: getSampleAlmanac([['upperbound', 101.2]]), expectedResult: 101.2 },
-      { almanac: getSampleAlmanac([['upperbound', 87]]), expectedResult: 87 },
-      { almanac: getSampleAlmanac([['upperbound', 3]]), expectedResult: 3 }
+      { upperbound: 101.2 },
+      { upperbound: 87 },
+      { upperbound: 3 }
     ]
     const sampleAction = getSampleAction()
     for (const testCase of testCases) {
-      const runResult = await invokeRulesEngineHelperFullRun(
-        sampleAction, { quantity: sampleAction.lowerBound }, testCase.almanac)
-      expect(runResult.upperbound).toBe(testCase.expectedResult)
+      rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
+        successCallback({ facts: { adjustedPerimeter: testCase.upperbound }, isEligible: true })
+      })
+      const runResult = await rulesEngineHelper.fullRun(sampleAction, getSampleParcel(), { quantity: sampleAction.lowerBound })
+      expect(runResult.upperbound).toBe(testCase.upperbound)
     }
   })
 
-  test('resets rules engine', () => {
-    rulesEngineHelper.fullRun(getSampleRules(), getSampleParcel(), { parameterValue: 1 })
+  test('resets rules engine', async () => {
+    await rulesEngineHelper.fullRun(getSampleRules(), getSampleParcel(), { parameterValue: 1 })
     expect(rulesEngine.resetEngine).toHaveBeenCalled()
   })
 
-  const invokeRulesEngineHelperFullRun = (action, actionData, almanac = getSampleAlmanac()) => {
-    let successCallback
-    let dfrResolve
-    const dfrPromise = new Promise((resolve, reject) => {
-      dfrResolve = resolve
-    })
-    rulesEngine.doFullRun.mockImplementation((r, p, o, callback) => {
-      successCallback = callback
-      return dfrPromise
-    })
-
-    const runPromise = rulesEngineHelper.fullRun(action, getSampleParcel(), actionData)
-    successCallback(undefined, almanac)
-    dfrResolve()
-    return runPromise
-  }
-
   const getSampleParcel = () => ({
     ref: 'SD12345678',
+    totalArea: 9,
     totalPerimeter: 100,
+    areaFeatures: [],
     perimeterFeatures: [],
-    previousActions: []
+    previousActions: [],
+    sssi: false
   })
 
-  const getSampleAction = (rate = 1) => ({
-    id: 'action-1',
-    description: 'Action 1',
+  const getSampleAction = (rate = 1, id = 'FG1') => ({
+    id,
+    description: 'An action',
     lowerBound: 1,
     rate,
     rules: getSampleRules()
@@ -104,8 +100,4 @@ describe('Rules engine helper', () => {
       }]
     }
   ]
-
-  const getSampleAlmanac = keyValues => ({
-    factMap: new Map(keyValues)
-  })
 })

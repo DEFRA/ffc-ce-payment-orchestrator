@@ -161,7 +161,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
       })
     })
 
-    describe('with SSSI rule enabled', () => {
+    describe('with SSSI rule', () => {
       const parcelId = 'SD78379604'
 
       beforeEach(async () => {
@@ -181,7 +181,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
         await setUpServer()
       })
 
-      test('parcel is in eligible if it is in a SSSI, with SSSI rule enabled', async () => {
+      test('parcel is in eligible if it is in a SSSI, with SSSI rule', async () => {
         const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity: 10 }))
         const payload = JSON.parse(response.payload)
         expect(response.statusCode).toBe(200)
@@ -243,7 +243,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
       })
     })
 
-    describe('with adjusted parcel area rule enabled', () => {
+    describe('with adjusted parcel area rule', () => {
       const parcelId = 'SD74445738'
 
       beforeEach(async () => {
@@ -265,7 +265,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
 
       test('parcel is eligible if requested area is less than adjusted parcel area', async () => {
         const quantity = adjustedAreaOfParcelSD74445738 - 0.1
-        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity: quantity }))
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
         const payload = JSON.parse(response.payload)
         expect(response.statusCode).toBe(200)
         expect(payload).toEqual(
