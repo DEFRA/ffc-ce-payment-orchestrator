@@ -1,3 +1,6 @@
+# Command history
+.ash_history
+
 # Logs
 logs
 *.log
