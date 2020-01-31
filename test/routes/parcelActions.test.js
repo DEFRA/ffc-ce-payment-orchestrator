@@ -84,7 +84,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
-    rulesEngineHelper.fullRun.mockResolvedValue({ upperbound: {} })
+    rulesEngineHelper.fullRun.mockResolvedValue({})
     actionsService.getByIdWithRules.mockResolvedValue({ input: {} })
     server = await createServer()
     await server.initialize()
@@ -143,24 +143,24 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
   })
 
   test('elaborates input description with upperbound provided by rules engine runner', async () => {
-    const upperbound = getUpperboundFact(40)
+    const upperbound = 40
     rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: 100, upperbound })
     const response = await server.inject(generateRequestOptions())
     const responseData = JSON.parse(response.payload)
 
     expect(responseData.input).toEqual(
-      expect.objectContaining({ upperbound: upperbound.value })
+      expect.objectContaining({ upperbound: upperbound })
     )
   })
 
   test('rounds upperbound provided by rules engine runner to two decimal places', async () => {
     const testCases = [
-      { upperbound: getUpperboundFact(739.3000000000001), expectedValue: 739.3 },
-      { upperbound: getUpperboundFact(40.2699999999999), expectedValue: 40.27 },
-      { upperbound: getUpperboundFact(78.8383838383838), expectedValue: 78.84 },
-      { upperbound: getUpperboundFact(44.4444444444444), expectedValue: 44.44 },
-      { upperbound: getUpperboundFact(55.5555555555555), expectedValue: 55.56 },
-      { upperbound: getUpperboundFact(1.005), expectedValue: 1.01 }
+      { upperbound: 739.3000000000001, expectedValue: 739.3 },
+      { upperbound: 40.2699999999999, expectedValue: 40.27 },
+      { upperbound: 78.8383838383838, expectedValue: 78.84 },
+      { upperbound: 44.4444444444444, expectedValue: 44.44 },
+      { upperbound: 55.5555555555555, expectedValue: 55.56 },
+      { upperbound: 1.005, expectedValue: 1.01 }
     ]
     for (const testCase of testCases) {
       const { upperbound, expectedValue } = testCase
@@ -249,12 +249,4 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
       }]
     }
   ]
-
-  const getUpperboundFact = value => ({
-    id: 'upperbound',
-    options: { cache: true },
-    priority: 1,
-    type: 'CONSTANT',
-    value
-  })
 })

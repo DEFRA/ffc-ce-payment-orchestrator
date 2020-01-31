@@ -1,12 +1,13 @@
 const actionsService = require('./actionsService')
 const parcelService = require('./parcelService')
-const rulesEngine = require('../rules-engine')
+const rulesEngine = require('./rulesEngineService')
 
 module.exports = {
   get: async function (parcelRef) {
     const actions = await actionsService.get()
     const returnActions = []
     const parcelData = parcelService.getByRef(parcelRef)
+
     for (const action of actions) {
       rulesEngine.resetEngine()
       let actionPassed = false
@@ -14,6 +15,7 @@ module.exports = {
         actionPassed = true
       }
       await rulesEngine.doEligibilityRun(action.rules, [parcelData], { }, successFunc)
+
       if (actionPassed) {
         const { rules, ...returnAction } = action
         returnActions.push(returnAction)

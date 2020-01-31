@@ -20,7 +20,8 @@
         "areaCovered": 0.3
       }
     ],
-    "previousActions": []
+    "previousActions": [],
+    "sssi": false
   },
   {
     "ref": "SD75492628",
@@ -32,9 +33,10 @@
     "previousActions": [
       {
         "date": "2017-04-28",
-        "identifier": "ABC action"
+        "identifier": "FG1"
       }
-    ]
+    ],
+    "sssi": false
   },
   {
     "ref": "SD78379604",
@@ -44,7 +46,7 @@
     "perimeterFeatures": [],
     "areaFeatures": [],
     "previousActions": [],
-    "SSSI": true
+    "sssi": true
   },
   {
     "ref": "SD81437506",
@@ -66,9 +68,10 @@
     "previousActions": [
       {
         "date": "2013-07-03",
-        "identifier": "XYZ action"
+        "identifier": "FG1"
       }
-    ]
+    ],
+    "sssi": false
   },
   {
     "ref": "SD81525709",
@@ -82,6 +85,7 @@
       }
     ],
     "areaFeatures": [],
-    "previousActions": []
+    "previousActions": [],
+    "sssi": false
   }
 ]

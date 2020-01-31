@@ -9,7 +9,7 @@ const quantityBoundsResponseBuilder = (action, runResult) => ({
   description: action.description,
   input: {
     ...action.input,
-    upperbound: runResult.upperbound && Math.round((runResult.upperbound.value + Number.EPSILON) * 100) / 100
+    upperbound: runResult.upperbound && Math.round((runResult.upperbound + Number.EPSILON) * 100) / 100
   }
 })
 
@@ -40,7 +40,8 @@ module.exports = [{
     const action = await actionsService.getByIdWithRules(actionId)
     const runData = { quantity: action.input.lowerbound }
     const runResult = await rulesEngineHelper.fullRun(action, parcel, runData)
+    const response = quantityBoundsResponseBuilder(action, runResult)
 
-    return h.response(quantityBoundsResponseBuilder(action, runResult)).code(200)
+    return h.response(response).code(200)
   }
 }]

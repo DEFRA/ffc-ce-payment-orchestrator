@@ -1,5 +1,4 @@
-const rulesEngine = require('./index')
-const { quantityFactName, rateFactName } = require('./enums')
+const rulesEngine = require('../services/rulesEngineService')
 
 function eligibiltyRun (action, parcel, options) {
   const eligibilityAction = {
@@ -10,14 +9,31 @@ function eligibiltyRun (action, parcel, options) {
 }
 
 async function fullRun (action, parcel, options) {
-  const runResult = { eligible: false }
-  rulesEngine.resetEngine()
-  const successCallback = (event, almanac, ruleResult) => {
-    runResult.eligible = true
-    runResult.value = action[rateFactName] * options[quantityFactName]
-    runResult.upperbound = almanac.factMap.get('upperbound')
+  const upperboundFactsByActionId = {
+    FG1: 'adjustedPerimeter',
+    SW6: 'pondlessArea'
   }
-  await rulesEngine.doFullRun(action.rules, [parcel], options, successCallback)
+  const upperboundFact = upperboundFactsByActionId[action.id]
+  const returnFacts = []
+
+  if (upperboundFact) {
+    returnFacts.push(upperboundFact)
+  }
+
+  const runResult = { eligible: false }
+  const successCallback = ({ facts, isEligible }) => {
+    runResult.eligible = isEligible
+    runResult.facts = facts
+    runResult.value = action.rate * options.quantity
+
+    if (upperboundFact) {
+      runResult.upperbound = facts[upperboundFact]
+    }
+  }
+
+  rulesEngine.resetEngine()
+  await rulesEngine.doFullRun(action.rules, [parcel], options, successCallback, returnFacts)
+
   return runResult
 }
 
