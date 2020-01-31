@@ -22,7 +22,7 @@ module.exports = {
         throw Error('rulesEngineService.doFullRun requires exactly 1 parcel')
       }
 
-      const parcel = parcels[0]
+      const [parcel] = parcels
 
       const enabledRules = requestedRules
         .filter(rule => rule.enabled)
