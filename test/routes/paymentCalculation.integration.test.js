@@ -195,7 +195,7 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
   })
 
   // Skip area rule tests because these rules are not yet implemented in new rules engine
-  describe.skip('action SW6: Winter cover crops', () => {
+  describe('action SW6: Winter cover crops', () => {
     const actionId = 'SW6'
 
     describe('with total parcel area rule', () => {

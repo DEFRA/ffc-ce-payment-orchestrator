@@ -1,14 +1,18 @@
 const mockParcelsToReturn = [{
   ref: 'SS12345678',
-  SSSI: false,
+  sssi: false,
+  totalArea: 90,
   totalPerimeter: 45,
+  areaFeatures: [],
   perimeterFeatures: [],
   previousActions: []
 },
 {
   ref: 'XX12345678',
-  SSSI: true,
+  sssi: true,
+  totalArea: 90,
   totalPerimeter: 45,
+  areaFeatures: [],
   perimeterFeatures: [],
   previousActions: []
 }]
@@ -34,12 +38,12 @@ jest.mock('../../server/services/actionsService', () => {
           enabled: true,
           facts: [
             {
-              id: 'SSSI',
+              id: 'sssi',
               description: 'Parcel in SSSI area'
             }
           ],
           conditions: [{
-            fact: 'SSSI',
+            fact: 'sssi',
             operator: 'equal',
             value: true
           }]
@@ -54,17 +58,17 @@ jest.mock('../../server/services/actionsService', () => {
 })
 
 const parcelActionsService = require('../../server/services/parcelActionsService')
-const SSSIparcelRef = 'SS12345678'
-const nonSSSIparcelRef = 'XX12345678'
+const sssiParcelRef = 'SS12345678'
+const nonSSSIParcelRef = 'XX12345678'
 
 describe('parcelActionService', () => {
   test('parcel actions service returns an array', async () => {
-    const actions = await parcelActionsService.get(SSSIparcelRef)
+    const actions = await parcelActionsService.get(sssiParcelRef)
     expect(Array.isArray(actions)).toEqual(true)
   })
 
   test('returns all actions if parcel is eligible for all actions', async () => {
-    const actions = await parcelActionsService.get(SSSIparcelRef)
+    const actions = await parcelActionsService.get(sssiParcelRef)
     expect(actions).toEqual([
       { id: 'TE1', description: 'Testing' },
       { id: 'TE2', description: 'Testing' }
@@ -72,7 +76,7 @@ describe('parcelActionService', () => {
   })
 
   test('returns only eligible actions if the parcel is eligible for some actions', async () => {
-    const actions = await parcelActionsService.get(nonSSSIparcelRef)
+    const actions = await parcelActionsService.get(nonSSSIParcelRef)
     expect(actions).toEqual([
       { id: 'TE2', description: 'Testing' }])
   })

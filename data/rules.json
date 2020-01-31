@@ -109,13 +109,13 @@
     "description": "Parcel within SSSI",
     "facts": [
       {
-        "id": "SSSI",
+        "id": "sssi",
         "description": "Parcel in SSSI area"
       }
     ],
     "conditions": [
       {
-        "fact": "SSSI",
+        "fact": "sssi",
         "operator": "equal",
         "value": true
       }

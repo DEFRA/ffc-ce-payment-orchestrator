@@ -9,7 +9,10 @@ describe('Rules engine helper', () => {
   })
 
   test('indicates that rules pass as per result from rules engine', async () => {
-    const runResult = await invokeRulesEngineHelperFullRun(getSampleAction, { quantity: 1 })
+    rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
+      successCallback({ facts: {}, isEligible: true })
+    })
+    const runResult = await rulesEngineHelper.fullRun(getSampleAction(), getSampleParcel(), { quantity: 1 })
     expect(runResult.eligible).toBeTruthy()
   })
 
@@ -20,13 +23,16 @@ describe('Rules engine helper', () => {
   })
 
   test('provides a value when rules pass as per result from rules engine', async () => {
+    rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
+      successCallback({ facts: {}, isEligible: true })
+    })
     const testCases = [
       { action: getSampleAction(98), data: { quantity: 22 }, expectedResult: 98 * 22 },
       { action: getSampleAction(5), data: { quantity: 128 }, expectedResult: 5 * 128 },
       { action: getSampleAction(991), data: { quantity: 3 }, expectedResult: 991 * 3 }
     ]
     for (const testCase of testCases) {
-      const runResult = await invokeRulesEngineHelperFullRun(testCase.action, testCase.data)
+      const runResult = await rulesEngineHelper.fullRun(testCase.action, getSampleParcel(), testCase.data)
       expect(runResult.value).toBe(testCase.expectedResult)
     }
   })
@@ -36,28 +42,14 @@ describe('Rules engine helper', () => {
     expect(rulesEngine.resetEngine).toHaveBeenCalled()
   })
 
-  const invokeRulesEngineHelperFullRun = (action, actionData) => {
-    let successCallback
-    let dfrResolve
-    const dfrPromise = new Promise((resolve, reject) => {
-      dfrResolve = resolve
-    })
-    rulesEngine.doFullRun.mockImplementation((r, p, o, callback) => {
-      successCallback = callback
-      return dfrPromise
-    })
-
-    const runPromise = rulesEngineHelper.fullRun(action, getSampleParcel(), actionData)
-    successCallback()
-    dfrResolve()
-    return runPromise
-  }
-
   const getSampleParcel = () => ({
     ref: 'SD12345678',
+    totalArea: 9,
     totalPerimeter: 100,
+    areaFeatures: [],
     perimeterFeatures: [],
-    previousActions: []
+    previousActions: [],
+    sssi: false
   })
 
   const getSampleAction = (rate = 1) => ({

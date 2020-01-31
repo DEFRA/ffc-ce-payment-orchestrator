@@ -20,7 +20,8 @@
         "areaCovered": 0.3
       }
     ],
-    "previousActions": []
+    "previousActions": [],
+    "sssi": false
   },
   {
     "ref": "SD75492628",
@@ -34,7 +35,8 @@
         "date": "2017-04-28",
         "identifier": "FG1"
       }
-    ]
+    ],
+    "sssi": false
   },
   {
     "ref": "SD78379604",
@@ -44,7 +46,7 @@
     "perimeterFeatures": [],
     "areaFeatures": [],
     "previousActions": [],
-    "SSSI": true
+    "sssi": true
   },
   {
     "ref": "SD81437506",
@@ -68,7 +70,8 @@
         "date": "2013-07-03",
         "identifier": "FG1"
       }
-    ]
+    ],
+    "sssi": false
   },
   {
     "ref": "SD81525709",
@@ -82,6 +85,7 @@
       }
     ],
     "areaFeatures": [],
-    "previousActions": []
+    "previousActions": [],
+    "sssi": false
   }
 ]
