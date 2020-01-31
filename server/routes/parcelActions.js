@@ -1,7 +1,19 @@
 const validationSchema = require('../schema/parcelActions')
 const parcelActionsService = require('../services/parcelActionsService')
+const parcelService = require('../services/parcelService')
+const actionsService = require('../services/actionsService')
+const rulesEngineHelper = require('../rules-engine/helper')
 
-module.exports = {
+const quantityBoundsResponseBuilder = (action, runResult) => ({
+  id: action.id,
+  description: action.description,
+  input: {
+    ...action.input,
+    upperbound: runResult.upperbound && Math.round((runResult.upperbound.value + Number.EPSILON) * 100) / 100
+  }
+})
+
+module.exports = [{
   method: 'GET',
   path: '/parcels/{parcelRef}/actions',
   options: {
@@ -19,4 +31,16 @@ module.exports = {
       return h.response({ actions }).code(200)
     }
   }
-}
+}, {
+  method: 'GET',
+  path: '/parcels/{parcelRef}/actions/{actionId}',
+  handler: async (request, h) => {
+    const { actionId, parcelRef } = request.params
+    const parcel = parcelService.getByRef(parcelRef)
+    const action = await actionsService.getByIdWithRules(actionId)
+    const runData = { quantity: action.input.lowerbound }
+    const runResult = await rulesEngineHelper.fullRun(action, parcel, runData)
+
+    return h.response(quantityBoundsResponseBuilder(action, runResult)).code(200)
+  }
+}]
