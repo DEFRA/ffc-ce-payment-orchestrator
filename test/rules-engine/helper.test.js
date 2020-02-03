@@ -8,7 +8,7 @@ describe('Rules engine helper', () => {
     jest.clearAllMocks()
   })
 
-  test('indicates that rules pass as per result from rules engine', async () => {
+  test('doFullRun indicates that rules pass as per result from rules engine', async () => {
     rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
       successCallback({ facts: {}, isEligible: true })
     })
@@ -16,7 +16,7 @@ describe('Rules engine helper', () => {
     expect(runResult.eligible).toBeTruthy()
   })
 
-  test('indicates that rules fail as per result from rules engine', async () => {
+  test('doFullRun indicates that rules fail as per result from rules engine', async () => {
     rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
       successCallback({ facts: {}, isEligible: false })
     })
@@ -24,7 +24,7 @@ describe('Rules engine helper', () => {
     expect(runResult.eligible).toBeFalsy()
   })
 
-  test('provides a value when rules pass as per result from rules engine', async () => {
+  test('doFullRun provides a value when rules pass as per result from rules engine', async () => {
     rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
       successCallback({ facts: {}, isEligible: true })
     })
@@ -39,18 +39,48 @@ describe('Rules engine helper', () => {
     }
   })
 
-  test('provides an upperbound fact when available', async () => {
+  test('upperbound not provided when no eligible action available', async () => {
+    const sampleAction = getSampleAction()
+    sampleAction.rules[0].id = 1
+    sampleAction.rules[0].enabled = false
+
+    const runResult = await rulesEngineHelper.preCheckRun(sampleAction, getSampleParcel(), { quantity: sampleAction.lowerBound })
+    expect(runResult.upperbound).toBeUndefined()
+  })
+
+  test('provides an upperbound fact from parcel data when quantity rule enabled', async () => {
     const testCases = [
       { upperbound: 101.2 },
       { upperbound: 87 },
       { upperbound: 3 }
     ]
     const sampleAction = getSampleAction()
+    sampleAction.rules[0].id = 1
+    sampleAction.rules[0].enabled = true
+
+    for (const testCase of testCases) {
+      const sampleParcel = getSampleParcel()
+      sampleParcel.totalPerimeter = testCase.upperbound
+      const runResult = await rulesEngineHelper.preCheckRun(sampleAction, sampleParcel, { quantity: sampleAction.lowerBound })
+      expect(runResult.upperbound).toBe(testCase.upperbound)
+    }
+  })
+
+  test('provides an upperbound fact from the rules engine when remove feature rule enabled', async () => {
+    const testCases = [
+      { upperbound: 101.2 },
+      { upperbound: 87 },
+      { upperbound: 3 }
+    ]
+    const sampleAction = getSampleAction()
+    sampleAction.rules[0].id = 2
+    sampleAction.rules[0].enabled = true
+
     for (const testCase of testCases) {
       rulesEngine.doFullRun.mockImplementation((r, p, o, successCallback) => {
         successCallback({ facts: { adjustedPerimeter: testCase.upperbound }, isEligible: true })
       })
-      const runResult = await rulesEngineHelper.fullRun(sampleAction, getSampleParcel(), { quantity: sampleAction.lowerBound })
+      const runResult = await rulesEngineHelper.preCheckRun(sampleAction, getSampleParcel(), { quantity: sampleAction.lowerBound })
       expect(runResult.upperbound).toBe(testCase.upperbound)
     }
   })
