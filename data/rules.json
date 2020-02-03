@@ -195,6 +195,16 @@
     "id": 8,
     "type": "eligibility",
     "groupname": "Area",
-    "description": "Cultivated parcel"
+    "description": "Cultivated parcel",
+    "facts": [
+      {
+        "id": "totalArea",
+        "description": "Total Parcel Area"
+      },
+      {
+        "id": "quantity",
+        "description": "Area requested"
+      }
+    ]
   }
 ]
