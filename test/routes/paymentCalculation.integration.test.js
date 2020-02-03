@@ -288,5 +288,64 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
         )
       })
     })
+
+    describe('with cultivated parcel rule', () => {
+      const quantity = 10
+
+      beforeEach(async () => {
+        jest.mock(
+          '../../data/actions.json',
+          () => [
+            {
+              id: 'SW6',
+              description: 'Winter cover crops',
+              rate: 114,
+              rules: [
+                { id: 8, enabled: true }
+              ]
+            }
+          ]
+        )
+        await setUpServer()
+      })
+
+      test('parcel is eligible if parcel is arable land', async () => {
+        const parcelId = 'SD75492628'
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: true,
+            value: quantity * 114
+          })
+        )
+      })
+
+      test('parcel is eligible if parcel is cultivated and managed', async () => {
+        const parcelId = 'SD81525709'
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: true,
+            value: quantity * 114
+          })
+        )
+      })
+
+      test('parcel is ineligible if parcel is not cultivated or arable', async () => {
+        const parcelId = 'SD78379604'
+        const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
+        const payload = JSON.parse(response.payload)
+        expect(response.statusCode).toBe(200)
+        expect(payload).toEqual(
+          expect.objectContaining({
+            eligible: false
+          })
+        )
+      })
+    })
   })
 })
