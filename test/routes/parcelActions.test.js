@@ -161,7 +161,6 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
     actionsService.getByIdWithRules.mockResolvedValue(getSampleAction())
     const response = await server.inject(generateRequestOptions())
     const responseData = JSON.parse(response.payload)
-    console.log(responseData)
 
     expect(responseData.input).toEqual(
       expect.objectContaining({ upperbound: upperbound })
