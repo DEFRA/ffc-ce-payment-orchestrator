@@ -7,7 +7,8 @@ const rulesMap = {
   4: rules.noActionsInTimePeriod,
   5: rules.notSSSI,
   6: rules.pondlessArea,
-  7: rules.area
+  7: rules.area,
+  8: rules.cultivatedParcel
 }
 
 module.exports = {
