@@ -10,7 +10,7 @@
       },
       {
         "id": 2,
-        "enabled": true
+        "enabled": false
       },
       {
         "id": 3,
@@ -18,11 +18,11 @@
       },
       {
         "id": 4,
-        "enabled": true
+        "enabled": false
       },
       {
         "id": 5,
-        "enabled": true
+        "enabled": false
       }
     ]
   },
@@ -33,11 +33,11 @@
     "rules": [
       {
         "id": 5,
-        "enabled": true
+        "enabled": false
       },
       {
         "id": 6,
-        "enabled": true
+        "enabled": false
       },
       {
         "id": 7,
