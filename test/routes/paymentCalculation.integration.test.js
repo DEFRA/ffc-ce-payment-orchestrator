@@ -290,6 +290,8 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
     })
 
     describe('with cultivated parcel rule', () => {
+      const quantity = 10
+
       beforeEach(async () => {
         jest.mock(
           '../../data/actions.json',
@@ -309,7 +311,6 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
 
       test('parcel is eligible if parcel is arable land', async () => {
         const parcelId = 'SD75492628'
-        const quantity = areaOfParcelSD74445738 - 1
         const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
         const payload = JSON.parse(response.payload)
         expect(response.statusCode).toBe(200)
@@ -323,7 +324,6 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
 
       test('parcel is eligible if parcel is cultivated and managed', async () => {
         const parcelId = 'SD81525709'
-        const quantity = areaOfParcelSD74445738 - 1
         const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
         const payload = JSON.parse(response.payload)
         expect(response.statusCode).toBe(200)
@@ -337,7 +337,6 @@ describe('POST /parcels/{parcelRef/actions/{actionId}/payment-calculation', () =
 
       test('parcel is ineligible if parcel is not cultivated or arable', async () => {
         const parcelId = 'SD78379604'
-        const quantity = areaOfParcelSD74445738 - 1
         const response = await server.inject(generateRequestOptions(parcelId, actionId, { quantity }))
         const payload = JSON.parse(response.payload)
         expect(response.statusCode).toBe(200)
