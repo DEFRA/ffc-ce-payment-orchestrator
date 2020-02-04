@@ -21,7 +21,8 @@
       }
     ],
     "previousActions": [],
-    "sssi": false
+    "sssi": false,
+    "landCoverClass": 110
   },
   {
     "ref": "SD75492628",
@@ -36,7 +37,8 @@
         "identifier": "FG1"
       }
     ],
-    "sssi": false
+    "sssi": false,
+    "landCoverClass": 110
   },
   {
     "ref": "SD78379604",
@@ -46,7 +48,8 @@
     "perimeterFeatures": [],
     "areaFeatures": [],
     "previousActions": [],
-    "sssi": true
+    "sssi": true,
+    "landCoverClass": 400
   },
   {
     "ref": "SD81437506",
@@ -71,7 +74,8 @@
         "identifier": "FG1"
       }
     ],
-    "sssi": false
+    "sssi": false,
+    "landCoverClass": 200
   },
   {
     "ref": "SD81525709",
@@ -86,6 +90,7 @@
     ],
     "areaFeatures": [],
     "previousActions": [],
-    "sssi": false
+    "sssi": false,
+    "landCoverClass": 670
   }
 ]
