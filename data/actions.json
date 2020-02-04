@@ -5,7 +5,7 @@
     "rate": 4,
     "precheck": true,
     "input": {
-      "unit": "metre",
+      "unit": "metres",
       "description": "fence length",
       "lowerbound": 2
     },
@@ -38,7 +38,7 @@
     "rate": 114,
     "precheck": true,
     "input": {
-      "unit": "hectare",
+      "unit": "hectares",
       "description": "claim area",
       "lowerbound": 0.1
     },
