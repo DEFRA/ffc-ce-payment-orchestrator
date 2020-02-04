@@ -84,7 +84,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
 
   beforeEach(async () => {
     jest.clearAllMocks()
-    rulesEngineHelper.fullRun.mockResolvedValue({})
+    rulesEngineHelper.preCheckRun.mockResolvedValue({})
     actionsService.getByIdWithRules.mockResolvedValue({ input: {} })
     server = await createServer()
     await server.initialize()
@@ -111,7 +111,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
     expect(actionsService.getByIdWithRules).toHaveBeenCalledWith(actionId)
   })
 
-  test('provides correct arguments to rules engine runner', async () => {
+  test('provides correct arguments to rules engine runner if precheck turned on', async () => {
     const options = generateRequestOptions()
     const sampleParcel = getSampleParcel()
     const sampleAction = getSampleAction()
@@ -120,11 +120,24 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
 
     await server.inject(options)
 
-    expect(rulesEngineHelper.fullRun).toHaveBeenCalledWith(
+    expect(rulesEngineHelper.preCheckRun).toHaveBeenCalledWith(
       expect.objectContaining(sampleAction),
       expect.objectContaining(sampleParcel),
       expect.objectContaining({ quantity: sampleAction.input.lowerbound })
     )
+  })
+
+  test('rules engine runner does not run if precheck not turned on', async () => {
+    const options = generateRequestOptions()
+    const sampleParcel = getSampleParcel()
+    const sampleAction = getSampleAction()
+    sampleAction.precheck = false
+    parcelService.getByRef.mockReturnValue(sampleParcel)
+    actionsService.getByIdWithRules.mockResolvedValue(sampleAction)
+
+    await server.inject(options)
+
+    expect(rulesEngineHelper.preCheckRun).not.toHaveBeenCalled()
   })
 
   test('provides input description as given in action', async () => {
@@ -144,7 +157,8 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
 
   test('elaborates input description with upperbound provided by rules engine runner', async () => {
     const upperbound = 40
-    rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: 100, upperbound })
+    rulesEngineHelper.preCheckRun.mockResolvedValue({ upperbound })
+    actionsService.getByIdWithRules.mockResolvedValue(getSampleAction())
     const response = await server.inject(generateRequestOptions())
     const responseData = JSON.parse(response.payload)
 
@@ -164,7 +178,8 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
     ]
     for (const testCase of testCases) {
       const { upperbound, expectedValue } = testCase
-      rulesEngineHelper.fullRun.mockResolvedValue({ eligible: true, value: 100, upperbound })
+      rulesEngineHelper.preCheckRun.mockResolvedValue({ upperbound })
+      actionsService.getByIdWithRules.mockResolvedValue(getSampleAction())
       const response = await server.inject(generateRequestOptions())
       const responseData = JSON.parse(response.payload)
 
@@ -175,7 +190,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
   })
 
   test('handles failing rules run', async () => {
-    rulesEngineHelper.fullRun.mockResolvedValue({ eligible: false })
+    rulesEngineHelper.preCheckRun.mockResolvedValue({ eligible: false })
     expect(async () => {
       await server.inject(generateRequestOptions())
     }).not.toThrow()
@@ -187,7 +202,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
       const sampleAction = getSampleAction(undefined, testCase)
       actionsService.getByIdWithRules.mockResolvedValue(sampleAction)
       await server.inject(generateRequestOptions())
-      expect(rulesEngineHelper.fullRun).toHaveBeenCalledWith(
+      expect(rulesEngineHelper.preCheckRun).toHaveBeenCalledWith(
         expect.any(Object),
         expect.any(Object),
         expect.objectContaining({ quantity: testCase })
@@ -219,6 +234,7 @@ describe('GET /parcels/{parcelRef}/actions/{actionId}', () => {
     id: 'crop-circle',
     description: 'Damages claim for UFO landings in field',
     rate,
+    precheck: true,
     rules: getSampleRules(),
     input: {
       unit: 'metres',
