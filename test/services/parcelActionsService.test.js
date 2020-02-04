@@ -16,6 +16,9 @@ const mockParcelsToReturn = [{
   perimeterFeatures: [],
   previousActions: []
 }]
+const mockRuleFailureReasons = {
+  sampleRule: 'Sample reason'
+}
 
 jest.mock('../../server/services/parcelService', () => {
   return {
@@ -28,6 +31,7 @@ const actionsService = require('../../server/services/actionsService')
 jest.mock('../../server/services/actionsService')
 const rulesEngineService = require('../../server/services/rulesEngineService')
 jest.mock('../../server/services/rulesEngineService')
+jest.mock('../../server/rules-engine/ruleFailureReasons', () => ({ reasons: mockRuleFailureReasons }))
 
 const parcelActionsService = require('../../server/services/parcelActionsService')
 
@@ -36,28 +40,29 @@ describe('parcelActionService', () => {
     jest.clearAllMocks()
     rulesEngineService.doEligibilityRun.mockImplementation((r, p, e, successCallback) => {
       successCallback()
+      return Promise.resolve({ failingRules: [] })
     })
   })
 
   test('parcel actions returns each eligible action', async () => {
     const testCases = [
       {
-        actions: [{ id: 'action-1', rules: [] }],
+        actions: [buildSampleAction('action-1')],
         eligible: ['action-1']
       },
       {
         actions: [
-          { id: 'action-2', rules: [] },
-          { id: 'action-3', rules: [] },
-          { id: 'action-4', rules: [] }
+          buildSampleAction('action-2'),
+          buildSampleAction('action-3'),
+          buildSampleAction('action-4')
         ],
         eligible: ['action-2', 'action-4']
       },
       {
         actions: [
-          { id: 'action-5', rules: [] },
-          { id: 'action-6', rules: [] },
-          { id: 'action-7', rules: [] }
+          buildSampleAction('action-5'),
+          buildSampleAction('action-6'),
+          buildSampleAction('action-7')
         ],
         eligible: ['action-6']
       }
@@ -66,14 +71,35 @@ describe('parcelActionService', () => {
       actionsService.get.mockResolvedValue(testCase.actions)
       rulesEngineService.doEligibilityRun.mockImplementation((r, p, e, callback) => {
         const actionIndex = rulesEngineService.doEligibilityRun.mock.calls.length
+        const failingRules = []
         if (testCase.eligible.includes(`action-${actionIndex}`)) {
           callback()
+        } else {
+          failingRules.push('sampleRule')
         }
-        return Promise.resolve()
+        return Promise.resolve({ failingRules })
       })
-      const eligibleActions = await parcelActionsService.get('AB123456')
-      const expectedActions = testCase.actions.filter(a => testCase.eligible.includes(a.id)).map(a => ({ id: a.id }))
-      expect(eligibleActions).toEqual(expectedActions)
+      const actions = await parcelActionsService.get('AB123456')
+      const expectedActions = testCase.actions.map(a => buildExpectedResponse(a, testCase.eligible.includes(a.id)))
+      expect(actions).toEqual(expect.arrayContaining(expectedActions))
     }
+  })
+
+  const buildExpectedResponse = (action, eligible) => {
+    const resp = {
+      id: action.id,
+      description: action.description,
+      eligible
+    }
+    if (!eligible) {
+      resp.reason = mockRuleFailureReasons.sampleRule
+    }
+    return resp
+  }
+
+  const buildSampleAction = tag => ({
+    id: tag,
+    description: tag,
+    rules: []
   })
 })

@@ -11,9 +11,9 @@ const rulesMap = {
 }
 
 module.exports = {
-  doEligibilityRun: async function (rules, parcels, passedFacts, successFunc) {
+  doEligibilityRun: function (rules, parcels, passedFacts, successFunc) {
     const eligibilityRules = rules.filter(rule => rule.type === 'eligibility')
-    await this.doFullRun(eligibilityRules, parcels, passedFacts, successFunc)
+    return this.doFullRun(eligibilityRules, parcels, passedFacts, successFunc)
   },
 
   doFullRun: async function (requestedRules, parcels, passedFacts, successFunc, returnFacts) {
@@ -43,6 +43,12 @@ module.exports = {
 
       if (isEligible) {
         successFunc({ facts, isEligible })
+      }
+
+      return {
+        runResult: result,
+        passingRules: enabledRules.map(er => er.event.type).filter(r => events.includes(r)),
+        failingRules: enabledRules.map(er => er.event.type).filter(r => !events.includes(r))
       }
     } catch (error) {
       console.error('rules engine failed', error)

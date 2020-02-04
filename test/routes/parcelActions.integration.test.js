@@ -20,7 +20,7 @@ describe('GET /parcels/{parcelRef}/actions', () => {
     await server.stop()
   })
 
-  test('Each parcel returns expected actions', async () => {
+  test('Each parcel returns expected eligible actions', async () => {
     const testCases = [
       { parcelRef: 'SD74445738', expectedActions: ['FG1', 'SW6'] },
       { parcelRef: 'SD75492628', expectedActions: ['SW6'] },
@@ -33,8 +33,7 @@ describe('GET /parcels/{parcelRef}/actions', () => {
       const response = await server.inject(generateRequestOptions(testCase.parcelRef))
       const payload = JSON.parse(response.payload)
       expect(response.statusCode).toBe(200)
-      console.log(testCase.parcelRef, testCase.expectedActions, payload.actions)
-      expect(payload.actions.map(a => a.id)).toEqual(
+      expect(payload.actions.filter(a => a.eligible).map(a => a.id)).toEqual(
         testCase.expectedActions
       )
     }
