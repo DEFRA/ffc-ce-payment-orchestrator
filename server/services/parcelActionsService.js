@@ -3,14 +3,14 @@ const parcelService = require('./parcelService')
 const rulesEngine = require('./rulesEngineService')
 const { reasons } = require('../rules-engine/ruleFailureReasons')
 
-function buildReturnAction (action, eligible, failingRules) {
+function buildReturnAction (action, eligible, failingEligibilityRules) {
   const returnAction = {
     id: action.id,
     description: action.description,
     eligible
   }
   if (!eligible) {
-    returnAction.reason = failingRules.map(fr => reasons[fr]).join(', ')
+    returnAction.reason = failingEligibilityRules.map(fr => reasons[fr]).join(', ')
   }
   return returnAction
 }
