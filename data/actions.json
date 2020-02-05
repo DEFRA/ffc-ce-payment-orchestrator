@@ -60,5 +60,26 @@
         "enabled": true
       }
     ]
+  },
+  {
+    "id": "LV7",
+    "description": "Livestock troughs",
+    "rate": 110,
+    "precheck": true,
+    "input": {
+      "unit": "whole troughs",
+      "description": "number of troughs",
+      "lowerbound": 1
+    },
+    "rules": [
+      {
+        "id": 9,
+        "enabled": true
+      },
+      {
+        "id": 10,
+        "enabled": true
+      }
+    ]
   }
 ]
