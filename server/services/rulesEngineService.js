@@ -41,6 +41,7 @@ module.exports = {
       const result = await runEngine(enabledRules, { parcel, ...parameters }, returnFacts)
       const { events, facts } = result
       const isEligible = events.length === enabledRules.length
+      const rulesRun = events.map(e => e.type)
 
       if (isEligible) {
         successFunc({ facts, isEligible })
@@ -48,8 +49,8 @@ module.exports = {
 
       return {
         runResult: result,
-        passingRules: enabledRules.map(er => er.event.type).filter(r => events.includes(r)),
-        failingRules: enabledRules.map(er => er.event.type).filter(r => !events.includes(r))
+        passingRules: enabledRules.map(er => er.event.type).filter(r => rulesRun.includes(r)),
+        failingRules: enabledRules.map(er => er.event.type).filter(r => !rulesRun.includes(r))
       }
     } catch (error) {
       console.error('rules engine failed', error)

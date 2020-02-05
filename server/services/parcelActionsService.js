@@ -10,7 +10,7 @@ function buildReturnAction (action, eligible, failingRules) {
     eligible
   }
   if (!eligible) {
-    returnAction.reason = failingRules.map(fr => reasons[fr]).join(',')
+    returnAction.reason = failingRules.map(fr => reasons[fr]).join(', ')
   }
   return returnAction
 }
