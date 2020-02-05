@@ -16,6 +16,9 @@ const mockParcelsToReturn = [{
   perimeterFeatures: [],
   previousActions: []
 }]
+const mockRuleFailureReasons = {
+  sampleRule: 'Sample reason'
+}
 
 jest.mock('../../server/services/parcelService', () => {
   return {
@@ -24,60 +27,79 @@ jest.mock('../../server/services/parcelService', () => {
     })
   }
 })
-
-jest.mock('../../server/services/actionsService', () => {
-  return {
-    get: jest.fn().mockResolvedValue([{
-      id: 'TE1',
-      description: 'Testing',
-      rules: [
-        {
-          id: 5,
-          type: 'eligibility',
-          description: 'Parcel within SSSI',
-          enabled: true,
-          facts: [
-            {
-              id: 'sssi',
-              description: 'Parcel in SSSI area'
-            }
-          ],
-          conditions: [{
-            fact: 'sssi',
-            operator: 'equal',
-            value: true
-          }]
-        }]
-    },
-    {
-      id: 'TE2',
-      description: 'Testing',
-      rules: []
-    }])
-  }
-})
+const actionsService = require('../../server/services/actionsService')
+jest.mock('../../server/services/actionsService')
+const rulesEngineService = require('../../server/services/rulesEngineService')
+jest.mock('../../server/services/rulesEngineService')
+jest.mock('../../server/rules-engine/eligibilityRuleFailureReasons', () => ({ reasons: mockRuleFailureReasons }))
 
 const parcelActionsService = require('../../server/services/parcelActionsService')
-const sssiParcelRef = 'SS12345678'
-const nonSSSIParcelRef = 'XX12345678'
 
 describe('parcelActionService', () => {
-  test('parcel actions service returns an array', async () => {
-    const actions = await parcelActionsService.get(sssiParcelRef)
-    expect(Array.isArray(actions)).toEqual(true)
+  beforeEach(() => {
+    jest.clearAllMocks()
+    rulesEngineService.doEligibilityRun.mockImplementation((r, p, e, successCallback) => {
+      successCallback()
+      return Promise.resolve({ failingRules: [] })
+    })
   })
 
-  test('returns all actions if parcel is eligible for all actions', async () => {
-    const actions = await parcelActionsService.get(sssiParcelRef)
-    expect(actions).toEqual([
-      { id: 'TE1', description: 'Testing' },
-      { id: 'TE2', description: 'Testing' }
-    ])
+  test('parcel actions returns each eligible action', async () => {
+    const testCases = [
+      {
+        actions: [buildSampleAction('action-1')],
+        eligible: ['action-1']
+      },
+      {
+        actions: [
+          buildSampleAction('action-2'),
+          buildSampleAction('action-3'),
+          buildSampleAction('action-4')
+        ],
+        eligible: ['action-2', 'action-4']
+      },
+      {
+        actions: [
+          buildSampleAction('action-5'),
+          buildSampleAction('action-6'),
+          buildSampleAction('action-7')
+        ],
+        eligible: ['action-6']
+      }
+    ]
+    for (const testCase of testCases) {
+      actionsService.get.mockResolvedValue(testCase.actions)
+      rulesEngineService.doEligibilityRun.mockImplementation((r, p, e, callback) => {
+        const actionIndex = rulesEngineService.doEligibilityRun.mock.calls.length
+        const failingRules = []
+        if (testCase.eligible.includes(`action-${actionIndex}`)) {
+          callback()
+        } else {
+          failingRules.push('sampleRule')
+        }
+        return Promise.resolve({ failingRules })
+      })
+      const actions = await parcelActionsService.get('AB123456')
+      const expectedActions = testCase.actions.map(a => buildExpectedResponse(a, testCase.eligible.includes(a.id)))
+      expect(actions).toEqual(expect.arrayContaining(expectedActions))
+    }
   })
 
-  test('returns only eligible actions if the parcel is eligible for some actions', async () => {
-    const actions = await parcelActionsService.get(nonSSSIParcelRef)
-    expect(actions).toEqual([
-      { id: 'TE2', description: 'Testing' }])
+  const buildExpectedResponse = (action, eligible) => {
+    const resp = {
+      id: action.id,
+      description: action.description,
+      eligible
+    }
+    if (!eligible) {
+      resp.reason = mockRuleFailureReasons.sampleRule
+    }
+    return resp
+  }
+
+  const buildSampleAction = tag => ({
+    id: tag,
+    description: tag,
+    rules: []
   })
 })
