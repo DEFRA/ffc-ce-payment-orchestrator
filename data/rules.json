@@ -3,20 +3,11 @@
     "id": 1,
     "type": "prevalidation",
     "groupname": "Perimeter",
-    "description": "Proposed fence length is longer than Total Parcel Perimeter",
+    "engineRule": "perimeter",
     "facts": [
       {
         "id": "totalPerimeter",
         "description": "Total Parcel Perimeter"
-      }
-    ],
-    "conditions": [
-      {
-        "fact": "quantity",
-        "operator": "greaterThan",
-        "value": {
-          "fact": "totalPerimeter"
-        }
       }
     ]
   },
@@ -25,6 +16,7 @@
     "type": "prevalidation",
     "groupname": "Perimeter",
     "description": "Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features",
+    "engineRule": "adjustedPerimeter",
     "facts": [
       {
         "id": "totalPerimeter",
@@ -32,44 +24,23 @@
       },
       {
         "id": "perimeterRemoved",
-        "description": "Total Feature Length",
-        "calculated": true,
-        "calculation": {
-          "operator": "sumall",
-          "sourcefact": "perimeterFeatures",
-          "path": "$..length"
-        }
+        "description": "Total Feature Length"
       },
       {
         "id": "upperbound",
-        "description": "Total usable perimeter length",
-        "calculated": true,
-        "calculation": {
-          "operator": "subtract",
-          "value1": "totalPerimeter",
-          "value2": "perimeterRemoved"
-        }
+        "description": "Total usable perimeter length"
       },
       {
         "id": "quantity",
         "description": "Metres of fencing requested"
-      }
-    ],
-    "conditions": [
-      {
-        "fact": "upperbound",
-        "operator": "lessThanInclusive",
-        "value": {
-          "fact": "quantity"
-        }
-      }
-    ]
+      }]
   },
   {
     "id": 3,
     "type": "prevalidation",
     "groupname": "Perimeter",
     "description": "Proposed fence length is longer than Total Parcel Perimeter minus the Perimeter features including the Tolerance",
+    "engineRule": "tolerancePerimeter",
     "facts": [
       {
         "id": "totalPerimeter",
@@ -88,18 +59,11 @@
     "id": 4,
     "type": "eligibility",
     "description": "Previous Action date is within the last 5 years",
+    "engineRule": "noActionsInTimePeriod",
     "facts": [
       {
         "id": "previousActions",
         "description": "Previous Action Dates"
-      }
-    ],
-    "conditions": [
-      {
-        "fact": "previousActions",
-        "path": "$..date",
-        "operator": "lessThan5Years",
-        "value": "2020-01-20T00:00:01.000Z"
       }
     ]
   },
@@ -107,17 +71,11 @@
     "id": 5,
     "type": "eligibility",
     "description": "Parcel within SSSI",
+    "engineRule": "notSSSI",
     "facts": [
       {
         "id": "sssi",
         "description": "Parcel in SSSI area"
-      }
-    ],
-    "conditions": [
-      {
-        "fact": "sssi",
-        "operator": "equal",
-        "value": true
       }
     ]
   },
@@ -126,6 +84,7 @@
     "type": "prevalidation",
     "groupname": "Area",
     "description": "Proposed area is larger than the Total Parcel Area minus the Pond area of the Parcel Features",
+    "engineRule": "pondlessArea",
     "facts": [
       {
         "id": "totalArea",
@@ -133,44 +92,24 @@
       },
       {
         "id": "areaRemoved",
-        "description": "Feature Area Removed",
-        "calculated": true,
-        "calculation": {
-          "operator": "sumall",
-          "sourcefact": "areaFeatures",
-          "path": "$..[?(@.type==='pond')].areaCovered"
-        }
+        "description": "Feature Area Removed"
       },
       {
         "id": "upperbound",
-        "description": "Total usable area",
-        "calculated": true,
-        "calculation": {
-          "operator": "subtract",
-          "value1": "totalArea",
-          "value2": "areaRemoved"
-        }
+        "description": "Total usable area"
       },
       {
         "id": "quantity",
         "description": "Area requested"
       }
-    ],
-    "conditions": [
-      {
-        "fact": "upperbound",
-        "operator": "lessThanInclusive",
-        "value": {
-          "fact": "quantity"
-        }
-      }
-    ]
+    ] 
   },
   {
     "id": 7,
     "type": "prevalidation",
     "groupname": "Area",
     "description": "Proposed area is larger than the Total Parcel Area",
+    "engineRule": "area",
     "facts": [
       {
         "id": "totalArea",
@@ -179,15 +118,6 @@
       {
         "id": "quantity",
         "description": "Area requested"
-      }
-    ],
-    "conditions": [
-      {
-        "fact": "totalArea",
-        "operator": "lessThanInclusive",
-        "value": {
-          "fact": "quantity"
-        }
       }
     ]
   },
@@ -196,6 +126,7 @@
     "type": "eligibility",
     "groupname": "Area",
     "description": "Cultivated parcel",
+    "engineRule": "cultivatedParcel",
     "facts": [
       {
         "id": "totalArea",

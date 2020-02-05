@@ -9,7 +9,6 @@ module.exports = {
     const parcelData = parcelService.getByRef(parcelRef)
 
     for (const action of actions) {
-      rulesEngine.resetEngine()
       let actionPassed = false
       const successFunc = function () {
         actionPassed = true

@@ -85,11 +85,6 @@ describe('Rules engine helper', () => {
     }
   })
 
-  test('resets rules engine', async () => {
-    await rulesEngineHelper.fullRun(getSampleRules(), getSampleParcel(), { parameterValue: 1 })
-    expect(rulesEngine.resetEngine).toHaveBeenCalled()
-  })
-
   const getSampleParcel = () => ({
     ref: 'SD12345678',
     totalArea: 9,

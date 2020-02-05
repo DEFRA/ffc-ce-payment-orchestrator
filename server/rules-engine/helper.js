@@ -10,8 +10,6 @@ async function fullRun (action, parcel, options) {
     runResult.facts = facts
     runResult.value = action.rate * options.quantity
   }
-
-  rulesEngine.resetEngine()
   await rulesEngine.doFullRun(action.rules, [parcel], options, successCallback, [])
 
   return runResult
@@ -52,7 +50,6 @@ async function preCheckRun (action, parcel, options) {
     const successCallback = ({ facts, isEligible }) => {
       preCheckResult.upperbound = facts[actionData.upperboundFact]
     }
-    rulesEngine.resetEngine()
     await rulesEngine.doFullRun(action.rules, [parcel], options, successCallback, returnFacts)
   }
 

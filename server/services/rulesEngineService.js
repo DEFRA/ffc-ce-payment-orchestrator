@@ -1,15 +1,11 @@
-const { runEngine, rules } = require('@neilbmclaughlin/rules-engine-test')
+const { runEngine, rules: engineRules } = require('@neilbmclaughlin/rules-engine-test')
+const rules = require('../../data/rules.json')
 
-const rulesMap = {
-  1: rules.perimeter,
-  2: rules.adjustedPerimeter,
-  3: rules.tolerancePerimeter,
-  4: rules.noActionsInTimePeriod,
-  5: rules.notSSSI,
-  6: rules.pondlessArea,
-  7: rules.area,
-  8: rules.cultivatedParcel
-}
+const rulesMap = rules.reduce((acc, curr) => {
+  acc[curr.id] = curr
+  curr.engineRule = engineRules[curr.engineRule]
+  return acc
+}, {})
 
 module.exports = {
   doEligibilityRun: async function (rules, parcels, passedFacts, successFunc) {
@@ -27,7 +23,7 @@ module.exports = {
 
       const enabledRules = requestedRules
         .filter(rule => rule.enabled)
-        .map(rule => rulesMap[rule.id])
+        .map(rule => rulesMap[rule.id].engineRule)
 
       const parameters = {
         actionId: passedFacts.actionId || 'FG1',
@@ -48,9 +44,5 @@ module.exports = {
     } catch (error) {
       console.error('rules engine failed', error)
     }
-  },
-
-  resetEngine: function () {
-
   }
 }
