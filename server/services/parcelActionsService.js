@@ -1,7 +1,7 @@
 const actionsService = require('./actionsService')
 const parcelService = require('./parcelService')
 const rulesEngine = require('./rulesEngineService')
-const { reasons } = require('../rules-engine/ruleFailureReasons')
+const { reasons } = require('../rules-engine/eligibilityRuleFailureReasons')
 
 function buildReturnAction (action, eligible, failingEligibilityRules) {
   const returnAction = {

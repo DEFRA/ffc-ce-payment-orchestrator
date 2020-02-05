@@ -31,7 +31,7 @@ const actionsService = require('../../server/services/actionsService')
 jest.mock('../../server/services/actionsService')
 const rulesEngineService = require('../../server/services/rulesEngineService')
 jest.mock('../../server/services/rulesEngineService')
-jest.mock('../../server/rules-engine/ruleFailureReasons', () => ({ reasons: mockRuleFailureReasons }))
+jest.mock('../../server/rules-engine/eligibilityRuleFailureReasons', () => ({ reasons: mockRuleFailureReasons }))
 
 const parcelActionsService = require('../../server/services/parcelActionsService')
 
