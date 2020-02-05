@@ -19,7 +19,7 @@ const actionRuleData = {
     eligibilityCheckOverride: (result, enabledRules) => {
       const ruleNames = enabledRules.map((rule) => rule.event.type)
       const passedRuleNames = result.events.map((event) => event.type)
-      return ruleNames.some((rule) => passedRuleNames.includes(rule))
+      return ruleNames.length > 0 ? ruleNames.some((rule) => passedRuleNames.includes(rule)) : true
     }
   }
 }

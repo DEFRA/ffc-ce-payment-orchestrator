@@ -211,22 +211,12 @@
     "id": 9,
     "type": "eligibility",
     "description": "Parcel within target area for the reduction of water pollution caused by farming",
-    "facts": [
-      {
-        "id": "test1",
-        "description": "Test Fact 1"
-      }
-    ]
+    "facts": []
   },
   {
     "id": 10,
     "type": "eligibility",
     "description": "Previous Actions contains the 'reintroduce grazing' action",
-    "facts": [
-      {
-        "id": "test2",
-        "description": "Test Fact 2"
-      }
-    ]
+    "facts": []
   }
 ]
