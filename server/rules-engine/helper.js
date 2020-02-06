@@ -15,7 +15,10 @@ const actionRuleData = {
   },
   LV7: {
     // LV7 has different eligibility criteria as only one rule needs to be true
-    // so we override the default eligbility check with this function
+    // so we override the default eligibility check with this function
+    // Logic is also a bit odd: if there are no eligibility rules enabled then
+    // we assume you are eligible, otherwise either of one of the two eligibilty rules
+    // must pass if enabled. It's not ideal but works for this limited use case.
     eligibilityCheckOverride: (result, enabledRules) => {
       const ruleNames = enabledRules.map((rule) => rule.event.type)
       const passedRuleNames = result.events.map((event) => event.type)
