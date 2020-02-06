@@ -206,5 +206,17 @@
         "description": "Area requested"
       }
     ]
+  },
+  {
+    "id": 9,
+    "type": "eligibility",
+    "description": "Parcel within target area for the reduction of water pollution caused by farming",
+    "facts": []
+  },
+  {
+    "id": 10,
+    "type": "eligibility",
+    "description": "Previous Actions contains the 'reintroduce grazing' action",
+    "facts": []
   }
 ]

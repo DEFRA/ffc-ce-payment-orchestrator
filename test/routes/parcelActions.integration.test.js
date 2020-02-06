@@ -22,9 +22,9 @@ describe('GET /parcels/{parcelRef}/actions', () => {
 
   test('Each parcel returns expected eligible actions', async () => {
     const testCases = [
-      { parcelRef: 'SD74445738', expectedActions: ['FG1', 'SW6'] },
-      { parcelRef: 'SD75492628', expectedActions: ['SW6'] },
-      { parcelRef: 'SD78379604', expectedActions: [] },
+      { parcelRef: 'SD74445738', expectedActions: ['FG1', 'SW6', 'LV7'] },
+      { parcelRef: 'SD75492628', expectedActions: ['SW6', 'LV7'] },
+      { parcelRef: 'SD78379604', expectedActions: ['LV7'] },
       { parcelRef: 'SD81437506', expectedActions: ['FG1'] },
       { parcelRef: 'SD81525709', expectedActions: ['FG1', 'SW6'] }
     ]

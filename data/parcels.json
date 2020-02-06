@@ -22,7 +22,9 @@
     ],
     "previousActions": [],
     "sssi": false,
-    "landCoverClass": 110
+    "landCoverClass": 110,
+    "hasReintroducedGrazing": true,
+    "inWaterPollutionZone": true
   },
   {
     "ref": "SD75492628",
@@ -38,7 +40,9 @@
       }
     ],
     "sssi": false,
-    "landCoverClass": 110
+    "landCoverClass": 110,
+    "hasReintroducedGrazing": true,
+    "inWaterPollutionZone": false
   },
   {
     "ref": "SD78379604",
@@ -49,7 +53,9 @@
     "areaFeatures": [],
     "previousActions": [],
     "sssi": true,
-    "landCoverClass": 400
+    "landCoverClass": 400,
+    "hasReintroducedGrazing": false,
+    "inWaterPollutionZone": true
   },
   {
     "ref": "SD81437506",
@@ -75,7 +81,9 @@
       }
     ],
     "sssi": false,
-    "landCoverClass": 200
+    "landCoverClass": 200,
+    "hasReintroducedGrazing": false,
+    "inWaterPollutionZone": false
   },
   {
     "ref": "SD81525709",
@@ -91,6 +99,8 @@
     "areaFeatures": [],
     "previousActions": [],
     "sssi": false,
-    "landCoverClass": 670
+    "landCoverClass": 670,
+    "hasReintroducedGrazing": false,
+    "inWaterPollutionZone": false
   }
 ]

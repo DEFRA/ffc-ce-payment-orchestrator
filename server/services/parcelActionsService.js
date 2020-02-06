@@ -1,6 +1,6 @@
 const actionsService = require('./actionsService')
 const parcelService = require('./parcelService')
-const rulesEngine = require('./rulesEngineService')
+const rulesEngineHelper = require('../rules-engine/helper')
 const { reasons } = require('../rules-engine/eligibilityRuleFailureReasons')
 
 function buildReturnAction (action, eligible, failingEligibilityRules) {
@@ -22,15 +22,8 @@ module.exports = {
     const parcelData = parcelService.getByRef(parcelRef)
 
     for (const action of actions) {
-      rulesEngine.resetEngine()
-      let actionPassed = false
-      const successFunc = function (args) {
-        actionPassed = true
-      }
-
-      const runResult = await rulesEngine.doEligibilityRun(action.rules, [parcelData], { }, successFunc)
-      const { failingRules } = runResult
-
+      const runResult = await rulesEngineHelper.eligibilityRun(action, parcelData, {})
+      const { actionPassed, failingRules } = runResult
       returnActions.push(buildReturnAction(action, actionPassed, failingRules))
     }
     return returnActions

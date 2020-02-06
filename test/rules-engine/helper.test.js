@@ -39,6 +39,20 @@ describe('Rules engine helper', () => {
     }
   })
 
+  test('doEligibilityRun sets actionpassed true when success callback run', async () => {
+    rulesEngine.doEligibilityRun.mockImplementation((r, p, o, successCallback) => {
+      successCallback({ })
+    })
+    const runResult = await rulesEngineHelper.eligibilityRun(getSampleAction(), getSampleParcel(), { })
+    expect(runResult.actionPassed).toBeTruthy()
+  })
+
+  test('doEligibilityRun sets actionpassed false when success callback run', async () => {
+    rulesEngine.doEligibilityRun.mockImplementation((r, p, o, successCallback) => { })
+    const runResult = await rulesEngineHelper.eligibilityRun(getSampleAction(), getSampleParcel(), { })
+    expect(runResult.actionPassed).toBeFalsy()
+  })
+
   test('upperbound not provided when no eligible action available', async () => {
     const sampleAction = getSampleAction()
     sampleAction.rules[0].id = 1
@@ -86,7 +100,7 @@ describe('Rules engine helper', () => {
   })
 
   test('resets rules engine', async () => {
-    await rulesEngineHelper.fullRun(getSampleRules(), getSampleParcel(), { parameterValue: 1 })
+    await rulesEngineHelper.fullRun(getSampleAction(), getSampleParcel(), { parameterValue: 1 })
     expect(rulesEngine.resetEngine).toHaveBeenCalled()
   })
 

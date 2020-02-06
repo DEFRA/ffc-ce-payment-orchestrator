@@ -8,16 +8,18 @@ const rulesMap = {
   5: rules.notSSSI,
   6: rules.pondlessArea,
   7: rules.area,
-  8: rules.cultivatedParcel
+  8: rules.cultivatedParcel,
+  9: rules.inWaterPollutionZone,
+  10: rules.hasReintroducedGrazing
 }
 
 module.exports = {
-  doEligibilityRun: function (rules, parcels, passedFacts, successFunc) {
+  doEligibilityRun: function (rules, parcels, passedFacts, successFunc, eligibilityRuleFunc) {
     const eligibilityRules = rules.filter(rule => rule.type === 'eligibility')
-    return this.doFullRun(eligibilityRules, parcels, passedFacts, successFunc)
+    return this.doFullRun(eligibilityRules, parcels, passedFacts, successFunc, [], eligibilityRuleFunc)
   },
 
-  doFullRun: async function (requestedRules, parcels, passedFacts, successFunc, returnFacts) {
+  doFullRun: async function (requestedRules, parcels, passedFacts, successFunc, returnFacts, eligibilityRuleFunc) {
     try {
       if (parcels.length !== 1) {
         throw Error('rulesEngineService.doFullRun requires exactly 1 parcel')
@@ -40,8 +42,11 @@ module.exports = {
 
       const result = await runEngine(enabledRules, { parcel, ...parameters }, returnFacts)
       const { events, facts } = result
-      const isEligible = events.length === enabledRules.length
       const rulesRun = events.map(e => e.type)
+
+      const isEligible = eligibilityRuleFunc
+        ? eligibilityRuleFunc(result, enabledRules)
+        : events.length === enabledRules.length
 
       if (isEligible) {
         successFunc({ facts, isEligible })

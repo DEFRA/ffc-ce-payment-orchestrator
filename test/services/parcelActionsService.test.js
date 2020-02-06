@@ -29,8 +29,8 @@ jest.mock('../../server/services/parcelService', () => {
 })
 const actionsService = require('../../server/services/actionsService')
 jest.mock('../../server/services/actionsService')
-const rulesEngineService = require('../../server/services/rulesEngineService')
-jest.mock('../../server/services/rulesEngineService')
+const rulesEngineHelper = require('../../server/rules-engine/helper')
+jest.mock('../../server/rules-engine/helper')
 jest.mock('../../server/rules-engine/eligibilityRuleFailureReasons', () => ({ reasons: mockRuleFailureReasons }))
 
 const parcelActionsService = require('../../server/services/parcelActionsService')
@@ -38,9 +38,8 @@ const parcelActionsService = require('../../server/services/parcelActionsService
 describe('parcelActionService', () => {
   beforeEach(() => {
     jest.clearAllMocks()
-    rulesEngineService.doEligibilityRun.mockImplementation((r, p, e, successCallback) => {
-      successCallback()
-      return Promise.resolve({ failingRules: [] })
+    rulesEngineHelper.eligibilityRun.mockImplementation((action, parcelData, options) => {
+      return Promise.resolve({ failingRules: [], actionPassed: true })
     })
   })
 
@@ -69,15 +68,16 @@ describe('parcelActionService', () => {
     ]
     for (const testCase of testCases) {
       actionsService.get.mockResolvedValue(testCase.actions)
-      rulesEngineService.doEligibilityRun.mockImplementation((r, p, e, callback) => {
-        const actionIndex = rulesEngineService.doEligibilityRun.mock.calls.length
+      rulesEngineHelper.eligibilityRun.mockImplementation((action, parcelData, options) => {
+        const actionIndex = rulesEngineHelper.eligibilityRun.mock.calls.length
         const failingRules = []
+        let actionPassed = false
         if (testCase.eligible.includes(`action-${actionIndex}`)) {
-          callback()
+          actionPassed = true
         } else {
           failingRules.push('sampleRule')
         }
-        return Promise.resolve({ failingRules })
+        return Promise.resolve({ actionPassed, failingRules })
       })
       const actions = await parcelActionsService.get('AB123456')
       const expectedActions = testCase.actions.map(a => buildExpectedResponse(a, testCase.eligible.includes(a.id)))
