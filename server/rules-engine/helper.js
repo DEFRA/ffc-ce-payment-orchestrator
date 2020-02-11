@@ -56,31 +56,22 @@ async function eligibilityRun (action, parcel, options) {
   return { actionPassed, ...results }
 }
 
-async function preCheckRun (action, parcel, options) {
-  const preCheckResult = {}
-  const actionData = actionRuleData[action.id]
-
+async function preCheckRun (action, options) {
   const preCheckRules = action.rules.filter((rule) => {
     return (rule.type === 'prevalidation') && rule.enabled
   })
 
-  if (preCheckRules.find((rule) => rule.id === actionData.quantityRuleID)) {
-    preCheckResult.upperbound = parcel[actionData.defaultUpperbound]
+  console.log({ rules: action.rules, options })
+  const failedRules = await rulesEngine.runRules(preCheckRules, options)
+  const inputBounds = failedRules
+    .map(r => r.inputBounds)
+    .filter(ib => ib !== {})
+
+  if (inputBounds.length > 1) {
+    throw new Error('There should be zero or one rule which has input bounds')
   }
 
-  // Rule precedence: the rule that removes features from the total overrides
-  // the default quantity rule if both are enabled
-  if (preCheckRules.find((rule) => rule.id === actionData.removeFeaturesRuleID)) {
-    // Get the rules engine to calculate the upper bound
-    const returnFacts = [actionData.upperboundFact]
-    const successCallback = ({ facts, isEligible }) => {
-      preCheckResult.upperbound = facts[actionData.upperboundFact]
-    }
-    rulesEngine.resetEngine()
-    await rulesEngine.doFullRun(action.rules, [parcel], options, successCallback, returnFacts)
-  }
-
-  return preCheckResult
+  return inputBounds[0] ? inputBounds[0] : {}
 }
 
 module.exports = {

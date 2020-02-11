@@ -1,4 +1,4 @@
-const { runEngine, rules } = require('@neilbmclaughlin/rules-engine-test')
+const { runRules, runEngine, rules } = require('@neilbmclaughlin/rules-engine-test')
 
 const rulesMap = {
   1: rules.perimeter,
@@ -60,6 +60,11 @@ module.exports = {
     } catch (error) {
       console.error('rules engine failed', error)
     }
+  },
+
+  runRules: function (requestedRules, options) {
+    const rules = requestedRules.map(rule => rulesMap[rule.id])
+    return runRules(rules, options)
   },
 
   resetEngine: function () {

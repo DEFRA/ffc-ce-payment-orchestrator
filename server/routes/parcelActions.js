@@ -38,9 +38,10 @@ module.exports = [{
     const response = actionResponseBuilder(action)
 
     if (action.precheck) {
-      const runData = { quantity: action.input.lowerbound }
-      const runResult = await rulesEngineHelper.preCheckRun(action, parcel, runData)
-      response.input.upperbound = runResult.upperbound && Math.round((runResult.upperbound + Number.EPSILON) * 100) / 100
+      const runData = { quantity: -1, parcel, actionId, actionYearsThreshold: 5 }
+      const runResult = await rulesEngineHelper.preCheckRun(action, runData)
+      console.log({ runResult })
+      response.input.upperbound = runResult.upper && Math.round((runResult.upper + Number.EPSILON) * 100) / 100
     }
 
     return h.response(response).code(200)
