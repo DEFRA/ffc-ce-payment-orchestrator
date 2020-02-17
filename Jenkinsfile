@@ -20,30 +20,15 @@ def timeoutInMinutes = 5
 node {
   checkout scm
   try {
+    stage('RBAC') {
+      def namespace = 'RBAC-TEST'
+      def rolearn = 'arn:aws:iam::562955126301:role/FFC-DEV-PLATFORM-DEVELOPER'
+      def username = 'FFC-PLATFORM-DEV-1'
+      defraUtils.setupRbacForNamespace(namespace, kubeCredsId, rolearn, username)
+    }
     stage('Set branch, PR, and containerTag variables') {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
       defraUtils.setGithubStatusPending()
-    }
-    stage('Helm lint') {
-      defraUtils.lintHelm(imageName)
-    }
-    stage('Build test image') {
-      defraUtils.buildTestImage(imageName, BUILD_NUMBER)
-    }
-    stage('Run tests') {
-      defraUtils.runTests(imageName, BUILD_NUMBER)
-    }
-    stage('Fix absolute paths in lcov file') {
-      defraUtils.replaceInFile(containerSrcFolder, localSrcFolder, lcovFile)
-    }
-    stage('SonarQube analysis') {
-      defraUtils.analyseCode(sonarQubeEnv, sonarScanner, ['sonar.projectKey' : repoName, 'sonar.sources' : '.'])
-    }
-    stage("Code quality gate") {
-      defraUtils.waitForQualityGateResult(timeoutInMinutes)
-    }
-    stage('Push container image') {
-      defraUtils.buildAndPushContainerImage(regCredsId, registry, imageName, containerTag)
     }
     if (pr != '') {
       stage('Helm install') {
