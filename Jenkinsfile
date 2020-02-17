@@ -1,4 +1,4 @@
-@Library('defra-library@0.0.8')
+@Library('defra-library@psd-483-setup-rbac-for-namespace')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
@@ -21,7 +21,7 @@ node {
   checkout scm
   try {
     stage('Set branch, PR, and containerTag variables') {
-      (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName)
+      (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
       defraUtils.setGithubStatusPending()
     }
     stage('Helm lint') {
