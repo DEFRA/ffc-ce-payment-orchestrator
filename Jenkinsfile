@@ -21,11 +21,12 @@ node {
   checkout scm
   try {
     stage('RBAC') {
+      def region = 'eu-west-2'
       def cluster = 'FFCLDNEKSAWSS001'
       def namespace = 'ffc-demo'
       def rolearn = 'arn:aws:iam::562955126301:role/FFC-DEV-PLATFORM-DEVELOPER'
       def username = 'FFC-PLATFORM-DEV-1'
-      defraUtils.setupRbacForNamespace(cluster, namespace, kubeCredsId, rolearn, username)
+      defraUtils.setupRbacForNamespace(region, cluster, namespace, kubeCredsId, rolearn, username)
     }
     stage('Set branch, PR, and containerTag variables') {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
