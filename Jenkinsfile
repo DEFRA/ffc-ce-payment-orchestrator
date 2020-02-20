@@ -27,8 +27,8 @@ node {
       def dbname = 'test_db_name'
       def sqlCmd = 'SELECT * FROM \\"schedule_scheduleId_seq\\"'
       defraUtils.runSqlCommandOnDatabaseHost(credentialsId, host, username, dbname, sqlCmd)
-      // defraUtils.createDatabase(credentialsId, host, username, 'tmpDB', username)
-      // defraUtils.dropDatabase(credentialsId, host, username, 'tmpDB')
+      defraUtils.createDatabase(credentialsId, host, username, 'tmpDB', username)
+      defraUtils.dropDatabase(credentialsId, host, username, 'tmpDB')
     }
     // stage('Set branch, PR, and containerTag variables') {
     //   (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
