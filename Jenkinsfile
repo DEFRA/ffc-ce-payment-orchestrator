@@ -79,5 +79,5 @@ node {
     throw e
   // } finally {
   //   defraUtils.deleteTestOutput(imageName)
-  // }
+  }
 }
