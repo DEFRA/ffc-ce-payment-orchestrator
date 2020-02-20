@@ -21,7 +21,14 @@ node {
   checkout scm
   try {
     stage('Database testing') {
-      defraUtils.testDatabaseConnectivity()
+      def credentialsId = 'test_db_pwd'
+      def host = 'ffc-demo-rds.ffc.aws-int.defra.cloud'
+      def username = 'test_db_user'
+      def dbname = 'test_db_name'
+      def sqlCmd = 'SELECT * FROM \\"schedule_scheduleId_seq\\"'
+      defraUtils.runSqlCommandOnDatabaseHost(credentialsId, host, username, dbname, sqlCmd)
+      // defraUtils.createDatabase(credentialsId, host, username, 'tmpDB', username)
+      // defraUtils.dropDatabase(credentialsId, host, username, 'tmpDB')
     }
     // stage('Set branch, PR, and containerTag variables') {
     //   (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
