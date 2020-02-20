@@ -21,7 +21,7 @@ node {
   checkout scm
   try {
     stage('Database testing') {
-      echo "Testing database"
+      defraUtils.testDatabaseConnectivity()
     }
     // stage('Set branch, PR, and containerTag variables') {
     //   (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
