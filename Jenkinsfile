@@ -20,13 +20,16 @@ def timeoutInMinutes = 5
 node {
   checkout scm
   try {
-    stage('Set branch, PR, and containerTag variables') {
-      (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
-      defraUtils.setGithubStatusPending()
+    stage('Database testing') {
+      echo "Testing database"
     }
-    stage('Helm lint') {
-      defraUtils.lintHelm(imageName)
-    }
+    // stage('Set branch, PR, and containerTag variables') {
+    //   (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
+    //   defraUtils.setGithubStatusPending()
+    // }
+    // stage('Helm lint') {
+    //   defraUtils.lintHelm(imageName)
+    // }
     // stage('Build test image') {
     //   defraUtils.buildTestImage(imageName, BUILD_NUMBER)
     // }
@@ -42,38 +45,38 @@ node {
     // stage("Code quality gate") {
     //   defraUtils.waitForQualityGateResult(timeoutInMinutes)
     // }
-    stage('Push container image') {
-      defraUtils.buildAndPushContainerImage(regCredsId, registry, imageName, containerTag)
-    }
-    if (pr != '') {
-      stage('Helm install') {
-        def extraCommands = [
-          "--values ./helm/ffc-ce-payment-orchestrator/jenkins-aws.yaml",
-          "--set container.redeployOnChange=$pr-$BUILD_NUMBER"
-        ].join(' ')
-
-        defraUtils.deployChart(kubeCredsId, registry, imageName, containerTag, extraCommands)
-      }
-    }
-    if (pr == '') {
-      stage('Publish chart') {
-        defraUtils.publishChart(registry, imageName, containerTag)
-      }
-      stage('Trigger Deployment') {
-        withCredentials([
-          string(credentialsId: 'JenkinsDeployUrl', variable: 'jenkinsDeployUrl'),
-          string(credentialsId: 'ffc-ce-payment-orchestrator-deploy-token', variable: 'jenkinsToken')
-        ]) {
-          defraUtils.triggerDeploy(jenkinsDeployUrl, 'FCEP/job/ffc-ce-payment-orchestrator-deploy', jenkinsToken, ['chartVersion':'1.0.0'])
-        }
-      }
-    }
-    if (mergedPrNo != '') {
-      stage('Remove merged PR') {
-        defraUtils.undeployChart(kubeCredsId, imageName, mergedPrNo)
-      }
-    }
-    defraUtils.setGithubStatusSuccess()
+    // stage('Push container image') {
+    //   defraUtils.buildAndPushContainerImage(regCredsId, registry, imageName, containerTag)
+    // }
+    // if (pr != '') {
+    //   stage('Helm install') {
+    //     def extraCommands = [
+    //       "--values ./helm/ffc-ce-payment-orchestrator/jenkins-aws.yaml",
+    //       "--set container.redeployOnChange=$pr-$BUILD_NUMBER"
+    //     ].join(' ')
+    //
+    //     defraUtils.deployChart(kubeCredsId, registry, imageName, containerTag, extraCommands)
+    //   }
+    // }
+    // if (pr == '') {
+    //   stage('Publish chart') {
+    //     defraUtils.publishChart(registry, imageName, containerTag)
+    //   }
+    //   stage('Trigger Deployment') {
+    //     withCredentials([
+    //       string(credentialsId: 'JenkinsDeployUrl', variable: 'jenkinsDeployUrl'),
+    //       string(credentialsId: 'ffc-ce-payment-orchestrator-deploy-token', variable: 'jenkinsToken')
+    //     ]) {
+    //       defraUtils.triggerDeploy(jenkinsDeployUrl, 'FCEP/job/ffc-ce-payment-orchestrator-deploy', jenkinsToken, ['chartVersion':'1.0.0'])
+    //     }
+    //   }
+    // }
+    // if (mergedPrNo != '') {
+    //   stage('Remove merged PR') {
+    //     defraUtils.undeployChart(kubeCredsId, imageName, mergedPrNo)
+    //   }
+    // }
+    // defraUtils.setGithubStatusSuccess()
   } catch(e) {
     defraUtils.setGithubStatusFailure(e.message)
     throw e
