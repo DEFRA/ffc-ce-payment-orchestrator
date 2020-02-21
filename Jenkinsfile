@@ -1,4 +1,4 @@
-@Library('defra-library@psd-512-create-db')
+@Library('defra-library@feature/PSD-492-create-sqs-queue')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
@@ -20,20 +20,24 @@ def timeoutInMinutes = 5
 node {
   checkout scm
   try {
-    stage('Database testing') {
-      def credentialsId = 'test_db_pwd'
-      def host = 'ffc-demo-rds.ffc.aws-int.defra.cloud'
-      def username = 'test_db_user'
-      def dbname = 'test_db_name'
-      def sqlCmd = 'SELECT * FROM \\"schedule_scheduleId_seq\\"'
-      defraUtils.runSqlCommandOnDatabaseHost(credentialsId, host, username, dbname, sqlCmd)
-      defraUtils.createDatabase(credentialsId, host, username, dbname, username)
-      defraUtils.dropDatabase(credentialsId, host, username, dbname)
-    }
-    // stage('Set branch, PR, and containerTag variables') {
-    //   (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
-    //   defraUtils.setGithubStatusPending()
+    // stage('Database testing') {
+    //   def credentialsId = 'test_db_pwd'
+    //   def host = 'ffc-demo-rds.ffc.aws-int.defra.cloud'
+    //   def username = 'test_db_user'
+    //   def dbname = 'test_db_name'
+    //   def sqlCmd = 'SELECT * FROM \\"schedule_scheduleId_seq\\"'
+    //   defraUtils.runSqlCommandOnDatabaseHost(credentialsId, host, username, dbname, sqlCmd)
+    //   defraUtils.createDatabase(credentialsId, host, username, dbname, username)
+    //   defraUtils.dropDatabase(credentialsId, host, username, dbname)
     // }
+    stage('Set branch, PR, and containerTag variables') {
+      (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
+      // defraUtils.setGithubStatusPending()
+    }
+    stage('Provision resources') {
+        // [['service': ['code', 'name', 'type']], 'pr_code', 'queue_purpose', 'repo_name']
+        defraUtils.provisionInfrastructure('aws', 'sqs', [service: [code: "FFC", name: "Future Farming Services", type: "FFC"], pr_code: pr, queue_purpose: "test-queue", repo_name: repoName])
+    }
     // stage('Helm lint') {
     //   defraUtils.lintHelm(imageName)
     // }
