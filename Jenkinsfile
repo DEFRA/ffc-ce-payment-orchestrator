@@ -37,7 +37,7 @@ node {
     stage('Provision resources') {
         // [['service': ['code', 'name', 'type']], 'pr_code', 'queue_purpose', 'repo_name']
         defraUtils.provisionInfrastructure('aws', 'sqs', [service: [code: "FFC", name: "Future Farming Services", type: "FFC"], pr_code: pr, queue_purpose: "test-queue1", repo_name: repoName])
-        defraUtils.provisionInfrastructure('aws', 'sqs', [service: [code: "FFC", name: "Future Farming Services", type: "FFC"], pr_code: pr, queue_purpose: "test-queue2", repo_name: repoName])
+        defraUtils.provisionInfrastructure('aws', 'sqs', [service: [code: "FFC", name: "Future Farming Services", type: "FFC"], pr_code: pr, queue_purpose: "test-queue3", repo_name: repoName])
     }
     // stage('Helm lint') {
     //   defraUtils.lintHelm(imageName)
