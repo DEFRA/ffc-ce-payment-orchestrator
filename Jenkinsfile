@@ -17,24 +17,23 @@ def localSrcFolder = '.'
 def lcovFile = './test-output/lcov.info'
 def timeoutInMinutes = 5
 
+def accountId = '562955126301'
+def region = 'eu-west-2'
+def cluster = 'FFCLDNEKSAWSS001'
+def namespace = 'ffc-ce'
+def role = "${namespace.toUpperCase()}-DEVELOPER"
+def rolearn = "arn:aws:iam::${accountId}:role/${role}"
+def username = "${role}-1"
+def clusterRole = 'edit'
+
 node {
   checkout scm
   try {
     stage('RBAC Setup') {
-      def region = 'eu-west-2'
-      def cluster = 'FFCLDNEKSAWSS001'
-      def namespace = 'ffc-demo'
-      def rolearn = 'arn:aws:iam::562955126301:role/FFC-DEV-PLATFORM-DEVELOPER'
-      def username = 'FFC-PLATFORM-DEV-1'
-      defraUtils.setupRbacForNamespace(region, cluster, namespace, kubeCredsId, rolearn, username)
+      defraUtils.setupRbacForNamespace(region, cluster, namespace, kubeCredsId, rolearn, username, clusterRole)
     }
     stage('RBAC Teardown') {
-      def region = 'eu-west-2'
-      def cluster = 'FFCLDNEKSAWSS001'
-      def namespace = 'ffc-demo'
-      def rolearn = 'arn:aws:iam::562955126301:role/FFC-DEV-PLATFORM-DEVELOPER'
-      def username = 'FFC-PLATFORM-DEV-1'
-      defraUtils.teardownRbacForNamespace(region, cluster, namespace, kubeCredsId, rolearn, username)
+      defraUtils.teardownRbacForNamespace(region, cluster, namespace, kubeCredsId, rolearn, username, clusterRole)
     }
     stage('Set branch, PR, and containerTag variables') {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
@@ -73,6 +72,6 @@ node {
     defraUtils.setGithubStatusFailure(e.message)
     throw e
   } finally {
-    defraUtils.deleteTestOutput(imageName)
+    /* defraUtils.deleteTestOutput(imageName) */
   }
 }
