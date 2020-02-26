@@ -17,11 +17,6 @@ def localSrcFolder = '.'
 def lcovFile = './test-output/lcov.info'
 def timeoutInMinutes = 5
 
-// Note 1: need to set region as the aws credentials do not
-// Note 2: the AWS credentials are of type iam-role
-def namespace = 'ffc-ce'
-def group = 'developer'
-
 node {
   checkout scm
   try {
@@ -37,9 +32,6 @@ node {
         ].join(' ')
 
         defraUtils.deployChart(kubeCredsId, registry, imageName, containerTag, extraCommands)
-        def prNamespace = "${imageName}-${containerTag}" 
-        echo "setup rbac for ${prNamespace}"
-        defraUtils.setupRbacForNamespace(prNamespace, group)
       }
     }
     if (pr == '') {
@@ -57,9 +49,6 @@ node {
     }
     if (mergedPrNo != '') {
       stage('Remove merged PR') {
-        def prNamespace = "${imageName}-${containerTag}" 
-        echo "setup rbac for ${prNamespace}"
-        defraUtils.teardownRbacForNamespace(prNamespace, group)
         defraUtils.undeployChart(kubeCredsId, imageName, mergedPrNo)
       }
     }
