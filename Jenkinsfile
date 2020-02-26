@@ -25,12 +25,6 @@ def group = 'developer'
 node {
   checkout scm
   try {
-    stage('RBAC Setup') {
-      defraUtils.setupRbacForNamespace(region, cluster, namespace, group)
-    }
-    stage('RBAC Teardown') {
-      defraUtils.teardownRbacForNamespace(region, cluster, namespace, group)
-    }
     stage('Set branch, PR, and containerTag variables') {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
       defraUtils.setGithubStatusPending()
@@ -43,7 +37,9 @@ node {
         ].join(' ')
 
         defraUtils.deployChart(kubeCredsId, registry, imageName, containerTag, extraCommands)
-        echo "${pr}, ${containerTag}, ${imageName}, ${containerTag}, ${mergedPrNo}"
+        def prNamespace = "${imageName}-${containerTag}" 
+        echo "setup rbac for ${prNamespace}"
+        defraUtils.setupRbacForNamespace(region, cluster, prNamespace, group)
       }
     }
     if (pr == '') {
@@ -61,6 +57,9 @@ node {
     }
     if (mergedPrNo != '') {
       stage('Remove merged PR') {
+        def prNamespace = "${imageName}-${containerTag}" 
+        echo "setup rbac for ${prNamespace}"
+        defraUtils.teardownRbacForNamespace(region, cluster, prNamespace, group)
         defraUtils.undeployChart(kubeCredsId, imageName, mergedPrNo)
       }
     }
