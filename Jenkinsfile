@@ -43,6 +43,7 @@ node {
         ].join(' ')
 
         defraUtils.deployChart(kubeCredsId, registry, imageName, containerTag, extraCommands)
+        echo "${pr}, ${containerTag}, ${imageName}, ${containerTag}, ${mergedPrNo}"
       }
     }
     if (pr == '') {
