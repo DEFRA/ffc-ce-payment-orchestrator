@@ -1,4 +1,4 @@
-@Library('defra-library@0.0.8')
+@Library('defra-library@fix/remove-global-variables')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
