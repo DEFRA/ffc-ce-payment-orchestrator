@@ -29,7 +29,7 @@ node {
       def host = 'ffc-demo-rds.ffc.aws-int.defra.cloud'
       def username = 'test_db_user'
       def dbname = 'test_db_name'
-      defraUtiles.provisionPrRoleAndSchema(host, username, dbname, credentialsId, credentialsId, pr)
+      defraUtils.provisionPrRoleAndSchema(host, username, dbname, credentialsId, credentialsId, pr)
       // def sqlCmd = 'SELECT * FROM \\"schedule_scheduleId_seq\\"'
       // defraUtils.runSqlCommandOnDatabaseHost(credentialsId, host, username, dbname, sqlCmd)
       // defraUtils.createDatabase(credentialsId, host, username, dbname, username)
