@@ -42,9 +42,9 @@ node {
     // stage('Delete resources') {
     //     defraUtils.destroyInfrastructure(repoName, pr)
     // }
-    // stage('Helm lint') {
-    //   defraUtils.lintHelm(imageName)
-    // }
+    stage('Helm lint') {
+      defraUtils.lintHelm(imageName)
+    }
     // stage('Build test image') {
     //   defraUtils.buildTestImage(imageName, BUILD_NUMBER)
     // }
