@@ -1,4 +1,4 @@
-@Library('defra-library@fix/remove-global-variables')
+@Library('defra-library@feature/PSD-493-destroy-sqs-queue')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
@@ -34,68 +34,68 @@ node {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
       // defraUtils.setGithubStatusPending()
     }
-    stage('Provision resources') {
-        // [['service': ['code', 'name', 'type']], 'pr_code', 'queue_purpose', 'repo_name']
-        defraUtils.provisionInfrastructure('aws', 'sqs', [service: [code: "FFC", name: "Future Farming Services", type: "FFC"], pr_code: pr, queue_purpose: "test-queue1", repo_name: repoName])
-        defraUtils.provisionInfrastructure('aws', 'sqs', [service: [code: "FFC", name: "Future Farming Services", type: "FFC"], pr_code: pr, queue_purpose: "test-queue3", repo_name: repoName])
-    }
-    // stage('Delete resources') {
-    //     defraUtils.destroyInfrastructure(repoName, pr)
+    // stage('Provision resources') {
+    //     // [['service': ['code', 'name', 'type']], 'pr_code', 'queue_purpose', 'repo_name']
+    //     defraUtils.provisionInfrastructure('aws', 'sqs', [service: [code: "FFC", name: "Future Farming Services", type: "FFC"], pr_code: pr, queue_purpose: "test-queue1", repo_name: repoName])
+    //     defraUtils.provisionInfrastructure('aws', 'sqs', [service: [code: "FFC", name: "Future Farming Services", type: "FFC"], pr_code: pr, queue_purpose: "test-queue3", repo_name: repoName])
     // }
-    stage('Helm lint') {
-      defraUtils.lintHelm(imageName)
+    stage('Delete resources') {
+        defraUtils.destroyInfrastructure(repoName, pr)
     }
-    stage('Build test image') {
-      defraUtils.buildTestImage(imageName, BUILD_NUMBER)
-    }
-    stage('Run tests') {
-      defraUtils.runTests(imageName, BUILD_NUMBER)
-    }
-    stage('Fix absolute paths in lcov file') {
-      defraUtils.replaceInFile(containerSrcFolder, localSrcFolder, lcovFile)
-    }
-    stage('SonarQube analysis') {
-      defraUtils.analyseCode(sonarQubeEnv, sonarScanner, ['sonar.projectKey' : repoName, 'sonar.sources' : '.'])
-    }
-    stage("Code quality gate") {
-      defraUtils.waitForQualityGateResult(timeoutInMinutes)
-    }
-    stage('Push container image') {
-      defraUtils.buildAndPushContainerImage(regCredsId, registry, imageName, containerTag)
-    }
-    if (pr != '') {
-      stage('Helm install') {
-        def extraCommands = [
-          "--values ./helm/ffc-ce-payment-orchestrator/jenkins-aws.yaml",
-          "--set container.redeployOnChange=$pr-$BUILD_NUMBER"
-        ].join(' ')
-
-        defraUtils.deployChart(kubeCredsId, registry, imageName, containerTag, extraCommands)
-      }
-    }
-    if (pr == '') {
-      stage('Publish chart') {
-        defraUtils.publishChart(registry, imageName, containerTag)
-      }
-      stage('Trigger Deployment') {
-        withCredentials([
-          string(credentialsId: 'JenkinsDeployUrl', variable: 'jenkinsDeployUrl'),
-          string(credentialsId: 'ffc-ce-payment-orchestrator-deploy-token', variable: 'jenkinsToken')
-        ]) {
-          defraUtils.triggerDeploy(jenkinsDeployUrl, 'FCEP/job/ffc-ce-payment-orchestrator-deploy', jenkinsToken, ['chartVersion':'1.0.0'])
-        }
-      }
-    }
-    if (mergedPrNo != '') {
-      stage('Remove merged PR') {
-        defraUtils.undeployChart(kubeCredsId, imageName, mergedPrNo)
-      }
-    }
-    defraUtils.setGithubStatusSuccess()
+    // stage('Helm lint') {
+    //   defraUtils.lintHelm(imageName)
+    // }
+    // stage('Build test image') {
+    //   defraUtils.buildTestImage(imageName, BUILD_NUMBER)
+    // }
+    // stage('Run tests') {
+    //   defraUtils.runTests(imageName, BUILD_NUMBER)
+    // }
+    // stage('Fix absolute paths in lcov file') {
+    //   defraUtils.replaceInFile(containerSrcFolder, localSrcFolder, lcovFile)
+    // }
+    // stage('SonarQube analysis') {
+    //   defraUtils.analyseCode(sonarQubeEnv, sonarScanner, ['sonar.projectKey' : repoName, 'sonar.sources' : '.'])
+    // }
+    // stage("Code quality gate") {
+    //   defraUtils.waitForQualityGateResult(timeoutInMinutes)
+    // }
+    // stage('Push container image') {
+    //   defraUtils.buildAndPushContainerImage(regCredsId, registry, imageName, containerTag)
+    // }
+    // if (pr != '') {
+    //   stage('Helm install') {
+    //     def extraCommands = [
+    //       "--values ./helm/ffc-ce-payment-orchestrator/jenkins-aws.yaml",
+    //       "--set container.redeployOnChange=$pr-$BUILD_NUMBER"
+    //     ].join(' ')
+    //
+    //     defraUtils.deployChart(kubeCredsId, registry, imageName, containerTag, extraCommands)
+    //   }
+    // }
+    // if (pr == '') {
+    //   stage('Publish chart') {
+    //     defraUtils.publishChart(registry, imageName, containerTag)
+    //   }
+    //   stage('Trigger Deployment') {
+    //     withCredentials([
+    //       string(credentialsId: 'JenkinsDeployUrl', variable: 'jenkinsDeployUrl'),
+    //       string(credentialsId: 'ffc-ce-payment-orchestrator-deploy-token', variable: 'jenkinsToken')
+    //     ]) {
+    //       defraUtils.triggerDeploy(jenkinsDeployUrl, 'FCEP/job/ffc-ce-payment-orchestrator-deploy', jenkinsToken, ['chartVersion':'1.0.0'])
+    //     }
+    //   }
+    // }
+    // if (mergedPrNo != '') {
+    //   stage('Remove merged PR') {
+    //     defraUtils.undeployChart(kubeCredsId, imageName, mergedPrNo)
+    //   }
+    // }
+    // defraUtils.setGithubStatusSuccess()
   } catch(e) {
     defraUtils.setGithubStatusFailure(e.message)
     throw e
-  } finally {
-    defraUtils.deleteTestOutput(imageName)
+  // } finally {
+  //   defraUtils.deleteTestOutput(imageName)
   }
 }
