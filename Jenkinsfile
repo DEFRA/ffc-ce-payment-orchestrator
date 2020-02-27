@@ -1,4 +1,4 @@
-@Library('defra-library@fix/remove-global-variables')
+@Library('defra-library@psd-512-create-db')
 import uk.gov.defra.ffc.DefraUtils
 def defraUtils = new DefraUtils()
 
@@ -20,19 +20,20 @@ def timeoutInMinutes = 5
 node {
   checkout scm
   try {
-    // stage('Database testing') {
-    //   def credentialsId = 'test_db_pwd'
-    //   def host = 'ffc-demo-rds.ffc.aws-int.defra.cloud'
-    //   def username = 'test_db_user'
-    //   def dbname = 'test_db_name'
-    //   def sqlCmd = 'SELECT * FROM \\"schedule_scheduleId_seq\\"'
-    //   defraUtils.runSqlCommandOnDatabaseHost(credentialsId, host, username, dbname, sqlCmd)
-    //   defraUtils.createDatabase(credentialsId, host, username, dbname, username)
-    //   defraUtils.dropDatabase(credentialsId, host, username, dbname)
-    // }
     stage('Set branch, PR, and containerTag variables') {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
       // defraUtils.setGithubStatusPending()
+    }
+    stage('Create database role and schema') {
+      def credentialsId = 'test_db_pwd'
+      def host = 'ffc-demo-rds.ffc.aws-int.defra.cloud'
+      def username = 'test_db_user'
+      def dbname = 'test_db_name'
+      defraUtiles.provisionPrRoleAndSchema(host, username, dbname, credentialsId, credentialsId, pr)
+      // def sqlCmd = 'SELECT * FROM \\"schedule_scheduleId_seq\\"'
+      // defraUtils.runSqlCommandOnDatabaseHost(credentialsId, host, username, dbname, sqlCmd)
+      // defraUtils.createDatabase(credentialsId, host, username, dbname, username)
+      // defraUtils.dropDatabase(credentialsId, host, username, dbname)
     }
     // stage('Provision resources') {
     //     // [['service': ['code', 'name', 'type']], 'pr_code', 'queue_purpose', 'repo_name']
@@ -42,12 +43,12 @@ node {
     // stage('Delete resources') {
     //     defraUtils.destroyInfrastructure(repoName, pr)
     // }
-    stage('Helm lint') {
-      defraUtils.lintHelm(imageName)
-    }
-    stage('Build test image') {
-      defraUtils.buildTestImage(imageName, BUILD_NUMBER)
-    }
+    // stage('Helm lint') {
+    //   defraUtils.lintHelm(imageName)
+    // }
+    // stage('Build test image') {
+    //   defraUtils.buildTestImage(imageName, BUILD_NUMBER)
+    // }
     // stage('Run tests') {
     //   defraUtils.runTests(imageName, BUILD_NUMBER)
     // }
