@@ -78,6 +78,6 @@ node {
     defraUtils.setGithubStatusFailure(e.message)
     throw e
   } finally {
-    defraUtils.deleteTestOutput(imageName)
+    /* defraUtils.deleteTestOutput(imageName) */
   }
 }
