@@ -26,7 +26,7 @@ node {
     }
     stage('Create database role and schema') {
       def credentialsId = 'test_db_pwd'
-      def host = 'ffc-demo-rds.ffc.aws-int.defra.cloud'
+      def host = 'postgresExternalNamePayments'
       def username = 'test_db_user'
       def dbname = 'test_db_name'
       defraUtils.provisionPrRoleAndSchema(host, username, dbname, credentialsId, credentialsId, pr)
