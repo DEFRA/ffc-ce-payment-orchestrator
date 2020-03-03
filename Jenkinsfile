@@ -24,6 +24,18 @@ node {
       (pr, containerTag, mergedPrNo) = defraUtils.getVariables(repoName, defraUtils.getPackageJsonVersion())
       defraUtils.setGithubStatusPending()
     }
+    stage('Test deploy/undeploy') {
+        int fakePrNumber = 999
+        String fakeContainerTag = "pr$fakePrNumber"
+        int fakeBuildNumber = 1
+        def extraCommands = [
+          "--values ./helm/ffc-ce-payment-orchestrator/jenkins-aws.yaml",
+          "--set container.redeployOnChange=$fakePrNumber-$fakeBuildNumber"
+        ].join(' ')
+
+        defraUtils.deployChart(kubeCredsId, registry, imageName, fakeContainerTag, extraCommands)
+        defraUtils.undeployChart(kubeCredsId, imageName, fakeContainerTag)
+    }
     if (pr != '') {
       stage('Helm install') {
         def extraCommands = [
