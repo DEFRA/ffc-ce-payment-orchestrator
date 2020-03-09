@@ -16,6 +16,8 @@ def containerSrcFolder = '\\/usr\\/src\\/app'
 def localSrcFolder = '.'
 def lcovFile = './test-output/lcov.info'
 def timeoutInMinutes = 5
+def serviceName = 'ffc-ce'
+def environment = 'dev'
 
 node {
   checkout scm
@@ -34,6 +36,8 @@ node {
         ].join(' ')
 
         defraUtils.deployChart(kubeCredsId, registry, imageName, fakeContainerTag, extraCommands)
+        defraUtils.setupRbac(environment, serviceName, imageName, fakeContainerTag)
+        defraUtils.teardownRbac(environment, serviceName, imageName, fakeContainerTag)
         defraUtils.undeployChart(kubeCredsId, imageName, fakeContainerTag)
     }
     if (pr != '') {
