@@ -36,8 +36,8 @@ node {
         ].join(' ')
 
         defraUtils.deployChart(kubeCredsId, registry, imageName, fakeContainerTag, extraCommands)
-        defraUtils.setupRbac(environment, serviceName, imageName, fakeContainerTag)
-        defraUtils.teardownRbac(environment, serviceName, imageName, fakeContainerTag)
+        /* defraUtils.setupRbac(environment, serviceName, imageName, fakeContainerTag) */
+        /* defraUtils.teardownRbac(environment, serviceName, imageName, fakeContainerTag) */
         defraUtils.undeployChart(kubeCredsId, imageName, fakeContainerTag)
     }
     if (pr != '') {
