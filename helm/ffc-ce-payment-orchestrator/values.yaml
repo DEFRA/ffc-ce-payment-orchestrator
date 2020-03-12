@@ -1,4 +1,5 @@
 environment: development
+workstream: ffc-ce
 name: ffc-ce-payment-orchestrator
 image: ffc-ce-payment-orchestrator
 imagePullSecret:
