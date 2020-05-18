@@ -1,21 +1,31 @@
 @Library('defra-library@v-6')
 
-def repoName = 'ffc-ce-payment-orchestrator'
+// def repoName = 'ffc-ce-payment-orchestrator'
 def namespace = 'paul-test2'
 def dockerTag = 'test'
 
 node {
   checkout scm
 
-  stage("Test") {
-    withKubeConfig([credentialsId: "test_kube_config"]) {
-      withCredentials([string(credentialsId: 'test_acr_url', variable: 'acrUrl')]) {
-        sh "helm package helm/$repoName"
-        sh "kubectl get namespaces $namespace || kubectl create namespace $namespace"
-        sh "helm upgrade --install --atomic --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
-      }
-    }
+  // TODO PUSH HELM CHART TO ACR
+
+  stage('Set PR, and containerTag variables') {
+    (repoName, pr, containerTag, mergedPrNo) = build.getVariables(version.getPackageJsonVersion())
   }
+
+  echo "repoName = $repoName"
+  echo "pr = $pr"
+  echo "mergedPrNo = $mergedPrNo"
+
+  // stage("Test") {
+  //   withKubeConfig([credentialsId: "test_kube_config"]) {
+  //     withCredentials([string(credentialsId: 'test_acr_url', variable: 'acrUrl')]) {
+  //       sh "helm package helm/$repoName"
+  //       sh "kubectl get namespaces $namespace || kubectl create namespace $namespace"
+  //       sh "helm upgrade --install --atomic --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
+  //     }
+  //   }
+  // }
 }
 
 // import uk.gov.defra.ffc.DefraUtils
