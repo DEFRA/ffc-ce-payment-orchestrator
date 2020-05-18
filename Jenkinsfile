@@ -11,7 +11,7 @@ node {
       def q2 = "kubectl create namespace $namespace"
       def q3 = "helm install --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
       sh "$q1"
-      echo "$q2"
+      sh "$q2"
       echo "$q3"
     }
   }
