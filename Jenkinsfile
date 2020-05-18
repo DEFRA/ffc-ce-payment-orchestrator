@@ -7,10 +7,10 @@ node {
     withCredentials([string(credentialsId: 'test_acr_url', variable: 'acrUrl')]) {
       def q1 = "helm package helm/$repoName"
       def q2 = "kubectl create namespace $namespace"
-      // def q3 = "helm install --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
+      def q3 = "helm install --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
       echo "$q1"
       echo "$q2"
-      // echo "$q3"
+      echo "$q3"
     }
   }
 }
