@@ -11,6 +11,7 @@ node {
       echo "$q1"
       echo "$q2"
       echo "$q3"
+    }
   }
 }
 
