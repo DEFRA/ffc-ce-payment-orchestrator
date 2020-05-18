@@ -1,3 +1,5 @@
+@Library('defra-library@v-6')
+
 def repoName = 'ffc-ce-payment-orchestrator'
 def namespace = 'paul-test2'
 def dockerTag = 'test'
@@ -16,7 +18,6 @@ node {
   }
 }
 
-// @Library('defra-library@0.0.8')
 // import uk.gov.defra.ffc.DefraUtils
 // def defraUtils = new DefraUtils()
 
