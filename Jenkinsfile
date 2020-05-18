@@ -9,8 +9,8 @@ node {
     withKubeConfig([credentialsId: "test_kube_config"]) {
       withCredentials([string(credentialsId: 'test_acr_url', variable: 'acrUrl')]) {
         sh "helm package helm/$repoName"
-        sh = "kubectl get namespaces $namespace || kubectl create namespace $namespace"
-        sh = "helm upgrade --install --atomic --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
+        sh "kubectl get namespaces $namespace || kubectl create namespace $namespace"
+        sh "helm upgrade --install --atomic --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
       }
     }
   }
