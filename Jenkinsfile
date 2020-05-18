@@ -6,13 +6,12 @@ node {
   checkout scm
 
   stage("Test") {
-    withCredentials([string(credentialsId: 'test_acr_url', variable: 'acrUrl')]) {
-      def q1 = "helm package helm/$repoName"
-      def q2 = "kubectl create namespace $namespace"
-      def q3 = "helm install --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
-      sh "$q1"
-      sh "$q2"
-      echo "$q3"
+    withKubeConfig([credentialsId: "test_kube_config"]) {
+      withCredentials([string(credentialsId: 'test_acr_url', variable: 'acrUrl')]) {
+        sh "helm package helm/$repoName"
+        sh = "kubectl get namespaces $namespace || kubectl create namespace $namespace"
+        sh = "helm upgrade --install --atomic --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
+      }
     }
   }
 }
