@@ -3,6 +3,8 @@ def namespace = 'paul-test2'
 def dockerTag = 'test'
 
 node {
+  checkout scm
+
   stage("Test") {
     withCredentials([string(credentialsId: 'test_acr_url', variable: 'acrUrl')]) {
       def q1 = "helm package helm/$repoName"
