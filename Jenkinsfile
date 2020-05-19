@@ -29,6 +29,7 @@ node {
           def dockerImageName = "$acrUrl/$repoName:docker-$tag"
           def helmChartName = "$acrUrl/$repoName:helm-$tag"
           def deploymentName = "$repoName-$tag"
+          def tmpDir = "./install"
 
           // Build and push docker container
           sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
@@ -49,7 +50,8 @@ node {
           // Then pull the chart and install
           sh "helm chart remove $helmChartName"
           sh "helm chart pull $helmChartName"
-          sh "helm upgrade $deploymentName $helmChartName --install --atomic --namespace=$namespace --set image=$dockerImageName"
+          sh "helm chart export $helmChartName --destination $tmpDir"
+          sh "cd $tmpDir && helm upgrade $deploymentName $helmChartName --install --atomic --namespace=$namespace --set image=$dockerImageName"
         }
       }
     }

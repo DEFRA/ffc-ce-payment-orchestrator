@@ -1,0 +1,3 @@
+environment: production
+container:
+  imagePullPolicy: Always
