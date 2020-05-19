@@ -51,7 +51,7 @@ node {
           sh "helm chart remove $helmChartName"
           sh "helm chart pull $helmChartName"
           sh "helm chart export $helmChartName --destination $tmpDir"
-          sh "cd $tmpDir && helm upgrade $deploymentName $helmChartName --install --atomic --namespace=$namespace --set image=$dockerImageName"
+          sh "helm upgrade $deploymentName $tmpDir/$repoName --install --atomic --namespace=$namespace --set image=$dockerImageName"
         }
       }
     }
