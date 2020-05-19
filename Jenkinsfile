@@ -21,20 +21,22 @@ node {
     withKubeConfig([credentialsId: "test_kube_config"]) {
       withCredentials([
         string(credentialsId: 'test_acr_url', variable: 'acrUrl'),
-        // usernamePassword(credentialsId: 'test_acr_creds', usernameVariable: 'acrUser', passwordVariable: 'acrPwd'),
+        usernamePassword(credentialsId: 'test_acr_creds', usernameVariable: 'acrUser', passwordVariable: 'acrPwd'),
       ]) {
         def dockerTag = "docker$tag"
         def helmTag = "helm$tag"
 
-        // sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
-        sh "az acr login --name $acrUrl"
+        sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
 
+        // Build and push docker container
         sh "docker-compose -f docker-compose.yaml build --no-cache"
         sh "docker tag $repoName $acrUrl/$repoName:$dockerTag"
         sh "docker push $acrUrl/$repoName:$dockerTag"
 
+        // Build and push Helm chart
+        sh "helm chart save helm/$repoName $acrUrl/$repoName:$helmTag"
+        sh "helm chart push $acrUrl/$repoName:$helmTag"
 
-        // sh "helm package helm/$repoName --version "
         // sh "kubectl get namespaces $namespace || kubectl create namespace $namespace"
         // sh "helm upgrade --install --atomic --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
       }
