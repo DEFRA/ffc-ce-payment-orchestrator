@@ -1,26 +1,29 @@
 @Library('defra-library@v-6')
 
-// def repoName = 'ffc-ce-payment-orchestrator'
+def repoName = 'ffc-ce-payment-orchestrator'
 def namespace = 'paul-test2'
 def tag = 'v1.0.1'
 
 node {
   checkout scm
 
-  stage('Set PR, and containerTag variables') {
-    build.BRANCH_NAME = 'azure-ci'
-    (repoName, pr, containerTag, mergedPrNo) = build.getVariables(version.getPackageJsonVersion())
-  }
+  // stage('Set PR, and containerTag variables') {
+  //   build.BRANCH_NAME = 'azure-ci'
+  //   (repoName, pr, containerTag, mergedPrNo) = build.getVariables(version.getPackageJsonVersion())
+  // }
 
-  echo "repoName = $repoName"
-  echo "pr = $pr"
-  echo "containerTag = $containerTag"
-  echo "mergedPrNo = $mergedPrNo"
+  // echo "repoName = $repoName"
+  // echo "pr = $pr"
+  // echo "containerTag = $containerTag"
+  // echo "mergedPrNo = $mergedPrNo"
 
   stage("Test") {
     withKubeConfig([credentialsId: "test_kube_config"]) {
-      withCredentials([string(credentialsId: 'test_acr_url', variable: 'acrUrl')]) {
-        sh "az acr login --name $acrUrl"
+      withCredentials([
+        string(credentialsId: 'test_acr_url', variable: 'acrUrl')],
+        usernamePassword(credentialsId: 'test_acr_creds', usernameVariable: 'acrUser', passwordVariable: 'acrPwd'),
+      ) {
+        sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
         sh "docker-compose -f docker-compose.yaml build --no-cache"
         sh "docker tag $repoName $acrUrl/$repoName:$tag"
         sh "docker push $acrUrl/$repoName:$tag"
