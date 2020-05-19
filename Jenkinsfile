@@ -35,7 +35,7 @@ node {
           // sh "docker push $acrUrl/$repoName:$dockerTag"
 
           // Build and push Helm chart
-          sh "echo $acrPwd | helm registry login $acrUrl --username $acrUser"
+          sh "helm registry login $acrUrl --username $acrUser --password $acrPwd"
 
           sh "helm chart save helm/$repoName $acrUrl/$repoName:$helmTag"
           sh "helm chart push $acrUrl/$repoName:$helmTag"
