@@ -2,7 +2,7 @@
 
 def repoName = 'ffc-ce-payment-orchestrator'
 def namespace = 'paul-test-ci'
-def tag = '-test-ci'
+def tag = 'test-ci'
 
 node {
   checkout scm
@@ -17,31 +17,40 @@ node {
   // echo "containerTag = $containerTag"
   // echo "mergedPrNo = $mergedPrNo"
 
-  withEnv(['HELM_EXPERIMENTAL_OCI=1']) {
-    stage("Test") {
+  // Need this environment variable set to enable Helm repos in ACR
+
+  stage("Test") {
+    withEnv(['HELM_EXPERIMENTAL_OCI=1']) {
       withKubeConfig([credentialsId: "test_kube_config"]) {
         withCredentials([
           string(credentialsId: 'test_acr_url', variable: 'acrUrl'),
           usernamePassword(credentialsId: 'test_acr_creds', usernameVariable: 'acrUser', passwordVariable: 'acrPwd'),
         ]) {
-          def dockerTag = "docker$tag"
-          def helmTag = "helm$tag"
-
-          // sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
+          def dockerImageName = "$acrUrl/$repoName:docker-$tag"
+          def helmChartName = "$acrUrl/$repoName:helm-$tag"
+          def deploymentName = "$repoName-$tag"
 
           // Build and push docker container
-          // sh "docker-compose -f docker-compose.yaml build --no-cache"
-          // sh "docker tag $repoName $acrUrl/$repoName:$dockerTag"
-          // sh "docker push $acrUrl/$repoName:$dockerTag"
+          sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
+          sh "docker-compose -f docker-compose.yaml build --no-cache"
+          sh "docker tag $repoName $dockerImageName"
+          sh "docker push $dockerImageName"
 
           // Build and push Helm chart
+          def chartName = "$acrUrl/$repoName:$helmTag"
           sh "helm registry login $acrUrl --username $acrUser --password $acrPwd"
+          sh "helm chart save helm/$repoName $chartName"
+          sh "helm chart push $chartName"
 
-          sh "helm chart save helm/$repoName $acrUrl/$repoName:$helmTag"
-          sh "helm chart push $acrUrl/$repoName:$helmTag"
+          // Create K8s namespace
+          sh "kubectl get namespaces $namespace || kubectl create namespace $namespace"
 
-          // sh "kubectl get namespaces $namespace || kubectl create namespace $namespace"
-          // sh "helm upgrade --install --atomic --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
+          // Install Helm chart on K8s cluster:
+          // First remove local cached copy and pull from ACR (just to demonstrate it actually works)
+          // Then pull the chart and install
+          sh "helm chart remove $chartName"
+          sh "helm chart pull $chartName"
+          sh "helm upgrade $deploymentName $chartName --install --atomic --namespace=$namespace --set image=$dockerImageName"
         }
       }
     }
