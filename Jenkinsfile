@@ -27,7 +27,7 @@ node {
           def dockerTag = "docker$tag"
           def helmTag = "helm$tag"
 
-          sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
+          // sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
 
           // Build and push docker container
           // sh "docker-compose -f docker-compose.yaml build --no-cache"
@@ -35,6 +35,8 @@ node {
           // sh "docker push $acrUrl/$repoName:$dockerTag"
 
           // Build and push Helm chart
+          sh "echo $acrPwd | helm registry login $acrUrl --username $acrUser"
+
           sh "helm chart save helm/$repoName $acrUrl/$repoName:$helmTag"
           sh "helm chart push $acrUrl/$repoName:$helmTag"
 
