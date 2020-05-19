@@ -20,9 +20,9 @@ node {
   stage("Test") {
     withKubeConfig([credentialsId: "test_kube_config"]) {
       withCredentials([
-        string(credentialsId: 'test_acr_url', variable: 'acrUrl')],
+        string(credentialsId: 'test_acr_url', variable: 'acrUrl'),
         usernamePassword(credentialsId: 'test_acr_creds', usernameVariable: 'acrUser', passwordVariable: 'acrPwd'),
-      ) {
+      ]) {
         sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
         sh "docker-compose -f docker-compose.yaml build --no-cache"
         sh "docker tag $repoName $acrUrl/$repoName:$tag"
