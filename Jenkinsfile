@@ -1,8 +1,12 @@
 @Library('defra-library@v-6')
 
+// BRANCH_NAME will be available in multi-branch pipeline, but not here in the testing one
+import groovy.transform.Field
+@Field String BRANCH_NAME = 'azure-ci'
+
 // def repoName = 'ffc-ce-payment-orchestrator'
 def namespace = 'paul-test2'
-def dockerTag = 'v1.0.0'
+def tag = 'v1.0.1'
 
 node {
   checkout scm
@@ -13,14 +17,15 @@ node {
 
   echo "repoName = $repoName"
   echo "pr = $pr"
+  echo "containerTag = $containerTag"
   echo "mergedPrNo = $mergedPrNo"
 
   stage("Test") {
     withKubeConfig([credentialsId: "test_kube_config"]) {
       withCredentials([string(credentialsId: 'test_acr_url', variable: 'acrUrl')]) {
         sh "docker-compose -f docker-compose.yaml build --no-cache"
-        // sh "docker tag $repoName $acrUrl/$repoName:$dockerTag"
-        // sh "docker push $acrUrl/$repoName:$dockerTag"
+        sh "docker tag $repoName $acrUrl/$repoName:$tag"
+        sh "docker push $acrUrl/$repoName:$tag"
         // sh "helm package helm/$repoName"
         // sh "kubectl get namespaces $namespace || kubectl create namespace $namespace"
         // sh "helm upgrade --install --atomic --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
