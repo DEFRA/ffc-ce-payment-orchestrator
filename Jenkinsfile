@@ -37,10 +37,9 @@ node {
           sh "docker push $dockerImageName"
 
           // Build and push Helm chart
-          def chartName = "$acrUrl/$repoName:$helmTag"
           sh "helm registry login $acrUrl --username $acrUser --password $acrPwd"
-          sh "helm chart save helm/$repoName $chartName"
-          sh "helm chart push $chartName"
+          sh "helm chart save helm/$repoName $helmChartName"
+          sh "helm chart push $helmChartName"
 
           // Create K8s namespace
           sh "kubectl get namespaces $namespace || kubectl create namespace $namespace"
@@ -48,9 +47,9 @@ node {
           // Install Helm chart on K8s cluster:
           // First remove local cached copy and pull from ACR (just to demonstrate it actually works)
           // Then pull the chart and install
-          sh "helm chart remove $chartName"
-          sh "helm chart pull $chartName"
-          sh "helm upgrade $deploymentName $chartName --install --atomic --namespace=$namespace --set image=$dockerImageName"
+          sh "helm chart remove $helmChartName"
+          sh "helm chart pull $helmChartName"
+          sh "helm upgrade $deploymentName $helmChartName --install --atomic --namespace=$namespace --set image=$dockerImageName"
         }
       }
     }
