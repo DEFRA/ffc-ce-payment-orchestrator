@@ -1,9 +1,5 @@
 @Library('defra-library@v-6')
 
-// BRANCH_NAME will be available in multi-branch pipeline, but not here in the testing one
-import groovy.transform.Field
-@Field String BRANCH_NAME = 'azure-ci'
-
 // def repoName = 'ffc-ce-payment-orchestrator'
 def namespace = 'paul-test2'
 def tag = 'v1.0.1'
@@ -12,6 +8,7 @@ node {
   checkout scm
 
   stage('Set PR, and containerTag variables') {
+    build.BRANCH_NAME = 'azure-ci'
     (repoName, pr, containerTag, mergedPrNo) = build.getVariables(version.getPackageJsonVersion())
   }
 
