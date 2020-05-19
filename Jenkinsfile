@@ -1,8 +1,8 @@
 @Library('defra-library@v-6')
 
 def repoName = 'ffc-ce-payment-orchestrator'
-def namespace = 'paul-test2'
-def tag = 'v1.0.1'
+def namespace = 'paul-test-ci'
+def tag = '-test-ci'
 
 node {
   checkout scm
@@ -21,13 +21,20 @@ node {
     withKubeConfig([credentialsId: "test_kube_config"]) {
       withCredentials([
         string(credentialsId: 'test_acr_url', variable: 'acrUrl'),
-        usernamePassword(credentialsId: 'test_acr_creds', usernameVariable: 'acrUser', passwordVariable: 'acrPwd'),
+        // usernamePassword(credentialsId: 'test_acr_creds', usernameVariable: 'acrUser', passwordVariable: 'acrPwd'),
       ]) {
-        sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
+        def dockerTag = "docker$tag"
+        def helmTag = "helm$tag"
+
+        // sh "az acr login --name $acrUrl --username $acrUser --password $acrPwd"
+        sh "az acr login --name $acrUrl"
+
         sh "docker-compose -f docker-compose.yaml build --no-cache"
-        sh "docker tag $repoName $acrUrl/$repoName:$tag"
-        sh "docker push $acrUrl/$repoName:$tag"
-        // sh "helm package helm/$repoName"
+        sh "docker tag $repoName $acrUrl/$repoName:$dockerTag"
+        sh "docker push $acrUrl/$repoName:$dockerTag"
+
+
+        // sh "helm package helm/$repoName --version "
         // sh "kubectl get namespaces $namespace || kubectl create namespace $namespace"
         // sh "helm upgrade --install --atomic --namespace=$namespace $repoName --set namespace=$namespace $repoName-1.0.0.tgz --set image=$acrUrl/$repoName:$dockerTag"
       }
