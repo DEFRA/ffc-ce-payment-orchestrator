@@ -47,6 +47,9 @@ node {
       build.buildAndPushContainerImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, repoName, containerTag)
     }
 
+    // Test master branch branch
+    pr = ''
+
     if (pr != '') {
       stage('Helm install') {
         helm.deployChart(config.environment, DOCKER_REGISTRY, repoName, containerTag)
