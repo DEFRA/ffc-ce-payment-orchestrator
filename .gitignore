@@ -74,3 +74,6 @@ test-output
 # Vim files
 rules-engine-session.Vim
 Session.Vim
+
+# Helm chart
+helm/**/*.lock

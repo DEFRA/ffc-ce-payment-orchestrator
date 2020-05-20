@@ -1,0 +1,3 @@
+{{- include "ffc-helm-library.cluster-ip-service" (list . "ffc-ce-payment-orchestrator.cluster-ip-service") -}}
+{{- define "ffc-ce-payment-orchestrator.cluster-ip-service" -}}
+{{- end -}}

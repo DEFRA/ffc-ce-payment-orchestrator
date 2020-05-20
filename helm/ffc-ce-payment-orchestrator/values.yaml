@@ -1,11 +1,14 @@
 environment: development
 name: ffc-ce-payment-orchestrator
+namespace: ffc-ce
 image: ffc-ce-payment-orchestrator
 imagePullSecret:
+labels: {}
 service:
   type: ClusterIP
   port: 80
 container:
+  port: 3002
   imagePullPolicy: IfNotPresent
   redeployOnChange: update this field to force a change
   requestMemory: 60Mi
