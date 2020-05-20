@@ -27,28 +27,29 @@ node {
       test.lintHelm(repoName)
     }
 
-    stage('Build test image') {
-      build.buildTestImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, repoName, BUILD_NUMBER, containerTag)
-    }
+    // stage('Build test image') {
+    //   build.buildTestImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, repoName, BUILD_NUMBER, containerTag)
+    // }
 
-    stage('Run tests') {
-      build.runTests(repoName, repoName, BUILD_NUMBER, containerTag)
-    }
+    // stage('Run tests') {
+    //   build.runTests(repoName, repoName, BUILD_NUMBER, containerTag)
+    // }
 
-    stage('Create JUnit report') {
-      test.createJUnitReport()
-    }
+    // stage('Create JUnit report') {
+    //   test.createJUnitReport()
+    // }
 
-    stage('Fix lcov report') {
-      utils.replaceInFile(containerSrcFolder, localSrcFolder, lcovFile)
-    }
+    // stage('Fix lcov report') {
+    //   utils.replaceInFile(containerSrcFolder, localSrcFolder, lcovFile)
+    // }
+
+    // Test master branch branch
+    pr = ''
+    containerTag = 0.1.0
 
     stage('Push container image') {
       build.buildAndPushContainerImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, repoName, containerTag)
     }
-
-    // Test master branch branch
-    pr = ''
 
     if (pr != '') {
       stage('Helm install') {
