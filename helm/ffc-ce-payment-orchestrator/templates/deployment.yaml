@@ -1,9 +1,13 @@
-apiVersion: extensions/v1beta1
+apiVersion: apps/v1
 kind: Deployment
 metadata:
   name: {{ quote .Values.name }}
 spec:
   replicas: {{ .Values.replicaCount }}
+  selector:
+    matchLabels:
+      app: {{ quote .Values.name }}
+      environment: {{ quote .Values.environment }}
   minReadySeconds: {{ .Values.minReadySeconds }}
   strategy:
     type: RollingUpdate
