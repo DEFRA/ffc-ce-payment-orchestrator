@@ -44,8 +44,8 @@ node {
     }
 
     // Test master branch branch
-    // pr = ''
-    // containerTag = '0.1.0'
+    pr = ''
+    containerTag = '0.1.0'
 
     stage('Push container image') {
       build.buildAndPushContainerImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, repoName, containerTag)
