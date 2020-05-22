@@ -4,6 +4,7 @@ namespace: ffc-ce
 image: ffc-ce-payment-orchestrator
 imagePullSecret:
 labels: {}
+deployment:
 service:
   type: ClusterIP
   port: 80
