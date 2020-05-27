@@ -1,6 +1,6 @@
 @Library('defra-library@psd-770-azure-ci') _
 
-def config = [environment: "dev", helmChartLocation: "acr"]
+def config = [environment: "dev"]
 def containerSrcFolder = '\\/home\\/node'
 def localSrcFolder = '.'
 def lcovFile = './test-output/lcov.info'
