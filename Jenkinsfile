@@ -1,6 +1,6 @@
 @Library('defra-library@psd-770-azure-ci') _
 
-def config = [environment: "dev"]
+def config = [environment: "dev", helmChartLocaion: "acr"]
 def containerSrcFolder = '\\/home\\/node'
 def localSrcFolder = '.'
 def lcovFile = './test-output/lcov.info'
@@ -58,7 +58,7 @@ node {
     }
     else {
       stage('Publish chart') {
-        helm.publishChartToACR(DOCKER_REGISTRY, repoName, containerTag)
+        helm.publishChart(DOCKER_REGISTRY, repoName, containerTag, config.helmChartLocaion)
       }
 
       stage('Trigger GitHub release') {
