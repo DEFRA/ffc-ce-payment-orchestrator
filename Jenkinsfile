@@ -1,108 +1,126 @@
 @Library('defra-library@psd-770-azure-ci') _
 
-def testMasterBranch = {
-  echo "IN TEST CLOSURE"
-  self.pr = ''
-  self.containerTag = '0.1.0'
-}
+def config = [helmChartLocation: "acr", environment: "dev"]
 
-buildNodeJs environment: 'dev', helmChartLocation: 'acr', testClosure: testMasterBranch
+  def containerSrcFolder = '\\/home\\/node'
+  def localSrcFolder = '.'
+  def lcovFile = './test-output/lcov.info'
+  def repoName = ''
+  def pr = ''
+  def identityTag = ''
+  def mergedPrNo = ''
 
+  node {
+    checkout scm
+    try {
+      stage('Set GitHub status as pending') {
+        build.setGithubStatusPending()
+      }
 
-// def config = [environment: "dev"]
-// def containerSrcFolder = '\\/home\\/node'
-// def localSrcFolder = '.'
-// def lcovFile = './test-output/lcov.info'
+      stage('Set PR, and identityTag variables') {
+        (repoName, pr, identityTag, mergedPrNo) = build.getVariables(version.getPackageJsonVersion())
+      }
 
-// node {
-//   checkout scm
+      if (pr != '') {
+        stage('Verify version incremented') {
+          version.verifyPackageJsonIncremented()
+        }
+      }
 
-//   try {
-//     stage('Set GitHub status as pending') {
-//       build.setGithubStatusPending()
-//     }
+      if (config.containsKey('validateClosure')) {
+        config['validateClosure']()
+      }
 
-//     stage('Set PR, and containerTag variables') {
-//       (repoName, pr, containerTag, mergedPrNo) = build.getVariables(version.getPackageJsonVersion())
-//     }
+      stage('Helm lint') {
+        test.lintHelm(repoName)
+      }
 
-//     if (pr != '') {
-//       stage('Verify version incremented') {
-//         version.verifyPackageJsonIncremented()
-//       }
-//     }
+      stage('Build test image') {
+        build.buildTestImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, repoName, BUILD_NUMBER, identityTag)
+      }
 
-//     stage('Helm lint') {
-//       test.lintHelm(repoName)
-//     }
+      if (config.containsKey('buildClosure')) {
+        config['buildClosure']()
+      }
 
-//     // stage('Build test image') {
-//     //   build.buildTestImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, repoName, BUILD_NUMBER, containerTag)
-//     // }
+      stage('Run tests') {
+        build.runTests(repoName, repoName, BUILD_NUMBER, identityTag)
+      }
 
-//     // stage('Run tests') {
-//     //   build.runTests(repoName, repoName, BUILD_NUMBER, containerTag)
-//     // }
+      stage('Create JUnit report') {
+        test.createJUnitReport()
+      }
 
-//     // stage('Create JUnit report') {
-//     //   test.createJUnitReport()
-//     // }
+      stage('Fix lcov report') {
+        utils.replaceInFile(containerSrcFolder, localSrcFolder, lcovFile)
+      }
 
-//     // stage('Fix lcov report') {
-//     //   utils.replaceInFile(containerSrcFolder, localSrcFolder, lcovFile)
-//     // }
+      if (config.containsKey('testClosure')) {
+        config['testClosure']()
+      }
 
-//     // Test master branch branch
-//     pr = ''
-//     containerTag = '0.1.0'
+      stage('Push container image') {
+        build.buildAndPushContainerImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, repoName, identityTag)
+      }
 
-//     // stage('Push container image') {
-//     //   build.buildAndPushContainerImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, repoName, containerTag)
-//     // }
+      pr = ''
+      identityTag = "0.2.0"
 
-//     if (pr != '') {
-//       stage('Helm install') {
-//         helm.deployChart(config.environment, DOCKER_REGISTRY, repoName, containerTag)
-//       }
-//     }
-//     else {
-//       stage('Publish chart') {
-//         helm.publishChart(DOCKER_REGISTRY, repoName, containerTag, config.helmChartLocation)
-//       }
+      if (pr != '') {
+        stage('Helm install') {
+          helm.deployChart(config.environment, DOCKER_REGISTRY, repoName, identityTag)
+        }
+      }
+      else {
+        stage('Publish chart') {
+          helm.publishChart(DOCKER_REGISTRY, repoName, identityTag, config.helmChartLocation)
+        }
 
-//       stage('Trigger GitHub release') {
-//         withCredentials([
-//           string(credentialsId: 'github-auth-token', variable: 'gitToken')
-//         ]) {
-//           release.trigger(containerTag, repoName, containerTag, gitToken)
-//         }
-//       }
+        stage('Trigger GitHub release') {
+          withCredentials([
+            string(credentialsId: 'github-auth-token', variable: 'gitToken')
+          ]) {
+            release.trigger(identityTag, repoName, identityTag, gitToken)
+          }
+        }
 
-//       stage('Trigger Deployment') {
-//         withCredentials([
-//           string(credentialsId: 'remote_build_token', variable: 'jenkinsToken')
-//         ]) {
-//           deploy.trigger(JENKINS_DEPLOY_SITE_ROOT, repoName, jenkinsToken, ['chartVersion': containerTag, 'environment': config.environment])
-//         }
-//       }
-//     }
+        stage('Trigger Deployment') {
+          withCredentials([
+            string(credentialsId: "$repoName-deploy-token", variable: 'jenkinsToken')
+          ]) {
+            deploy.trigger(JENKINS_DEPLOY_SITE_ROOT, repoName, jenkinsToken, ['chartVersion': identityTag, 'environment': config.environment])
+          }
+        }
+      }
 
-//     stage('Set GitHub status as success'){
-//       build.setGithubStatusSuccess()
-//     }
-//   } catch(e) {
-//     stage('Set GitHub status as fail') {
-//       build.setGithubStatusFailure(e.message)
-//     }
+      if (config.containsKey('deployClosure')) {
+        config['deployClosure']()
+      }
 
-//     // stage('Send build failure slack notification') {
-//     //   notifySlack.buildFailure(e.message, "#generalbuildfailures")
-//     // }
+      stage('Set GitHub status as success'){
+        build.setGithubStatusSuccess()
+      }
+    } catch(e) {
+      stage('Set GitHub status as fail') {
+        build.setGithubStatusFailure(e.message)
+      }
 
-//     throw e
-//   } finally {
-//     stage('Clean up test output') {
-//       test.deleteOutput('defradigital/node-development', containerSrcFolder)
-//     }
-//   }
-// }
+      stage('Send build failure slack notification') {
+        notifySlack.buildFailure(e.message, '#generalbuildfailures')
+      }
+
+      if (config.containsKey('failureClosure')) {
+        config['failureClosure']()
+      }
+
+      throw e
+    } finally {
+      stage('Clean up test output') {
+        test.deleteOutput('defradigital/node-development', containerSrcFolder)
+      }
+
+      if (config.containsKey('finallyClosure')) {
+        config['finallyClosure']()
+      }
+    }
+  }
