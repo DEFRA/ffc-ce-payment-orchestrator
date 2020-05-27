@@ -59,12 +59,12 @@ def config = [helmChartLocation: "acr", environment: "dev"]
         config['testClosure']()
       }
 
+      pr = ''
+      identityTag = "0.2.1"
+
       stage('Push container image') {
         build.buildAndPushContainerImage(DOCKER_REGISTRY_CREDENTIALS_ID, DOCKER_REGISTRY, repoName, identityTag)
       }
-
-      pr = ''
-      identityTag = "0.2.0"
 
       if (pr != '') {
         stage('Helm install') {
