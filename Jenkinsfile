@@ -1,8 +1,9 @@
 @Library('defra-library@psd-770-azure-ci') _
 
 def testMasterBranch = {
-  pr = ''
-  containerTag = '0.1.0'
+  echo "IN TEST CLOSURE"
+  self.pr = ''
+  self.containerTag = '0.1.0'
 }
 
 buildNodeJs environment: 'dev', helmChartLocation: 'acr', testClosure: testMasterBranch
