@@ -58,7 +58,7 @@ node {
     }
     else {
       stage('Publish chart') {
-        helm.publishChart(DOCKER_REGISTRY, repoName, containerTag, "garbage")
+        helm.publishChart(DOCKER_REGISTRY, repoName, containerTag)
       }
 
       stage('Trigger GitHub release') {
