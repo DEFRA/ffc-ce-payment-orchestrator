@@ -58,7 +58,7 @@ node {
     }
     else {
       stage('Publish chart') {
-        helm.publishChart(DOCKER_REGISTRY, repoName, containerTag)
+        helm.publishChart(DOCKER_REGISTRY, repoName, containerTag, config.helmChartLocation)
       }
 
       stage('Trigger GitHub release') {
