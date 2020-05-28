@@ -1,4 +1,4 @@
-@Library('defra-library@psd-770-azure-ci') _
+@Library('defra-library@v-6') _
 
 
 buildNodeJs environment: 'dev'
