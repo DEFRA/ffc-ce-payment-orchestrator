@@ -4,6 +4,9 @@ namespace: ffc-ce
 workstream: ffc-ce
 image: ffc-ce-payment-orchestrator
 
+configMap:
+  name: ffc-ce-payment-orchestrator
+
 labels: {}
 
 deployment:
