@@ -1,37 +1,43 @@
 environment: development
 name: ffc-ce-payment-orchestrator
+namespace: ffc-ce
+workstream: ffc-ce
 image: ffc-ce-payment-orchestrator
-imagePullSecret:
-service:
-  type: ClusterIP
-  port: 80
-container:
-  imagePullPolicy: IfNotPresent
+
+labels: {}
+
+deployment:
+  restartPolicy: Always
+  priorityClassName: low
+  replicas: 1
+  minReadySeconds: 5
   redeployOnChange: update this field to force a change
+  imagePullSecret:
+  runAsNonRoot: true
+  runAsUser: 1000
+
+container:
+  port: 3002
+  imagePullPolicy: IfNotPresent
   requestMemory: 60Mi
   requestCpu: 40m
   limitMemory: 120Mi
   limitCpu: 80m
-  runAsNonRoot: true
-  runAsUser: 1000
   readOnlyRootFilesystem: true
   allowPrivilegeEscalation: false
-  restartPolicy: Always
-  command: ["/bin/sh", "-c"]
+  command: ["/bin/sh","-c"]
   args: ["node index"]
-replicaCount: 1
-minReadySeconds: 10
-maxSurge: 1
-maxUnavailable: 1
+
 readinessProbe:
   path: /healthy
   port: 3002
-  initialDelaySeconds: 40
+  initialDelaySeconds: 60
   periodSeconds: 10
   failureThreshold: 3
+
 livenessProbe:
   path: /healthz
   port: 3002
-  initialDelaySeconds: 40
+  initialDelaySeconds: 70
   periodSeconds: 10
   failureThreshold: 3
