@@ -1,6 +1,5 @@
 {{- include "ffc-helm-library.deployment" (list . "ffc-ce-payment-orchestrator.deployment") -}}
 {{- define "ffc-ce-payment-orchestrator.deployment" -}}
-apiVersion: apps/v1
 spec:
   template:
     spec:
