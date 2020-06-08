@@ -4,6 +4,8 @@ namespace: ffc-ce
 workstream: ffc-ce
 image: ffc-ce-payment-orchestrator
 
+testValue: Value from values.yaml
+
 labels: {}
 
 deployment:
