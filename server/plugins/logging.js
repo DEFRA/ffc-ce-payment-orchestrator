@@ -12,9 +12,7 @@ module.exports = {
           args: [
             {
               log: '*',
-              error: '*',
-              response: '*',
-              request: '*'
+              error: '*'
             }
           ]
         },
