@@ -11,10 +11,6 @@ labels: {}
 containerConfigMap:
   name: ffc-ce-payment-orchestrator-config-map
 
-containerSecret:
-  name: ffc-ce-payment-orchestrator-container-secret
-  type: Opaque
-
 postgresUsername: changeme
 
 deployment:
