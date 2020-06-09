@@ -15,9 +15,7 @@ containerSecret:
   name: ffc-ce-payment-orchestrator-container-secret
   type: Opaque
 
-postgresService:
-  postgresUsername: changeme
-  postgresPassword: changeme
+postgresUsername: changeme
 
 deployment:
   restartPolicy: Always
