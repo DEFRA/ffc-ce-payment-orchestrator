@@ -1,0 +1,5 @@
+{{- include "ffc-helm-library.container-config-map" (list . "ffc-ce-payment-orchestrator.config-map") -}}
+{{- define "ffc-ce-payment-orchestrator.config-map" -}}
+data:
+  POSTGRES_USERNAME: {{ .Values.postgresService.postgresUsername | quote }}
+{{- end -}}

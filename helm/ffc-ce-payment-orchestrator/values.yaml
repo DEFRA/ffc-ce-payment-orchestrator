@@ -8,6 +8,14 @@ testValue: Value from values.yaml
 
 labels: {}
 
+containerSecret:
+  name: ffc-ce-payment-orchestrator
+  type: Opaque
+
+postgresService:
+  postgresUsername: changeme
+  postgresPassword: changeme
+
 deployment:
   restartPolicy: Always
   priorityClassName: low
