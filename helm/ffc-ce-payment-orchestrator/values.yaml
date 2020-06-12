@@ -16,6 +16,7 @@ containerSecret:
   type: Opaque
 
 postgresUsername: changeme
+postgresPassword: changeme
 
 deployment:
   restartPolicy: Always
