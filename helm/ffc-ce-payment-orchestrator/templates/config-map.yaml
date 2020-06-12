@@ -1,7 +1,5 @@
 {{- include "ffc-helm-library.container-config-map" (list . "ffc-ce-payment-orchestrator.config-map") -}}
 {{- define "ffc-ce-payment-orchestrator.config-map" -}}
 data:
-  QQQ1: {{ .Values.postgresUsername | quote }}
-  POSTGRES_USERNAM: {{ .Values.postgresUsername | quote }}
-  QQQ2: {{ .Values.postgresUsername | quote }}
+  POSTGRES_USERNAME: {{ .Values.postgresUsername | quote }}
 {{- end -}}
