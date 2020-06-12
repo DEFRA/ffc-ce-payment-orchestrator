@@ -2,4 +2,5 @@
 {{- define "ffc-ce-payment-orchestrator.config-map" -}}
 data:
   POSTGRES_USERNAME: {{ .Values.postgresUsername | quote }}
+  POSTGRES_USERNAME2: {{ .Values.post.username | quote }}
 {{- end -}}

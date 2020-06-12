@@ -18,6 +18,10 @@ containerSecret:
 postgresUsername: changeme1
 postgresPassword: changeme2
 
+post:
+  password: changeme3
+  username: changeme4
+
 deployment:
   restartPolicy: Always
   priorityClassName: low
