@@ -4,8 +4,6 @@ env:
   value: {{ quote .Values.environment }}
 - name: PORT
   value: {{ quote .Values.container.port }}
-- name: TEST_VALUE
-  value: {{ quote .Values.testValue }}
 ports:
 - containerPort: {{ .Values.container.port }}
 livenessProbe: {{ include "ffc-helm-library.http-get-probe" (list . .Values.livenessProbe) | nindent 4}}
