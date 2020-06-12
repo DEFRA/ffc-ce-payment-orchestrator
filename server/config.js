@@ -32,8 +32,8 @@ value.isProd = value.env === 'production'
 console.log(JSON.stringify(process.env))
 console.log(`QQQ1: ${process.env.QQQ1}`)
 console.log(`QQQ2: ${process.env.QQQ2}`)
-console.log(`POSTGRES USERNAME: ${process.env.POSTGRES_USERNAME}`)
 console.log(`POSTGRES USERNAM: ${process.env.POSTGRES_USERNAM}`)
 console.log(`POSTGRES PASSWORD: ${process.env.POSTGRES_PASSWORD}`)
+console.log(`POSTGRES USERNAME: ${process.env.POSTGRES_USERNAME}`)
 
 module.exports = value

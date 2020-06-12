@@ -3,6 +3,5 @@
 data:
   QQQ1: {{ .Values.postgresUsername | quote }}
   POSTGRES_USERNAM: {{ .Values.postgresUsername | quote }}
-  POSTGRES_USERNAME: {{ .Values.postgresUsername | quote }}
   QQQ2: {{ .Values.postgresUsername | quote }}
 {{- end -}}
