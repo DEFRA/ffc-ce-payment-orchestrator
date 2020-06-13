@@ -31,5 +31,6 @@ value.isProd = value.env === 'production'
 
 console.log(`POSTGRES PASSWORD: ${process.env.POSTGRES_PASSWORD2}`)
 console.log(`POSTGRES USERNAME: ${process.env.POSTGRES_USERNAME2}`)
+console.log(`QUEUE NAME: ${process.env.QUEUE_NAME}`)
 
 module.exports = value

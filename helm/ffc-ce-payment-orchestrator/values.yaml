@@ -15,6 +15,7 @@ containerSecret:
   name: ffc-ce-payment-orchestrator-container-secret
   type: Opaque
 
+calc-queue-name: dummy
 postgresUsername: changeme1
 postgresPassword: changeme2
 
