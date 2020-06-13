@@ -1,2 +1,2 @@
-postgresService.postgresUsername
-postgresService.postgresPassword
+post.username
+post.password
