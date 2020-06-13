@@ -29,7 +29,7 @@ const value = result.value
 value.isDev = value.env === 'development'
 value.isProd = value.env === 'production'
 
-console.log(`POSTGRES PASSWORD: ${process.env.POSTGRES_PASSWORD}`)
-console.log(`POSTGRES USERNAME: ${process.env.POSTGRES_USERNAME}`)
+console.log(`POSTGRES PASSWORD: ${process.env.POSTGRES_PASSWORD2}`)
+console.log(`POSTGRES USERNAME: ${process.env.POSTGRES_USERNAME2}`)
 
 module.exports = value
