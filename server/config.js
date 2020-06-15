@@ -30,8 +30,7 @@ value.isDev = value.env === 'development'
 value.isProd = value.env === 'production'
 
 console.log(JSON.stringify(process.env))
-console.log(`QUEUE NAME: ${process.env.QUEUE_NAME}`)
-console.log(`POSTGRES PASSWORD: ${process.env.POSTGRES_PASSWORD2}`)
-console.log(`POSTGRES USERNAME: ${process.env.POSTGRES_USERNAME2}`)
+console.log(`POSTGRES PASSWORD: ${process.env.POSTGRES_PASSWORD}`)
+console.log(`POSTGRES USERNAME: ${process.env.POSTGRES_USERNAME}`)
 
 module.exports = value
