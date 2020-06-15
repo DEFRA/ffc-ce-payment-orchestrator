@@ -4,8 +4,6 @@ namespace: ffc-ce
 workstream: ffc-ce
 image: ffc-ce-payment-orchestrator
 
-testValue: Value from values.yaml
-
 labels: {}
 
 containerConfigMap:
@@ -15,13 +13,9 @@ containerSecret:
   name: ffc-ce-payment-orchestrator-container-secret
   type: Opaque
 
-queueName: dummy
-postgresUsername: changeme1
-postgresPassword: changeme2
-
 post:
-  password: changeme3
-  username: changeme4
+  password: changeme1
+  username: changeme2
 
 deployment:
   restartPolicy: Always
