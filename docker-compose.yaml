@@ -4,8 +4,6 @@ services:
     build: .
     image: ffc-ce-payment-orchestrator
     command: npm run start:watch
-    environment:
-      POSTGRES_PASSWORD: Value from docker compose
     volumes:
       - ./data/:/usr/src/app/data/
       - ./server/:/usr/src/app/server/
