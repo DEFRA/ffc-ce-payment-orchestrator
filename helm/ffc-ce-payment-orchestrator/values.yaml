@@ -13,7 +13,6 @@ containerSecret:
   name: ffc-ce-payment-orchestrator-container-secret
   type: Opaque
 
-test1: blah
 post:
   password: changeme1
   username: changeme2
