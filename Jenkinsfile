@@ -1,3 +1,3 @@
-@Library('defra-library@v-6') _
+@Library('defra-library@fail-build-on-synk') _
 
 buildNodeJs environment: 'dev'
