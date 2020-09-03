@@ -25,7 +25,7 @@
   ],
   "license": "OGL-UK-3.0",
   "dependencies": {
-    "@hapi/hapi": "^18.4.0",
+    "@hapi/hapi": "^19.1.1",
     "@hapi/joi": "^16.1.8",
     "@neilbmclaughlin/rules-engine-test": "^5.0.0",
     "json-rules-engine": "^5.0.3",
