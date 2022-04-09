@@ -30,7 +30,7 @@
     "@neilbmclaughlin/rules-engine-test": "^5.0.0",
     "json-rules-engine": "^5.0.3",
     "jsonpath": "^1.0.2",
-    "moment": "^2.24.0"
+    "moment": "^2.29.2"
   },
   "devDependencies": {
     "@hapi/good": "^8.2.4",
